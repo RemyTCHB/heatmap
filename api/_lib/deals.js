@@ -108,4 +108,4 @@ function applyEvent(latest, event, f, now) {
   return { deal, isNew };
 }
 
-module.exports = { KEYS, extract, applyEvent, money, date };
+module.exports = { KEYS, extract, applyEvent, blank, money, date, NO_DISPO };

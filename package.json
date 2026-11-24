@@ -2,9 +2,14 @@
   "name": "tchb-deal-heat-map",
   "private": true,
   "description": "TCHB Deal Heat Map. api/ holds the Vercel functions that receive the GoHighLevel webhooks.",
-  "engines": { "node": ">=20" },
-  "scripts": { "test": "node --test tests/*.test.js" },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
   "dependencies": {
-    "firebase-admin": "^12.7.0"
+    "firebase-admin": "^12.7.0",
+    "zipcodes": "^8.0.0"
   }
 }

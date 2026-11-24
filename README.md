@@ -6,6 +6,22 @@ Hub's look. Deals come from GoHighLevel webhooks and are matched by **contact ID
 The Heat Map is a separate app: its own Vercel project and its own Firebase project. It does not read or write the
 Hub's data.
 
+## The Page
+
+`index.html` at the root is the Heat Map: the map (pins, heat, states), the leaderboards, the deal list, the deal panel
+and Settings, in the Hub's look. People sign in with their company Google account.
+
+- **Everyone at totalchb.com and kpidriver.com** can view it.
+- **The owner and managers** can edit deals, add and delete deals, fix review flags, and change the Settings lists.
+  Everyone else sees it read-only, and the server enforces the same rule.
+- The page refreshes the deals every minute, so new hooks show up without reloading.
+
+Its endpoints (`api/app/[op].js`): `GET /api/app/config`, `GET /api/app/data`, `POST /api/app/deal`,
+`POST /api/app/options`, and `POST /api/app/import` (the one-time CSV history load, webhook key only).
+
+A hook for a deal that came from the CSV history (no contact ID yet) finds it by house number and ZIP and adopts it,
+so a deal signed before go-live closes on its own row.
+
 ## Webhooks
 
 GoHighLevel sends the same payload to each address. The address says which event happened.
@@ -65,6 +81,13 @@ The key can also go in an `X-Heatmap-Key` header. It is a secret: anyone with it
    - `HEATMAP_WEBHOOK_KEY`: a long random password you make up. It goes in the three addresses.
    - `HEATMAP_FIREBASE_SERVICE_ACCOUNT`: the whole contents of the service account key file from step 1.
 4. Deploy. The three addresses above, with your domain and key, go into the GoHighLevel workflows' Webhook actions.
+5. Google sign-in, in the same Firebase project:
+   - Authentication, Get started, Sign-in method: enable **Google**.
+   - Authentication, Settings, Authorized domains: add your domain (e.g. `heatmap.totalchb.com`).
+   - Project settings, General, Your apps: add a **Web** app and copy its `firebaseConfig` object.
+   - In Vercel, add `HEATMAP_FIREBASE_WEB_CONFIG` with that object as JSON (keys in double quotes), then redeploy.
+6. Optional, in Vercel: `HEATMAP_MANAGERS` (emails that can edit, comma-separated), `HEATMAP_OWNERS`, and
+   `HEATMAP_ALLOWED_DOMAINS`. Defaults are in `api/_lib/auth.js`.
 
 ## Tests
 

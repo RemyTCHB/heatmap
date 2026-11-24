@@ -60,3 +60,34 @@ test('hooks that arrive without a signed one are flagged; a cancel after closing
   const d = run([['signed', hook()], ['closed', hook({ 'Dispo Manager': 'Moe Al Amir' })], ['cancelled', hook()]])[2].deal;
   assert.strictEqual(d.status, 'closed'); assert.ok(d.flags.includes('Cancelled Hook After It Closed'));
 });
+
+const opts = require('../api/_lib/options');
+const { addrKey, geocode } = require('../api/_lib/geo');
+const { roleOf } = require('../api/_lib/auth');
+
+test('Settings lists: intake, rename, merge', () => {
+  const o = opts.fromDeals([{ source: 'PPC NW RDS' }, { source: 'PPC NW RDS' }, { source: 'SELF GEN' }]);
+  assert.deepStrictEqual(o.source.map(x => x.name), ['PPC NW RDS', 'SELF GEN']);
+  const f = { source: 'ppc nw rds', exit: 'Seller Finance' };
+  assert.strictEqual(opts.intake(o, f, 1), true); assert.strictEqual(f.source, 'PPC NW RDS'); assert.strictEqual(o.exit[0].crm, true);
+  const r = opts.apply(o, { kind: 'source', op: 'rename', name: 'SELF GEN', to: 'Self Generated' });
+  assert.deepStrictEqual(r.move, { kind: 'source', from: 'SELF GEN', to: 'Self Generated' }); assert.deepStrictEqual(r.options.source[1].aliases, ['SELF GEN']);
+  const m = opts.apply(r.options, { kind: 'source', op: 'merge', name: 'Self Generated', to: 'PPC NW RDS' });
+  assert.strictEqual(m.options.source.length, 1); assert.ok(m.options.source[0].aliases.includes('Self Generated'));
+  assert.throws(() => opts.apply(o, { kind: 'source', op: 'add', name: 'ppc nw rds' }));
+});
+
+test('address key and map spot', () => {
+  assert.strictEqual(addrKey({ address: '1858 NW 141st Ave', zip: '33028' }), '1858|33028');
+  assert.strictEqual(addrKey({ address: 'NW 141st Ave', zip: '33028' }), '');
+  const d = geocode({ zip: '44314' }); assert.strictEqual(d.city, 'Akron'); assert.ok(d.lat > 40);
+  assert.strictEqual(geocode({ zip: '', city: '', state: '' }).lat, null);
+});
+
+test('who may edit', () => {
+  assert.strictEqual(roleOf('systems@totalchb.com', {}), 'owner');
+  assert.strictEqual(roleOf('brandy@kpidriver.com', {}), 'manager');
+  assert.strictEqual(roleOf('luke@totalchb.com', {}), 'viewer');
+  assert.strictEqual(roleOf('someone@gmail.com', {}), null);
+  assert.strictEqual(roleOf('luke@totalchb.com', { HEATMAP_MANAGERS: 'luke@totalchb.com' }), 'manager');
+});

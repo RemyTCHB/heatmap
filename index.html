@@ -1,0 +1,1212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="tchb-logo.png">
+<title>TCHB Deal Heat Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: the hub's header standard (glass bar, 1280px column), then KPIs, a full-width map card with a live webhook feed, then a leaderboard grid and the deal list. */
+:root {
+  --indigo-900:#2c2752; --indigo-700:#4d458a; --indigo-500:#625aa5; --indigo-100:#eae9f4; --indigo-050:#f5f4fa;
+  --red-500:#bd2239; --red-050:#fbf0f2; --green-500:#109648; --green-600:#0d7a3b; --green-050:#eaf7ef;
+  --gray-050:#f7f7f9; --gray-100:#eeedf2; --gray-300:#c9c7d4; --gray-500:#767388; --gray-700:#47445a; --gray-900:#211e33;
+  --surface-page:#ffffff; --surface-card:#ffffff; --surface-subtle:#f7f7f9; --surface-accent:#f5f4fa;
+  --text-body:#47445a; --text-muted:#767388; --text-heading:#4d458a; --text-strong:#211e33;
+  --border-default:#eeedf2; --border-strong:#c9c7d4;
+  --action:#4d458a; --action-hover:#625aa5;
+  --shadow-card:0 1px 2px rgba(34,29,84,.06),0 4px 16px rgba(34,29,84,.08);
+  --shadow-raised:0 2px 4px rgba(34,29,84,.08),0 12px 32px rgba(34,29,84,.14);
+  --glass-bg:rgba(255,255,255,.55); --glass-border:rgba(255,255,255,.85);
+  --glass-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(17,29,44,.06),0 1px 2px rgba(34,29,84,.10),0 4px 14px rgba(34,29,84,.10);
+  --header-bg:rgba(255,255,255,.78); --menu-bg:rgba(255,255,255,.66);
+  --menu-sheen:linear-gradient(180deg,rgba(255,255,255,.85) 0%,rgba(255,255,255,.35) 100%);
+  --menu-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 2px 4px rgba(34,29,84,.08),0 16px 40px rgba(34,29,84,.18);
+  --glass-hover:rgba(255,255,255,.85); --glass-divider:rgba(17,29,44,.08);
+  --st-signed:#3a7fc2; --st-signed-bg:#ebf3fb; --st-closed:#109648; --st-closed-bg:#eaf7ef; --st-cancel:#bd2239; --st-cancel-bg:#fbf0f2;
+  --map-land:#eeedf2; --map-line:#ffffff; --map-hover:#dcdae6; --map-sea:transparent;
+  --seq-lo:#ebe9f5; --seq-hi:#2c2752; --seqr-lo:#fbe9ec; --seqr-hi:#8a1428;
+  --heat-a:#625aa5; --heat-b:#7d3468; --heat-c:#bd2239; --heat-d:#f29b38;
+  --bar-track:#eeedf2; --bar-fill:linear-gradient(90deg,#4d458a,#7d3468 60%,#bd2239);
+  --font-display:'Baloo 2','Nunito Sans',system-ui,sans-serif;
+  --font-body:'Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --indigo-900:#0f0e1c; --indigo-700:#c2bdf0; --indigo-500:#8f87dd; --indigo-100:#36325c; --indigo-050:#2a2747;
+  --red-500:#ef5a6f; --red-050:#3a1f2b; --green-500:#4fd98a; --green-600:#4fd98a; --green-050:#163224;
+  --gray-050:#191729; --gray-100:#2a2740; --gray-300:#4a4662; --gray-500:#9a97ad; --gray-700:#d4d2e3; --gray-900:#f1f0f7;
+  --surface-page:#1c1a2e; --surface-card:#1f1d33; --surface-subtle:#141323; --surface-accent:#2a2747;
+  --text-body:#e4e2ee; --text-muted:#a3a0b8; --text-heading:#c2bdf0; --text-strong:#f1f0f7;
+  --border-default:#2f2c47; --border-strong:#4a4664; --action:#756dc4; --action-hover:#625aa5;
+  --shadow-card:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.28); --shadow-raised:0 2px 4px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.45);
+  --glass-bg:rgba(255,255,255,.06); --glass-border:rgba(255,255,255,.12); --glass-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  --header-bg:rgba(31,29,51,.78); --menu-bg:rgba(30,28,50,.78);
+  --menu-sheen:linear-gradient(180deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.02) 100%);
+  --menu-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 16px 40px rgba(0,0,0,.5);
+  --glass-hover:rgba(255,255,255,.10); --glass-divider:rgba(255,255,255,.10);
+  --st-signed:#5b9bdb; --st-signed-bg:#17283d; --st-closed:#4fd98a; --st-closed-bg:#163224; --st-cancel:#ef5a6f; --st-cancel-bg:#3a1f2b;
+  --map-land:#2a2740; --map-line:#1f1d33; --map-hover:#3a3657;
+  --seq-lo:#2e2a4a; --seq-hi:#c9c3ff; --seqr-lo:#3a2030; --seqr-hi:#ff7b8c;
+  --heat-a:#5a52a8; --heat-b:#9a3f80; --heat-c:#ef5a6f; --heat-d:#ffc06a;
+  --bar-track:#2a2740; --bar-fill:linear-gradient(90deg,#8f87dd,#b45a9a 60%,#ef5a6f);
+  color-scheme:dark;
+} }
+:root[data-theme="dark"] {
+  --indigo-900:#0f0e1c; --indigo-700:#c2bdf0; --indigo-500:#8f87dd; --indigo-100:#36325c; --indigo-050:#2a2747;
+  --red-500:#ef5a6f; --red-050:#3a1f2b; --green-500:#4fd98a; --green-600:#4fd98a; --green-050:#163224;
+  --gray-050:#191729; --gray-100:#2a2740; --gray-300:#4a4662; --gray-500:#9a97ad; --gray-700:#d4d2e3; --gray-900:#f1f0f7;
+  --surface-page:#1c1a2e; --surface-card:#1f1d33; --surface-subtle:#141323; --surface-accent:#2a2747;
+  --text-body:#e4e2ee; --text-muted:#a3a0b8; --text-heading:#c2bdf0; --text-strong:#f1f0f7;
+  --border-default:#2f2c47; --border-strong:#4a4664; --action:#756dc4; --action-hover:#625aa5;
+  --shadow-card:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.28); --shadow-raised:0 2px 4px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.45);
+  --glass-bg:rgba(255,255,255,.06); --glass-border:rgba(255,255,255,.12); --glass-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  --header-bg:rgba(31,29,51,.78); --menu-bg:rgba(30,28,50,.78);
+  --menu-sheen:linear-gradient(180deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.02) 100%);
+  --menu-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 16px 40px rgba(0,0,0,.5);
+  --glass-hover:rgba(255,255,255,.10); --glass-divider:rgba(255,255,255,.10);
+  --st-signed:#5b9bdb; --st-signed-bg:#17283d; --st-closed:#4fd98a; --st-closed-bg:#163224; --st-cancel:#ef5a6f; --st-cancel-bg:#3a1f2b;
+  --map-land:#2a2740; --map-line:#1f1d33; --map-hover:#3a3657;
+  --seq-lo:#2e2a4a; --seq-hi:#c9c3ff; --seqr-lo:#3a2030; --seqr-hi:#ff7b8c;
+  --heat-a:#5a52a8; --heat-b:#9a3f80; --heat-c:#ef5a6f; --heat-d:#ffc06a;
+  --bar-track:#2a2740; --bar-fill:linear-gradient(90deg,#8f87dd,#b45a9a 60%,#ef5a6f);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+.gate{position:fixed;inset:0;z-index:90;background:var(--surface-subtle);display:grid;place-items:center;padding:24px}
+.gate-card{background:var(--surface-card);border:1px solid var(--border-default);border-radius:20px;box-shadow:var(--shadow-raised);padding:28px 32px;max-width:420px;width:100%;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.gate-card .logo{height:56px}
+/* view-only accounts: no add, save, delete or list changes */
+body.ro [data-add],body.ro #drSave,body.ro #drDel,body.ro .rm,body.ro .addrow,body.ro [data-confirm],body.ro [data-link],body.ro [data-fix],body.ro [data-acceptall],body.ro .crm-badge{display:none!important}
+body{background:var(--surface-subtle);color:var(--text-body);font-family:var(--font-body);font-size:14px;line-height:1.45;text-transform:capitalize}
+/* Title Case everywhere, as in the hub; what people type stays exactly as typed */
+button{text-transform:inherit}
+input,textarea,code{text-transform:none}
+::placeholder{text-transform:capitalize}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--header-bg)}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--indigo-500) 45%,transparent);border-radius:8px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+
+/* ---------- header (hub standard) ---------- */
+header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--header-bg);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border-default)}
+.bar-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-block:12px}
+.bar-l,.bar-r{flex:1 1 0;min-width:max-content;display:flex;align-items:center;gap:14px}
+.bar-r{justify-content:flex-end;gap:10px}
+.logo{height:56px;width:auto;display:block}
+.logo.dk{display:none}
+:root[data-theme="dark"] .logo.lt{display:none} :root[data-theme="dark"] .logo.dk{display:block}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo.lt{display:none} :root:not([data-theme="light"]) .logo.dk{display:block}}
+.glass{background:var(--glass-bg);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.pill{height:40px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 14px;font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--text-strong);white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green-500);box-shadow:0 0 0 0 color-mix(in srgb,var(--green-500) 60%,transparent);animation:pulse 2s infinite;flex:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green-500) 55%,transparent)}70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.bubble{background:var(--green-050);color:var(--green-600);border-radius:999px;padding:0 8px;font-size:12px;line-height:20px}
+.tabs{display:flex;background:var(--gray-100);border-radius:999px;padding:4px;gap:2px}
+.tabs a,.tabs button{border:0;background:transparent;border-radius:999px;padding:8px 18px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text-body);text-decoration:none;white-space:nowrap}
+.tabs .on{background:var(--action);color:#fff}
+.theme{display:flex;border-radius:999px;padding:3px;gap:2px}
+.theme button{width:40px;height:32px;border:0;border-radius:999px;background:transparent;display:grid;place-items:center;color:var(--gray-700)}
+.theme button.on{background:var(--action);color:#fff}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--indigo-500);color:#fff;font-family:var(--font-display);font-weight:800;display:grid;place-items:center;border:0;font-size:15px}
+.hook{position:relative}
+.hook .ct{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:var(--red-500);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;padding:0 4px;font-family:var(--font-display)}
+.icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--text-heading);border:0}
+
+/* ---------- title + KPI ---------- */
+main{padding-block:28px 96px;display:flex;flex-direction:column;gap:24px}
+.title{text-align:center;font-family:var(--font-display);font-weight:800;font-size:44px;line-height:1.05;color:var(--text-heading);margin:0;text-wrap:balance}
+.title span{color:var(--red-500)}
+.sub{text-align:center;color:var(--text-muted);font-size:13px;margin-top:4px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center}
+.sample{display:inline-flex;gap:6px;align-items:center;background:var(--surface-accent);color:var(--text-heading);border-radius:999px;padding:2px 10px;font-weight:700;font-size:12px}
+.kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
+.kpi{background:var(--surface-card);border:1px solid var(--border-default);border-radius:16px;padding:14px 14px 12px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .v{font-family:var(--font-display);font-weight:800;font-size:24px;color:var(--text-strong);line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi .l{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.kpi .l i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.kpi.ring-k{flex-direction:row;align-items:center;gap:12px}
+.ring{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring b{width:44px;height:44px;border-radius:50%;background:var(--surface-card);display:grid;place-items:center;font-family:var(--font-display);font-size:13px;font-weight:800;color:var(--text-heading);font-variant-numeric:tabular-nums}
+
+/* ---------- filters ---------- */
+.filters{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr,81px));z-index:20;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:16px;transition:background .15s,box-shadow .15s}
+.filters.stuck{background:color-mix(in srgb,var(--surface-card) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border-default);box-shadow:var(--shadow-card)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--border-default);background:var(--surface-card);border-radius:999px;padding:7px 14px;font-family:var(--font-display);font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:8px;color:var(--text-body);white-space:nowrap}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip .n{color:var(--text-muted);font-variant-numeric:tabular-nums}
+.chip.on{background:var(--action);border-color:var(--action);color:#fff}
+.chip.on .n{color:rgba(255,255,255,.8)}
+.chip.on i{box-shadow:0 0 0 2px #fff}
+/* glass dropdowns: the trigger is a glass pill, the list opens in a glass menu like the hub's photo menu */
+.ddrow{display:flex;gap:8px;flex-wrap:wrap}
+.dd{height:36px;border-radius:999px;display:inline-flex;align-items:center;justify-content:space-between;gap:10px;padding:0 13px 0 15px;font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--text-strong);white-space:nowrap;max-width:210px;min-width:0;transition:background .15s,border-color .15s}
+.dd:hover{background:var(--glass-hover)}
+.dd .ddv{overflow:hidden;text-overflow:ellipsis}
+.dd svg{flex:none;color:var(--text-muted);transition:transform .15s}
+.dd[aria-expanded="true"] svg{transform:rotate(180deg)}
+.dd.set{color:var(--text-heading);border-color:color-mix(in srgb,var(--indigo-500) 55%,transparent)}
+.dd.field-dd{width:100%;max-width:none;height:41px;border-radius:10px;font-family:var(--font-body);font-size:14px;font-weight:600;padding:0 12px}
+.field.changed .dd{border-color:var(--indigo-500);background:var(--indigo-050)}
+.pop{position:fixed;z-index:80;display:none;max-width:min(320px,calc(100vw - 16px));max-height:min(340px,calc(100vh - 24px));overflow:auto;padding:6px;border-radius:14px;background:var(--menu-bg);background-image:var(--menu-sheen);border:1px solid var(--glass-border);box-shadow:var(--menu-shadow);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5)}
+.pop.open{display:block;animation:popin .14s ease-out}
+@keyframes popin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.opt{display:flex;width:100%;align-items:center;gap:8px;border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:9px;font-weight:700;font-size:13.5px;color:var(--text-body);white-space:nowrap}
+.opt:hover,.opt:focus,.opt:focus-visible{background:color-mix(in srgb,var(--indigo-500) 13%,transparent);color:var(--text-strong);outline:none;box-shadow:none}
+.opt.on{color:var(--text-heading)}
+.opt .ck{width:14px;flex:none;color:var(--red-500);font-weight:800}
+.opt .ol{overflow:hidden;text-overflow:ellipsis}
+.otag{margin-left:auto;padding-left:12px;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--indigo-500)}
+.pop .q{width:100%;border:1px solid var(--glass-border);background:var(--glass-bg);border-radius:9px;padding:8px 10px;margin-bottom:6px;font-size:13px}
+.pop .q:focus{outline:none;border-color:var(--indigo-500)}
+/* photo menu */
+.acct{width:260px;padding:8px}
+.acct-me{display:flex;gap:10px;align-items:center;padding:8px 8px 10px}
+.acct-me .nm{font-family:var(--font-display);font-weight:800;color:var(--text-strong);font-size:15px;line-height:1.2}
+.acct-me .role{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red-500)}
+.acct .div{height:1px;background:var(--glass-divider);margin:4px 6px 6px}
+.mi{display:flex;width:100%;align-items:center;gap:10px;border:0;background:transparent;padding:9px 10px;border-radius:10px;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text-strong);text-align:left}
+.mi svg{color:var(--text-heading);flex:none}
+.mi:hover,.mi:focus-visible{background:color-mix(in srgb,var(--indigo-500) 13%,transparent);box-shadow:none}
+.mi .bubble{margin-left:auto}
+.bubble.red{background:var(--red-050);color:var(--red-500)}
+.acct-theme{align-items:center;justify-content:space-between;padding:4px 10px 8px;font-family:var(--font-display);font-weight:700;color:var(--text-strong)}
+.mob-only{display:none}
+.avatar{position:relative}
+.avatar .adot{position:absolute;top:-1px;right:-1px;width:12px;height:12px;border-radius:50%;background:var(--red-500);border:2px solid var(--surface-card)}
+/* settings window */
+.mscrim{position:fixed;inset:0;background:rgba(20,18,40,.38);z-index:55;opacity:0;pointer-events:none;transition:opacity .2s}
+.mscrim.open{opacity:1;pointer-events:auto}
+.modal{position:fixed;left:50%;top:50%;width:min(660px,calc(100% - 32px));max-height:calc(100% - 48px);z-index:56;background:var(--surface-card);border:1px solid var(--border-default);border-radius:20px;box-shadow:var(--shadow-raised);display:flex;flex-direction:column;opacity:0;pointer-events:none;transform:translate(-50%,-47%);transition:opacity .18s,transform .18s}
+.modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.set-tabs{padding:14px 20px 0;overflow-x:auto}
+.set-tabs .seg button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ndot{min-width:18px;height:18px;border-radius:9px;background:var(--red-500);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 5px}
+.set-b{padding:14px 20px 20px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.optlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.optrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:6px 10px;align-items:center;padding:6px;border-radius:12px;border:1px solid var(--border-default)}
+.optrow.crm{border-color:color-mix(in srgb,var(--indigo-500) 50%,transparent);background:var(--indigo-050)}
+.optname{border:1px solid transparent;background:transparent;border-radius:8px;padding:7px 9px;font-weight:700;font-size:14px;color:var(--text-strong);min-width:0;width:100%}
+.optname:hover{border-color:var(--border-default)}
+.optname:focus{outline:none;border-color:var(--indigo-500);background:var(--surface-page)}
+.uses{font-size:12px;color:var(--text-muted);white-space:nowrap}
+.crm-badge{border:0;border-radius:999px;background:var(--indigo-500);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;white-space:nowrap;font-family:var(--font-display)}
+.rm{border:0;background:transparent;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--text-muted)}
+.rm:hover{background:var(--st-cancel-bg);color:var(--st-cancel)}
+.alias{grid-column:1/-1;font-size:11.5px;color:var(--text-muted);padding:0 9px 2px}
+.rmbox{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--st-cancel-bg);border-radius:10px;padding:10px;font-size:13px;color:var(--text-strong)}
+.btn.sm{padding:7px 14px;font-size:13px}
+.set-err{color:var(--st-cancel);font-size:13px;font-weight:700}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1;min-width:0;border:1px solid var(--border-strong);background:var(--surface-page);border-radius:999px;padding:9px 14px;font-size:14px}
+.addrow input:focus{outline:none;border-color:var(--indigo-500)}
+.lnk{border:0;background:transparent;padding:0;margin-left:auto;font-size:11.5px;font-weight:800;color:var(--indigo-500)}
+.hubhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hubtag{border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--indigo-050);color:var(--text-heading);font-family:var(--font-display)}
+.hubtag.warn{background:var(--st-cancel-bg);color:var(--st-cancel)}
+.optrow.person{grid-template-columns:auto minmax(0,1fr) auto;padding:8px 10px}
+.pav{width:32px;height:32px;border-radius:50%;background:var(--indigo-500);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:12px;flex:none}
+.pav.out{background:var(--gray-300);color:var(--text-strong)}
+.pname{font-weight:700;color:var(--text-strong);min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.pname small{font-weight:600;color:var(--text-muted);font-size:11.5px}
+.linkbox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.chip.review{border-color:color-mix(in srgb,var(--red-500) 40%,transparent);color:var(--red-500)}
+.chip.review.on{background:var(--red-500);border-color:var(--red-500);color:#fff}
+.chip.addchip{background:var(--action);border-color:var(--action);color:#fff}
+.flagline{font-size:11.5px;font-weight:700;color:var(--red-500);margin-top:2px;white-space:normal;max-width:340px}
+.flags{background:var(--red-050);border-radius:12px;padding:10px 12px;font-size:12.5px;color:var(--text-strong)}
+.flags b{color:var(--red-500);font-family:var(--font-display)}
+.flags ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.flags li{display:flex;gap:10px;justify-content:space-between;align-items:baseline}
+.flags .lnk{margin-left:0;flex:none}
+.btn.danger{color:var(--st-cancel)}
+.btn.pri.danger{background:var(--st-cancel);color:#fff}
+.delq{margin-right:auto;font-weight:700;color:var(--text-strong);font-size:13px}
+.field input[type="date"]{font-variant-numeric:tabular-nums}
+.newopt{display:inline-block;margin-top:4px;font-size:11px;font-weight:800;color:var(--indigo-500);background:var(--indigo-050);border-radius:6px;padding:1px 7px}
+.spacer{flex:1}
+.statefilter{display:none}
+.statefilter.show{display:inline-flex}
+.statefilter button{border:0;background:transparent;padding:0 0 0 4px;color:inherit;font-weight:800}
+
+/* ---------- map card ---------- */
+.card{background:var(--surface-card);border:1px solid var(--border-default);border-radius:20px;box-shadow:var(--shadow-card)}
+.mapcard{display:grid;grid-template-columns:minmax(0,1fr) 320px;overflow:hidden}
+.mapside{border-left:1px solid var(--border-default);display:flex;flex-direction:column;min-height:0;min-width:0}
+.maparea{position:relative;padding:14px 16px 16px;min-width:0}
+.maptools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--gray-100);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:999px;padding:6px 14px;font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--text-body)}
+.seg button.on{background:var(--surface-card);color:var(--text-heading);box-shadow:0 1px 3px rgba(34,29,84,.18)}
+.mapbox{position:relative;width:100%;aspect-ratio:975/610;max-width:100%;margin-top:8px;touch-action:none;user-select:none}
+.mapbox svg,.mapbox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mapbox canvas{pointer-events:none}
+.mapbox svg{cursor:grab}
+.mapbox svg.drag{cursor:grabbing}
+.st{fill:var(--map-land);stroke:none;transition:fill .2s}
+.st.hov{fill:var(--map-hover)}
+.borders{fill:none;stroke:var(--map-line);stroke-linejoin:round}
+.pin{stroke:var(--surface-card);cursor:pointer;transition:opacity .2s}
+.pin:hover{filter:brightness(1.1)}
+.pin.sel{stroke:var(--text-strong)}
+.ripple{fill:none;pointer-events:none;animation:rip 1.6s ease-out 3}
+@keyframes rip{from{opacity:.9;r:4}to{opacity:0;r:34}}
+.zoom{position:absolute;right:12px;bottom:12px;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;z-index:2}
+.zoom button{width:36px;height:34px;border:0;background:transparent;font-size:18px;font-weight:700;color:var(--text-heading)}
+.zoom button+button{border-top:1px solid var(--border-default)}
+.legend{position:absolute;left:12px;bottom:12px;padding:8px 12px;border-radius:12px;display:flex;flex-direction:column;gap:6px;font-size:12px;z-index:2;max-width:calc(100% - 80px)}
+.legend .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.legend .k{display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.legend .k i{width:10px;height:10px;border-radius:50%}
+.legend .ramp{width:160px;height:8px;border-radius:4px}
+.legend .ends{display:flex;justify-content:space-between;width:160px;color:var(--text-muted)}
+.maplabel{font-family:var(--font-display);font-weight:700;fill:var(--text-strong);paint-order:stroke;stroke:var(--surface-card);stroke-linejoin:round;pointer-events:none}
+
+.side-h{padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.h3{font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--text-heading);margin:0;line-height:1.2}
+.live-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--green-600)}
+.feed{list-style:none;margin:0;padding:0 8px 8px;overflow:auto;flex:1;min-height:0;max-height:560px}
+.feed li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;padding:10px 8px;border-radius:12px;cursor:pointer;align-items:start}
+.feed li:hover{background:var(--surface-subtle)}
+.feed li.new{animation:flash 2.2s ease-out}
+@keyframes flash{0%{background:var(--indigo-050)}100%{background:transparent}}
+.ev{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ev svg{width:15px;height:15px}
+.feed .t{font-weight:800;color:var(--text-strong);font-size:13px;line-height:1.3}
+.feed .a{font-size:12.5px;color:var(--text-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feed .m{font-size:11.5px;color:var(--text-muted)}
+.side-f{border-top:1px solid var(--border-default);padding:12px 16px;font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:6px}
+.side-f code{font-size:11.5px;background:var(--surface-subtle);padding:2px 6px;border-radius:6px;color:var(--text-body);word-break:break-all}
+
+/* ---------- leaderboards ---------- */
+.sec-h{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;scroll-margin-top:150px}
+.h2{font-family:var(--font-display);font-weight:800;font-size:28px;color:var(--text-heading);margin:0;line-height:1.1}
+.h2 span{color:var(--red-500)}
+.muted{color:var(--text-muted);font-size:13px}
+.boards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.board{padding:16px 16px 12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.board-h{display:flex;justify-content:space-between;align-items:start;gap:8px}
+.board-h p{margin:2px 0 0;font-size:12px;color:var(--text-muted)}
+.mini{display:inline-flex;background:var(--gray-100);border-radius:999px;padding:2px;gap:1px;flex:none}
+.mini button{border:0;background:transparent;border-radius:999px;padding:3px 9px;font-size:11.5px;font-weight:800;color:var(--text-muted);font-family:var(--font-display)}
+.mini button.on{background:var(--surface-card);color:var(--text-heading);box-shadow:0 1px 2px rgba(34,29,84,.18)}
+.rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.rank li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+.rank .r{font-family:var(--font-display);font-weight:800;color:var(--text-muted);font-size:13px;text-align:center}
+.rank li:first-child .r{color:#fff;background:var(--red-500);border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:12px}
+.rank .nm{font-weight:700;color:var(--text-strong);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px}
+.rank .nm small{font-weight:600;color:var(--text-muted);font-size:11.5px;margin-left:4px}
+.rank .val{font-family:var(--font-display);font-weight:800;color:var(--text-strong);font-variant-numeric:tabular-nums;font-size:14px;text-align:right}
+.rank .bar{grid-column:2 / 4;height:6px;border-radius:3px;background:var(--bar-track);overflow:hidden;position:relative}
+.rank .bar b{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--bar-fill)}
+.rank .bar b.ghost{background:color-mix(in srgb,var(--indigo-500) 28%,transparent)}
+.rank .bar b.red{background:var(--st-cancel)}
+.rank .bar b.green{background:var(--st-closed)}
+.rank .bar b.blue{background:var(--st-signed)}
+.rank li.click{cursor:pointer}
+.rank li.click:hover .nm{color:var(--text-heading);text-decoration:underline}
+.board .more{border:0;background:transparent;color:var(--text-heading);font-weight:800;font-size:12.5px;align-self:flex-start;padding:2px 0}
+.empty{color:var(--text-muted);font-size:13px;padding:8px 0}
+
+/* ---------- deal list ---------- */
+.tablewrap{overflow:auto;max-height:520px;border-radius:20px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1080px}
+th{position:sticky;top:0;background:var(--surface-card);text-align:left;font-family:var(--font-display);font-weight:700;color:var(--text-muted);font-size:12px;letter-spacing:.03em;text-transform:uppercase;padding:12px 12px;border-bottom:1px solid var(--border-default);cursor:pointer;white-space:nowrap;z-index:1}
+th.r,td.r{text-align:right}
+td{padding:10px 12px;border-bottom:1px solid var(--border-default);white-space:nowrap;color:var(--text-body)}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-subtle)}
+td.addr{font-weight:700;color:var(--text-strong)}
+.stp{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:800;font-family:var(--font-display);letter-spacing:.02em;text-transform:uppercase}
+.stp i{width:7px;height:7px;border-radius:50%}
+.stp.signed{background:var(--st-signed-bg);color:var(--st-signed)} .stp.signed i{background:var(--st-signed)}
+.stp.closed{background:var(--st-closed-bg);color:var(--st-closed)} .stp.closed i{background:var(--st-closed)}
+.stp.cancelled{background:var(--st-cancel-bg);color:var(--st-cancel)} .stp.cancelled i{background:var(--st-cancel)}
+.edited{font-size:10.5px;font-weight:800;color:var(--indigo-500);margin-left:6px;text-transform:uppercase;letter-spacing:.04em}
+
+/* ---------- drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(20,18,40,.32);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface-card);z-index:51;box-shadow:var(--shadow-raised);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer.open{transform:none}
+.dr-h{padding:18px 20px 14px;border-bottom:1px solid var(--border-default);display:flex;gap:12px;align-items:start;justify-content:space-between}
+.dr-h .h3{font-size:20px}
+.dr-b{padding:16px 20px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:14px}
+.dr-f{padding:14px 20px;border-top:1px solid var(--border-default);display:flex;gap:10px;justify-content:flex-end;align-items:center}
+.statusseg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.statusseg button{border:1px solid var(--border-default);background:var(--surface-card);border-radius:12px;padding:9px 6px;font-family:var(--font-display);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;color:var(--text-body)}
+.statusseg button i{width:9px;height:9px;border-radius:50%}
+.statusseg button.on.signed{border-color:var(--st-signed);background:var(--st-signed-bg);color:var(--st-signed)}
+.statusseg button.on.closed{border-color:var(--st-closed);background:var(--st-closed-bg);color:var(--st-closed)}
+.statusseg button.on.cancelled{border-color:var(--st-cancel);background:var(--st-cancel-bg);color:var(--st-cancel)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:700;color:var(--text-muted);display:flex;gap:6px;align-items:center}
+.field textarea{border:1px solid var(--border-strong);background:var(--surface-page);border-radius:10px;padding:9px 11px;font-size:14px;width:100%;min-width:0;resize:vertical;text-transform:none}
+.field textarea:focus{border-color:var(--indigo-500);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--indigo-500) 25%,transparent)}
+.field.changed textarea{border-color:var(--indigo-500);background:var(--indigo-050)}
+.closings{border:1px solid var(--border-default);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.closings>b{font-family:var(--font-display);color:var(--text-heading)}
+.crow{display:flex;justify-content:space-between;gap:10px}
+.crow b{color:var(--text-strong)}
+.crow.total{border-top:1px solid var(--border-default);padding-top:6px;font-weight:700}
+.field input,.field select{border:1px solid var(--border-strong);background:var(--surface-page);border-radius:10px;padding:9px 11px;font-size:14px;width:100%;min-width:0}
+.field input:focus,.field select:focus{border-color:var(--indigo-500);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--indigo-500) 25%,transparent)}
+.field.changed input,.field.changed select{border-color:var(--indigo-500);background:var(--indigo-050)}
+.field .dot2{width:6px;height:6px;border-radius:50%;background:var(--indigo-500);display:none}
+.field.changed .dot2{display:inline-block}
+.spread{display:flex;justify-content:space-between;background:var(--surface-subtle);border-radius:12px;padding:10px 12px;font-size:12.5px;gap:8px;flex-wrap:wrap}
+.spread b{font-family:var(--font-display);color:var(--text-strong);font-size:15px}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--border-default);padding-left:14px}
+.hist li{font-size:12.5px;position:relative}
+.hist li::before{content:"";position:absolute;left:-20px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--surface-card);border:2px solid var(--indigo-500)}
+.hist li.wh::before{border-color:var(--green-500)}
+.hist .w{color:var(--text-muted);font-size:11.5px}
+.btn{border:0;border-radius:999px;padding:10px 20px;font-family:var(--font-display);font-weight:800;font-size:14px}
+.btn.pri{background:var(--action);color:#fff}
+.btn.pri:hover{background:var(--action-hover)}
+.btn.pri:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:var(--gray-100);color:var(--text-body)}
+.x{border:0;background:var(--gray-100);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--text-body);flex:none}
+.note{font-size:12px;color:var(--text-muted);background:var(--surface-accent);border-radius:12px;padding:10px 12px}
+
+/* ---------- tooltip + toast ---------- */
+.tip{position:fixed;z-index:60;pointer-events:none;background:var(--menu-bg);border:1px solid var(--border-default);box-shadow:var(--shadow-raised);border-radius:12px;padding:10px 12px;font-size:12.5px;min-width:180px;max-width:260px;opacity:0;transition:opacity .12s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tip.show{opacity:1}
+.tip .th{font-weight:800;color:var(--text-strong);margin-bottom:4px;font-size:13px}
+.tip .tr{display:flex;justify-content:space-between;gap:14px;color:var(--text-muted)}
+.tip .tr b{color:var(--text-strong);font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:70;background:var(--gray-900);color:var(--surface-card);border-radius:14px;padding:11px 16px;font-weight:700;font-size:13px;display:flex;gap:10px;align-items:center;opacity:0;transition:all .25s;max-width:calc(100% - 32px);box-shadow:var(--shadow-raised)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast i{width:10px;height:10px;border-radius:50%;flex:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:1240px){ .bar-mid{order:3;flex-basis:100%;display:flex;justify-content:center} .kpis{grid-template-columns:repeat(4,minmax(0,1fr))} }
+@media (max-width:1020px){ .mapcard{grid-template-columns:1fr} .mapside{border-left:0;border-top:1px solid var(--border-default)} .feed{max-height:340px} .boards{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:640px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .bar-row{padding-block:8px;gap:10px}
+  .logo{height:38px}
+  .clock .date{display:none}
+  .bar-r .act,.bar-r .theme{display:none}
+  .bar-l,.bar-r{min-width:0}
+  .tabs a{padding:7px 12px;font-size:13px}
+  main{padding-block:18px 96px;gap:16px}
+  .title{font-size:30px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi.ring-k{grid-column:1/-1}
+  .boards{grid-template-columns:1fr}
+  .filters{flex-wrap:nowrap;overflow-x:auto;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+  .chips,.ddrow{flex-wrap:nowrap}
+  .mob-only{display:flex}
+  .optrow{grid-template-columns:minmax(0,1fr) auto auto}
+  .optname{grid-column:1/-1}
+  .optrow.person{grid-template-columns:auto minmax(0,1fr) auto}
+  .linkbox{grid-column:1/-1;justify-content:flex-start}
+  .spacer{display:none}
+  .legend{position:static;margin-top:8px;max-width:none;background:transparent;border:0;box-shadow:none;padding:0}
+  .fgrid{grid-template-columns:1fr}
+  .maparea{padding:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <img class="logo lt" src="tchb-logo.png" alt="Total Cash Home Buyers"><img class="logo dk" src="tchb-logo-dark.png" alt="Total Cash Home Buyers">
+    <h1 class="title" style="font-size:36px">Deal Heat <span>Map</span></h1>
+    <p class="muted" id="gateMsg">Sign in with your company Google account.</p>
+    <button class="btn pri" id="signIn" hidden>Sign In With Google</button>
+  </div>
+</div>
+<header class="bar" id="hdr">
+  <div class="wrap bar-row">
+    <div class="bar-l">
+      <img class="logo lt" src="tchb-logo.png" alt="Total Cash Home Buyers">
+      <img class="logo dk" src="tchb-logo-dark.png" alt="Total Cash Home Buyers">
+      <button class="pill glass clock num" id="clock" title="Live: every change is saved"><span class="dot"></span><span class="date" id="clkDate"></span><span id="clkTime"></span></button>
+    </div>
+    <nav class="bar-mid tabs" aria-label="Sections">
+      <a href="#map" class="on" data-tab="map">Heat Map</a>
+      <a href="#leaderboards" data-tab="leaderboards">Leaderboards</a>
+      <a href="#deals" data-tab="deals">Deal List</a>
+    </nav>
+    <div class="bar-r">
+      <button class="icon-btn glass hook" title="Deals signed, closed or cancelled today" id="hookBtn" aria-label="Deal events today">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2"/><path d="m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06"/><path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"/></svg>
+        <span class="ct" id="hookCt">0</span>
+      </button>
+      <div class="theme glass" role="group" aria-label="Theme">
+        <button id="thL" aria-label="Light theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+        <button id="thD" aria-label="Dark theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      </div>
+      <button class="avatar" id="avatarBtn" aria-label="Account menu" aria-haspopup="menu"><span id="avTxt"></span><span class="adot" id="avDot" hidden></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div>
+    <h1 class="title">Deal Heat <span>Map</span></h1>
+    <div class="sub"><span class="sample"><span class="dot" style="width:8px;height:8px"></span>Live</span><span id="importNote">From GoHighLevel and the CSV history · pins sit at each ZIP code</span></div>
+  </div>
+
+  <section class="kpis" id="kpis" aria-label="Totals"></section>
+
+  <div class="filters" id="filters">
+    <div class="chips" id="statusChips"></div>
+    <span class="chip on statefilter" id="stateChip"></span>
+    <button class="chip addchip" data-add>+ Add Deal</button>
+    <div class="spacer"></div>
+    <div class="ddrow" id="filterDDs"></div>
+  </div>
+
+  <section class="card mapcard" id="map" style="scroll-margin-top:150px">
+    <div class="maparea">
+      <div class="maptools">
+        <div class="seg" id="modeSeg" role="group" aria-label="Map view">
+          <button data-m="pins" class="on">Pins</button><button data-m="heat">Heat</button><button data-m="states">States</button>
+        </div>
+        <span id="ddMetric" hidden></span>
+        <span class="muted" id="mapHint">Click a pin to view or fix a deal · click a state to filter</span>
+      </div>
+      <div class="mapbox" id="mapbox">
+        <canvas id="heat"></canvas>
+        <svg id="svg" viewBox="0 0 975 610" role="img" aria-label="Map of deals across the USA">
+          <g id="gStates"></g>
+          <path id="borders" class="borders"/>
+          <g id="gLabels"></g>
+          <g id="gPins"></g>
+          <g id="gFx"></g>
+        </svg>
+        <div class="legend glass" id="legend"></div>
+        <div class="zoom glass"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zReset" aria-label="Reset zoom" style="font-size:13px">⤢</button></div>
+      </div>
+    </div>
+    <aside class="mapside">
+      <div class="side-h"><h2 class="h3">Latest Activity</h2><span class="live-tag"><span class="dot"></span>Live</span></div>
+      <ul class="feed" id="feed"></ul>
+      <div class="side-f">
+        <span>The latest signed, closed and cancelled deals. New ones arrive from GoHighLevel as their hooks fire; the page refreshes every minute.</span>
+      </div>
+    </aside>
+  </section>
+
+  <section id="leaderboards" class="sec-h" style="margin-top:8px">
+    <div><h2 class="h2">Leader<span>boards</span></h2><div class="muted" id="lbSub">Every board follows the filters above</div></div>
+  </section>
+  <div class="boards" id="boards"></div>
+
+  <section id="deals" class="sec-h" style="margin-top:8px">
+    <div><h2 class="h2">Deal <span>List</span></h2><div class="muted" id="dlSub"></div></div>
+    <button class="btn pri" data-add>+ Add Deal</button>
+  </section>
+  <div class="card tablewrap"><table id="table"></table></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Deal details" aria-hidden="true"></aside>
+<div class="tip" id="tip"></div>
+<div class="pop" id="pop"></div>
+<div class="pop acct" id="acct" role="menu"></div>
+<div class="mscrim" id="setScrim"></div>
+<section class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle"></section>
+<div class="toast" id="toast"><i></i><span></span></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+(() => {
+// ---------- data ----------
+// Deals come from /api/app/data: GoHighLevel hooks plus the CSV history. Pins sit at each deal's ZIP code;
+// zips.json lets an editor place a deal they add or move.
+let MAP = null, ZIPS = null;
+// People will come from the hub's Team Members once live; for now the names come from the CSVs.
+const HUB_PEOPLE = [['Brandy Pollack','manager'], ['Remy Ahmed','manager']];
+const ROLE_LABEL = { owner: 'Owner', manager: 'Manager', viewer: 'Viewer', lead: 'Team Leader', member: 'Member' };
+let ME = { name: '', email: '', photo: '', role: 'viewer', canEdit: false };
+let SERVER_OPTS = null, fb = null, auth = null;
+const roleOf = n => { const p = HUB_PEOPLE.find(x => x[0] === n); return p ? ROLE_LABEL[p[1]] : 'Member'; };
+const NOT_PEOPLE = /^AI /i;   // the CRM's AI agents work leads too, but they aren't hub team members
+const initials = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+const STATUS = { signed:{label:'Signed', ev:'Contract Signed', v:'--st-signed'}, closed:{label:'Closed', ev:'Closed Deal', v:'--st-closed'}, cancelled:{label:'Cancelled', ev:'Cancelled Deal', v:'--st-cancel'} };
+const ORDER = ['signed','closed','cancelled'];
+// the editable dropdown lists (Settings). Each option keeps the other spellings the CRM has sent for it.
+const KINDS = { source: 'Lead Sources', exit: 'Exit Strategies', acq: 'ACQ', dispo: 'DISPO', fus: 'FUS' };
+const ONE = { source: 'Lead Source', exit: 'Exit Strategy', acq: 'ACQ', dispo: 'DISPO', fus: 'FUS' };
+const ART = { source: 'a lead source', exit: 'an exit strategy', acq: 'an ACQ name', dispo: 'a DISPO name', fus: 'a FUS name' };
+const mkOpt = n => ({ name: n, aliases: [] });
+const OPTS = { source: [], exit: [], acq: [], dispo: [], fus: [] };
+const PEOPLE = { acq: 1, dispo: 1, fus: 1 };
+const optTag = o => o.company ? 'Company' : o.crm ? 'New' : o.hub === false ? 'Not In Hub' : o.role === 'Team Leader' ? 'Lead' : '';
+const names = k => OPTS[k].map(o => o.name);
+const norm = s => String(s == null ? '' : s).trim().replace(/\s+/g, ' ').toLowerCase();
+// match what the CRM sent to an option (ignoring capitals and spaces); add it as a new option when nothing matches
+function matchOpt(kind, raw) {
+  const n = norm(raw); if (!n) return { name: '', added: false };
+  const o = OPTS[kind].find(x => (x.email && norm(x.email) === n) || norm(x.name) === n || x.aliases.some(a => norm(a) === n));
+  if (o) return { name: o.name, added: false };
+  if (PEOPLE[kind]) { const fm = OPTS[kind].filter(x => x.hub && norm(x.name.split(' ')[0]) === n); if (fm.length === 1) return { name: fm[0].name, added: false }; }
+  const name = String(raw).trim().replace(/\s+/g, ' ');
+  OPTS[kind].push({ name, aliases: [], crm: true, added: Date.now(), ...(PEOPLE[kind] ? { hub: false } : {}) });
+  return { name, added: true };
+}
+// the lists start from what the CSVs hold, most used first
+function decorate(k, o) { const n = o.name; if (!PEOPLE[k]) return { aliases: [], ...o }; return n === 'TCHB' ? { aliases: [], ...o, hub: true, company: true, role: 'Company · Placeholder Until The Real DISPO Is In' } : NOT_PEOPLE.test(n) ? { aliases: [], ...o, hub: false } : { aliases: [], ...o, hub: true, role: roleOf(n) }; }
+function buildOptions() {
+  if (SERVER_OPTS) { Object.keys(KINDS).forEach(k => { const have = (SERVER_OPTS[k] || []).map(o => decorate(k, o)), names = new Set(have.map(o => o.name)); const extra = {}; deals.forEach(d => { if (d[k] && !names.has(d[k])) extra[d[k]] = (extra[d[k]] || 0) + 1; }); OPTS[k] = [...have, ...Object.keys(extra).sort((a, b) => extra[b] - extra[a]).map(n => decorate(k, { name: n }))]; }); return; }
+  Object.keys(KINDS).forEach(k => { const c = {}; deals.forEach(d => { if (d[k]) c[d[k]] = (c[d[k]] || 0) + 1; });
+    OPTS[k] = Object.keys(c).sort((a, b) => c[b] - c[a]).map(n => !PEOPLE[k] ? mkOpt(n) : n === 'TCHB' ? { name: n, aliases: [], hub: true, company: true, role: 'Company · Placeholder Until The Real DISPO Is In' } : NOT_PEOPLE.test(n) ? { name: n, aliases: [], hub: false } : { name: n, aliases: [], hub: true, role: roleOf(n) }); });
+}
+const DAY = 864e5, NOW = new Date('2026-11-24T12:00:00-05:00').getTime();
+let deals = [], nid = 1, events = [];
+const proj = window.d3 && d3.geoAlbersUsa ? d3.geoAlbersUsa().scale(1300).translate([487.5, 305]) : null;
+function place(d) { if (!proj) return; d.x = d.y = null; if (d.lat == null) return; const p = proj([d.lon, d.lat]); if (p) { d.x = p[0]; d.y = p[1]; } }
+// deals at the same ZIP spread out on a small sunflower spiral so every pin stays clickable
+function layout() {
+  const g = {}; deals.forEach(d => { d.px = d.py = null; if (d.x == null) return; const k = Math.round(d.x) + ',' + Math.round(d.y); (g[k] = g[k] || []).push(d); });
+  Object.values(g).forEach(arr => arr.sort((a, b) => a.id - b.id).forEach((d, k) => { const a = k * 2.39996, r = k ? 2.4 * Math.sqrt(k) : 0; d.px = d.x + r * Math.cos(a); d.py = d.y + r * Math.sin(a); }));
+}
+// server deals get a small local number for the page; docId is the server's id
+function loadDeals(list) {
+  deals = list.map((d, i) => ({ feedback: '', ...d, docId: d.id, id: i + 1, edits: d.origin === 'manual' ? ['added'] : [], flags: d.flags || [], hist: (d.hist || []).map(h => ({ ...h, wh: !h.by })) })); deals.forEach(place);
+  nid = Math.max(0, ...deals.map(d => d.id)) + 1; buildOptions(); layout();
+  events = []; deals.forEach(d => d.hist.forEach(h => { const s = /^Signed/.test(h.text) ? 'signed' : /^Closed/.test(h.text) ? 'closed' : /^Cancelled/.test(h.text) ? 'cancelled' : ''; if (s && h.t) events.push({ id: d.id, s, t: h.t }); }));
+}
+
+// ---------- state ----------
+const F = { status: new Set(ORDER), period: 'all', acq: '', dispo: '', fus: '', src: '', exit: '', state: '', review: false };
+let mode = 'pins', stateMetric = 'deals', vb = [0, 0, 975, 610], selected = null, hookCount = 0;
+const boardMetric = {}, boardMore = {};
+const $ = id => document.getElementById(id);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const money = n => n == null ? '—' : '$' + Math.round(n).toLocaleString();
+const kmoney = n => n == null ? '—' : Math.abs(n) >= 1e6 ? '$' + (n / 1e6).toFixed(2) + 'M' : Math.abs(n) >= 1e4 ? '$' + (n / 1e3).toFixed(1) + 'K' : '$' + Math.round(n).toLocaleString();
+const pct = n => isFinite(n) ? Math.round(n * 100) + '%' : '—';
+const fdate = t => t ? new Date(t).toLocaleDateString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', year: 'numeric' }) : '—';
+const ago = t => { const s = (Date.now() - t) / 1000; if (s < 0 || s > 86400 * 400) return fdate(t); return s < 60 ? 'just now' : s < 3600 ? Math.floor(s / 60) + 'm ago' : s < 86400 ? Math.floor(s / 3600) + 'h ago' : Math.floor(s / 86400) + 'd ago'; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+const stName = a => (MAP.states.find(s => s.a === a) || {}).n || a;
+
+function inPeriod(d) {
+  if (F.period === 'all') return true;
+  const t = d.closedAt || d.signedAt;
+  if (F.period === 'ytd') return t >= new Date('2026-01-01T00:00:00-05:00').getTime();
+  return t >= NOW - (+F.period) * DAY;
+}
+// filters other than status (status is applied separately so chips can show counts)
+const base = () => deals.filter(d => inPeriod(d) && (!F.acq || d.acq === F.acq) && (!F.dispo || d.dispo === F.dispo) && (!F.fus || d.fus === F.fus) && (!F.src || d.source === F.src) && (!F.exit || d.exit === F.exit) && (!F.state || d.state === F.state) && (!F.review || d.flags.length));
+const visible = () => base().filter(d => F.status.has(d.status));
+
+// ---------- KPIs ----------
+function renderKpis(b) {
+  const closed = b.filter(d => d.status === 'closed'), canc = b.filter(d => d.status === 'cancelled'), sig = b.filter(d => d.status === 'signed');
+  const done = closed.length + canc.length, rate = done ? closed.length / done : NaN;
+  const act = closed.reduce((s, d) => s + (d.actual || 0), 0), potC = closed.reduce((s, d) => s + d.potential, 0);
+  const pipe = sig.reduce((s, d) => s + d.potential, 0);
+  const ringCol = css(rate >= .7 ? '--st-closed' : '--red-500');
+  $('kpis').innerHTML = `
+    <div class="kpi"><span class="v">${b.length}</span><span class="l">Total Deals</span></div>
+    <div class="kpi"><span class="v">${sig.length}</span><span class="l"><i style="background:var(--st-signed)"></i>Signed · Open</span></div>
+    <div class="kpi"><span class="v">${closed.length}</span><span class="l"><i style="background:var(--st-closed)"></i>Closed</span></div>
+    <div class="kpi"><span class="v">${canc.length}</span><span class="l"><i style="background:var(--st-cancel)"></i>Cancelled</span></div>
+    <div class="kpi ring-k"><div class="ring" style="background:conic-gradient(${ringCol} ${isFinite(rate) ? rate * 100 : 0}%, var(--gray-100) 0)"><b>${pct(rate)}</b></div><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="v" style="font-size:18px">${closed.length}/${done}</span><span class="l">Close Rate</span></div></div>
+    <div class="kpi"><span class="v">${kmoney(act)}</span><span class="l">${potC ? 'Actual Profit · ' + pct(act / potC) + ' of projected' : 'Actual Profit (Revenue)'}</span></div>
+    <div class="kpi"><span class="v">${closed.length ? kmoney(act / closed.length) : '—'}</span><span class="l">Avg Profit Per Close</span></div>`;
+}
+
+// ---------- filters ----------
+function fillSelect(el, label, list) { el.innerHTML = `<option value="">${label}</option>` + list.map(v => `<option>${esc(v)}</option>`).join(''); }
+function renderChips(b) {
+  const cnt = s => b.filter(d => d.status === s).length;
+  const all = F.status.size === 3;
+  $('statusChips').innerHTML = `<button class="chip ${all ? 'on' : ''}" data-s="all">All <span class="n">${b.length}</span></button>` +
+    ORDER.map(s => `<button class="chip ${!all && F.status.has(s) ? 'on' : ''}" data-s="${s}"><i style="background:var(${STATUS[s].v})"></i>${STATUS[s].label} <span class="n">${cnt(s)}</span></button>`).join('') +
+    `<button class="chip review ${F.review ? 'on' : ''}" data-s="review" title="Deals the import or the owner flagged to check">⚑ Needs Review <span class="n">${deals.filter(d => d.flags.length).length}</span></button>`;
+  const sc = $('stateChip');
+  sc.classList.toggle('show', !!F.state);
+  sc.innerHTML = F.state ? `State: ${esc(stName(F.state))} <button aria-label="Clear state filter">×</button>` : '';
+}
+$('statusChips').addEventListener('click', e => {
+  const b = e.target.closest('[data-s]'); if (!b) return;
+  const s = b.dataset.s;
+  if (s === 'review') { F.review = !F.review; return render(); }
+  if (s === 'all') ORDER.forEach(x => F.status.add(x));
+  else if (F.status.size === 3) { F.status.clear(); F.status.add(s); }
+  else { F.status.has(s) ? F.status.delete(s) : F.status.add(s); if (!F.status.size) ORDER.forEach(x => F.status.add(x)); }
+  render();
+});
+$('stateChip').addEventListener('click', () => { F.state = ''; render(); });
+const PERIODS = [['all','All Time'],['ytd','2026 YTD'],['90','Last 90 Days'],['30','Last 30 Days']];
+const FKEY = { source: 'src', exit: 'exit', acq: 'acq', dispo: 'dispo', fus: 'fus' };
+function renderFilterDDs() {
+  Object.entries(FKEY).forEach(([kind, fk]) => { if (F[fk] && !names(kind).includes(F[fk])) F[fk] = ''; });
+  const opts = (kind, all) => [{ v: '', l: all }, ...OPTS[kind].map(x => ({ v: x.name, l: x.name, tag: optTag(x) }))];
+  const one = (fk, kind, all) => dd({ value: F[fk], options: opts(kind, all), label: ONE[kind], set: !!F[fk], onChange: v => { F[fk] = v; render(); } });
+  $('filterDDs').innerHTML = dd({ value: F.period, options: PERIODS.map(([v, l]) => ({ v, l })), label: 'Period', set: F.period !== 'all', onChange: v => { F.period = v; render(); } }) +
+    one('acq', 'acq', 'All ACQ') + one('dispo', 'dispo', 'All DISPO') + one('fus', 'fus', 'All FUS') + one('src', 'source', 'All Lead Sources') + one('exit', 'exit', 'All Exits');
+}
+const METRICS = [['deals','Shade By Deals'],['profit','Shade By Actual Profit'],['close','Shade By Close Rate'],['cancel','Shade By Cancel Rate']];
+function renderTools() { const m = $('ddMetric'); m.hidden = mode !== 'states'; m.innerHTML = mode === 'states' ? dd({ value: stateMetric, options: METRICS.map(([v, l]) => ({ v, l })), label: 'Shade states by', onChange: v => { stateMetric = v; render(); } }) : ''; }
+
+// ---------- map ----------
+const svg = $('svg'), NS = 'http://www.w3.org/2000/svg';
+const pinPos = d => [d.px, d.py];
+function drawStatesBase() {
+  $('gStates').innerHTML = MAP.states.map(s => `<path class="st" data-a="${s.a}" d="${s.d}"/>`).join('');
+  $('borders').setAttribute('d', MAP.borders);
+}
+function stateStats(list) {
+  const m = {};
+  list.forEach(d => { const o = m[d.state] || (m[d.state] = { n: 0, closed: 0, canc: 0, signed: 0, profit: 0 }); o.n++; if (d.status === 'closed') { o.closed++; o.profit += d.actual || 0; } else if (d.status === 'cancelled') o.canc++; else o.signed++; });
+  return m;
+}
+const hex2 = h => { h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); };
+const mix = (a, b, t) => { const A = hex2(a), B = hex2(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; };
+function metricOf(o, m) { if (!o) return null; if (m === 'deals') return o.n; if (m === 'profit') return o.profit; const done = o.closed + o.canc; if (done < 2) return null; return m === 'close' ? o.closed / done : o.canc / done; }
+function renderMap(list) {
+  const k = vb[2] / 975, pk = Math.pow(k, .75);
+  svg.setAttribute('viewBox', vb.join(' '));
+  $('borders').setAttribute('stroke-width', (1 * k).toFixed(2));
+  const stats = stateStats(mode === 'states' ? base() : list);
+  const lo = css(stateMetric === 'cancel' ? '--seqr-lo' : '--seq-lo'), hi = css(stateMetric === 'cancel' ? '--seqr-hi' : '--seq-hi');
+  const vals = Object.values(stats).map(o => metricOf(o, stateMetric)).filter(v => v != null);
+  const max = Math.max(...vals, 1e-9), min = (stateMetric === 'close' || stateMetric === 'cancel') ? Math.min(...vals) : 0;
+  $('gStates').querySelectorAll('.st').forEach(p => {
+    const a = p.dataset.a, o = stats[a];
+    let fill = '';
+    if (mode === 'states') { const v = metricOf(o, stateMetric); if (v != null) fill = mix(lo, hi, max > min ? .15 + .85 * (v - min) / (max - min) : 1); }
+    else if (F.state && a !== F.state) fill = '';
+    p.style.fill = fill;
+    p.style.opacity = F.state && a !== F.state ? .55 : 1;
+  });
+  // pins
+  const g = $('gPins');
+  if (mode === 'pins') {
+    const sorted = list.filter(d => d.px != null).sort((a, b) => ORDER.indexOf(b.status) - ORDER.indexOf(a.status));
+    g.innerHTML = sorted.map(d => { const [x, y] = pinPos(d); return `<circle class="pin${selected === d.id ? ' sel' : ''}" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(4.6 * pk).toFixed(2)}" stroke-width="${(1.3 * pk).toFixed(2)}" fill="var(${STATUS[d.status].v})"/>`; }).join('');
+  } else if (mode === 'heat') {
+    g.innerHTML = list.filter(d => d.px != null).map(d => { const [x, y] = pinPos(d); return `<circle class="pin" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(5 * pk).toFixed(2)}" fill="transparent" stroke="none"/>`; }).join('');
+  } else g.innerHTML = '';
+  // labels: top cities in heat mode, state abbreviations with deals in states mode
+  const L = $('gLabels'); const fs = 11 * pk;
+  if (mode === 'heat') {
+    const byCity = {}; list.filter(d => d.x != null && d.city).forEach(d => { const key = d.city + ', ' + d.state; (byCity[key] = byCity[key] || { n: 0, x: d.x, y: d.y }).n++; });
+    L.innerHTML = Object.entries(byCity).sort((a, b) => b[1].n - a[1].n).slice(0, 6).map(([n, o]) => `<text class="maplabel" x="${o.x + 9 * pk}" y="${o.y - 9 * pk}" font-size="${fs}" stroke-width="${3 * pk}">${esc(n.split(',')[0])} · ${o.n}</text>`).join('');
+  } else if (mode === 'states') {
+    L.innerHTML = MAP.states.filter(s => stats[s.a] && !['RI','DE','DC','CT','NJ','MD','MA','NH','VT'].includes(s.a)).map(s => `<text class="maplabel" text-anchor="middle" x="${s.c[0]}" y="${s.c[1] + 4 * pk}" font-size="${fs}" stroke-width="${3 * pk}">${s.a}</text>`).join('');
+  } else L.innerHTML = '';
+  drawHeat(list);
+  renderLegend(min, max);
+}
+function drawHeat(list) {
+  const cv = $('heat'), box = $('mapbox'), W = box.clientWidth, H = box.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = W * dpr; cv.height = H * dpr;
+  const c = cv.getContext('2d'); c.clearRect(0, 0, cv.width, cv.height);
+  if (mode !== 'heat' || !W) return;
+  const R = 30 * dpr * Math.pow(975 / vb[2], .45) * (W / 975) * 1.25;
+  list.filter(d => d.px != null).forEach(d => {
+    const [x, y] = pinPos(d), sx = (x - vb[0]) / vb[2] * W * dpr, sy = (y - vb[1]) / vb[3] * H * dpr;
+    const w = d.status === 'closed' ? Math.min(1.6, .6 + (d.actual || 0) / 40000) : 1;
+    const gr = c.createRadialGradient(sx, sy, 0, sx, sy, R);
+    gr.addColorStop(0, `rgba(0,0,0,${.22 * w})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.fillRect(sx - R, sy - R, R * 2, R * 2);
+  });
+  // colourise the alpha with the brand ramp
+  const rampC = document.createElement('canvas'); rampC.width = 256; rampC.height = 1;
+  const rc = rampC.getContext('2d'), lg = rc.createLinearGradient(0, 0, 256, 0);
+  lg.addColorStop(0, 'rgba(0,0,0,0)'); lg.addColorStop(.18, css('--heat-a')); lg.addColorStop(.45, css('--heat-b')); lg.addColorStop(.72, css('--heat-c')); lg.addColorStop(1, css('--heat-d'));
+  rc.fillStyle = lg; rc.fillRect(0, 0, 256, 1);
+  const ramp = rc.getImageData(0, 0, 256, 1).data;
+  const img = c.getImageData(0, 0, cv.width, cv.height), px = img.data;
+  for (let i = 0; i < px.length; i += 4) {
+    const a = px[i + 3]; if (!a) continue;
+    const j = Math.min(255, Math.round(a * 1.15)) * 4;
+    px[i] = ramp[j]; px[i + 1] = ramp[j + 1]; px[i + 2] = ramp[j + 2]; px[i + 3] = Math.min(235, a * 2.4);
+  }
+  c.putImageData(img, 0, 0);
+}
+function renderLegend(min, max) {
+  const lg = $('legend');
+  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k"><i style="background:var(${STATUS[s].v})"></i>${STATUS[s].label}</span>`).join('')}</div>`;
+  else if (mode === 'heat') lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(--heat-a),var(--heat-b),var(--heat-c),var(--heat-d))"></div><div class="ends"><span>Fewer deals</span><span>More</span></div>`;
+  else {
+    const f = stateMetric === 'profit' ? kmoney : stateMetric === 'deals' ? (v => Math.round(v)) : pct;
+    const lo = stateMetric === 'cancel' ? '--seqr-lo' : '--seq-lo', hi = stateMetric === 'cancel' ? '--seqr-hi' : '--seq-hi';
+    lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(${lo}),var(${hi}))"></div><div class="ends num"><span>${f(min)}</span><span>${f(max)}</span></div>`;
+  }
+}
+$('modeSeg').addEventListener('click', e => {
+  const b = e.target.closest('[data-m]'); if (!b) return;
+  mode = b.dataset.m;
+  $('modeSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  $('mapHint').textContent = mode === 'pins' ? 'Click a pin to view or fix a deal · click a state to filter' : mode === 'heat' ? 'Pick Cancelled above to see where deals fall through' : 'Hover a state for its numbers · click to filter';
+  render();
+});
+
+// tooltip + clicks on the map
+const tip = $('tip');
+function showTip(html, ev) { tip.innerHTML = html; tip.classList.add('show'); const r = tip.getBoundingClientRect(); let x = ev.clientX + 14, y = ev.clientY + 14; if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14; if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14; tip.style.left = x + 'px'; tip.style.top = y + 'px'; }
+const hideTip = () => tip.classList.remove('show');
+let hovState = null;
+svg.addEventListener('pointermove', e => {
+  if (drag && drag.moved) return;
+  const pin = e.target.closest('.pin');
+  if (pin) { const d = deals.find(x => x.id === +pin.dataset.id); setHov(null);
+    showTip(`<div class="th">${esc(d.address)}, ${esc(d.city)} ${d.state}</div><div class="tr"><span>Status</span><b style="color:var(${STATUS[d.status].v})">${STATUS[d.status].label}</b></div><div class="tr"><span>ACQ / DISPO</span><b>${esc(d.acq.split(' ')[0])} / ${esc(d.dispo.split(' ')[0])}</b></div><div class="tr"><span>FUS</span><b>${esc(d.fus || '—')}</b></div><div class="tr"><span>Potential</span><b>${money(d.potential)}</b></div><div class="tr"><span>Actual</span><b>${money(d.actual)}</b></div><div class="tr"><span>Exit</span><b>${esc(d.exit || '—')}</b></div>${d.feedback ? `<div style="margin-top:6px;color:var(--text-body)">“${esc(d.feedback)}”</div>` : ''}`, e); return; }
+  const st = e.target.closest('.st');
+  if (st) { setHov(st); const a = st.dataset.a, o = stateStats(base())[a];
+    if (!o) return showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>No deals yet</span></div>`, e);
+    const done = o.closed + o.canc;
+    showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>Deals</span><b>${o.n}</b></div><div class="tr"><span>Signed · Closed · Cancelled</span><b>${o.signed} · ${o.closed} · ${o.canc}</b></div><div class="tr"><span>Close rate</span><b>${done ? pct(o.closed / done) : '—'}</b></div><div class="tr"><span>Actual profit</span><b>${money(o.profit)}</b></div><div class="tr"><span>Avg per close</span><b>${o.closed ? money(o.profit / o.closed) : '—'}</b></div>`, e); return; }
+  setHov(null); hideTip();
+});
+function setHov(el) { if (hovState === el) return; if (hovState) hovState.classList.remove('hov'); hovState = el; if (el && mode !== 'states') el.classList.add('hov'); }
+svg.addEventListener('pointerleave', () => { setHov(null); hideTip(); });
+svg.addEventListener('click', e => {
+  if (drag && drag.moved) return;
+  const pin = e.target.closest('.pin'); if (pin) return openDeal(+pin.dataset.id);
+  const st = e.target.closest('.st'); if (st) { F.state = F.state === st.dataset.a ? '' : st.dataset.a; render(); }
+});
+// zoom + pan
+let drag = null;
+function clampVb() { vb[2] = Math.min(975, Math.max(975 / 8, vb[2])); vb[3] = vb[2] * 610 / 975; vb[0] = Math.min(975 - vb[2], Math.max(0, vb[0])); vb[1] = Math.min(610 - vb[3], Math.max(0, vb[1])); }
+function zoomAt(f, cx, cy) { const nw = vb[2] / f; vb[0] = cx - (cx - vb[0]) * (nw / vb[2]); vb[1] = cy - (cy - vb[1]) * (nw / vb[2]); vb[2] = nw; clampVb(); renderMap(visible()); }
+const toMap = e => { const r = svg.getBoundingClientRect(); return [vb[0] + (e.clientX - r.left) / r.width * vb[2], vb[1] + (e.clientY - r.top) / r.height * vb[3]]; };
+svg.addEventListener('wheel', e => { if (!e.ctrlKey && !e.metaKey && vb[2] === 975 && e.deltaY > 0) return; e.preventDefault(); const [x, y] = toMap(e); zoomAt(e.deltaY < 0 ? 1.25 : 0.8, x, y); }, { passive: false });
+svg.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, vb: [...vb], moved: false }; });
+window.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (!drag.moved && Math.hypot(dx, dy) < 5) return; if (vb[2] >= 975) return; drag.moved = true; svg.classList.add('drag'); hideTip(); const r = svg.getBoundingClientRect(); vb[0] = drag.vb[0] - dx / r.width * vb[2]; vb[1] = drag.vb[1] - dy / r.height * vb[3]; clampVb(); renderMap(visible()); });
+window.addEventListener('pointerup', () => { svg.classList.remove('drag'); setTimeout(() => { drag = null; }, 0); });
+$('zIn').onclick = () => zoomAt(1.5, vb[0] + vb[2] / 2, vb[1] + vb[3] / 2);
+$('zOut').onclick = () => zoomAt(1 / 1.5, vb[0] + vb[2] / 2, vb[1] + vb[3] / 2);
+$('zReset').onclick = () => { vb = [0, 0, 975, 610]; renderMap(visible()); };
+window.addEventListener('resize', () => { measure(); drawHeat(visible()); });
+
+// ---------- leaderboards ----------
+function group(list, key) { const m = {}; list.forEach(d => { const k = typeof key === 'function' ? key(d) : d[key]; (m[k] = m[k] || []).push(d); }); return m; }
+function summarize(arr) { const closed = arr.filter(d => d.status === 'closed'), canc = arr.filter(d => d.status === 'cancelled'), sig = arr.filter(d => d.status === 'signed'); const profit = closed.reduce((s, d) => s + (d.actual || 0), 0), pot = closed.reduce((s, d) => s + d.potential, 0), done = closed.length + canc.length; return { n: arr.length, closed: closed.length, canc: canc.length, signed: sig.length, profit, pot, done, rate: done ? closed.length / done : NaN, crate: done ? canc.length / done : NaN, avg: closed.length ? profit / closed.length : NaN, pipe: sig.reduce((s, d) => s + d.potential, 0), days: avgDays(closed, 'signedAt', 'closedAt'), speed: avgDays(arr, 'created', 'signedAt') }; }
+function avgDays(list, a, b) { const l = list.filter(d => d[a] && d[b] && d[b] >= d[a]); return l.length ? l.reduce((s, d) => s + (d[b] - d[a]), 0) / l.length / DAY : NaN; }
+const BOARDS = [
+  { id: 'acq', t: 'Top ACQ', p: 'Who brings in the best contracts', key: 'acq', metrics: [['profit','Profit'],['closed','Closes'],['rate','Close %']] },
+  { id: 'dispo', t: 'Top DISPO', p: 'Who moves deals to the closing table', key: 'dispo', metrics: [['profit','Profit'],['closed','Closes'],['avg','Avg']] },
+  { id: 'fus', t: 'Top FUS', p: 'Whose follow-ups turn into closed deals', key: 'fus', metrics: [['profit','Profit'],['closed','Closes'],['rate','Close %']], min: { rate: 3 } },
+  { id: 'city', t: 'Top Cities', p: 'Where we do the most business', key: d => d.city + ', ' + d.state, metrics: [['n','Deals'],['profit','Profit'],['rate','Close %']], min: { rate: 3 } },
+  { id: 'state', t: 'Top States', p: 'Click a state to filter the map', key: 'state', label: stName, metrics: [['n','Deals'],['profit','Profit'],['rate','Close %']], min: { rate: 3 }, click: a => { F.state = a; render(); document.getElementById('map').scrollIntoView({ behavior: 'smooth' }); } },
+  { id: 'avgstate', t: 'Highest Avg Profit Per State', p: 'Average actual profit per closed deal, 2+ closes', key: 'state', label: stName, metrics: [['avg','Avg']], min: { avg: 2 } },
+  { id: 'src', t: 'Top Lead Sources', p: 'Which marketing channels pay off', key: 'source', metrics: [['profit','Profit'],['rate','Close %'],['n','Deals']], min: { rate: 3 } },
+  { id: 'lose', t: 'Where We Lose Deals', p: 'Cancel rate by state, 3+ finished deals', key: 'state', label: stName, metrics: [['crate','Cancel %'],['canc','Cancels']], min: { crate: 3 }, color: 'red' },
+  { id: 'acqlose', t: 'Cancels By ACQ', p: 'Which contracts fall through, 3+ finished deals', key: 'acq', metrics: [['crate','Cancel %'],['canc','Cancels']], min: { crate: 3 }, color: 'red' },
+  { id: 'speed', t: 'Speed To Contract', p: 'Average days from lead in to signed, by ACQ', key: 'acq', metrics: [['speed','Days']], asc: true, color: 'blue', min: { speed: 3 } },
+  { id: 'exit', t: 'Exit Strategy Mix', p: 'Closed deals and profit by exit', key: 'exit', metrics: [['closed','Closes'],['avg','Avg'],['profit','Profit']] },
+  { id: 'pair', t: 'Best ACQ + DISPO Pairs', p: 'Teams that close the most profit together', key: d => d.acq && d.dispo ? d.acq.split(' ')[0] + ' + ' + d.dispo.split(' ')[0] : '', metrics: [['profit','Profit'],['closed','Closes']] },
+  { id: 'big', t: 'Biggest Deals', p: 'Top single deals by actual profit · click to open', deals: true },
+  { id: 'days', t: 'Fastest To Close', p: 'Average days from contract to closing, by DISPO', key: 'dispo', metrics: [['days','Days']], asc: true, color: 'green' },
+  { id: 'pipe', t: 'Open Deals By State', p: 'Signed deals still waiting to close or cancel', key: 'state', label: stName, metrics: [['signed','Open']], color: 'blue' }
+];
+const fmtMetric = (m, v) => m === 'profit' || m === 'avg' || m === 'pipe' ? kmoney(v) : m === 'rate' || m === 'crate' || m === 'real' ? pct(v) : m === 'days' || m === 'speed' ? Math.round(v) + 'd' : Math.round(v);
+function renderBoards(list) {
+  // boards rank on all three statuses so close and cancel rates stay honest; the status chips still trim them
+  $('boards').innerHTML = BOARDS.map(b => {
+    const m = boardMetric[b.id] || (b.metrics ? b.metrics[0][0] : '');
+    const lim = boardMore[b.id] ? 10 : 5;
+    let rows = [];
+    if (b.deals) {
+      rows = list.filter(d => d.status === 'closed').sort((a, c) => c.actual - a.actual).slice(0, lim).map(d => ({ name: d.address, small: d.city + ' ' + d.state, v: d.actual, txt: kmoney(d.actual), id: d.id }));
+      const mx = rows[0] ? rows[0].v : 1; rows.forEach(r => r.w = r.v / mx);
+    } else {
+      const g = group(list, b.key);
+      rows = Object.entries(g).map(([k, arr]) => { const s = summarize(arr); s.real = s.pot ? s.profit / s.pot : NaN; return { k, s }; })
+        .filter(r => r.k && r.k !== 'undefined' && (!b.filterOut || !b.filterOut(r.s)))
+        .filter(r => { const mn = b.min && b.min[m]; if (!mn) return true; return (m === 'avg' ? r.s.closed : m === 'speed' ? r.s.n : r.s.done) >= mn; })
+        .map(r => ({ name: b.label ? b.label(r.k) : r.k, key: r.k, v: r.s[m], txt: fmtMetric(m, r.s[m]), small: m === 'rate' || m === 'crate' ? `${r.s.closed}/${r.s.done}` : m === 'avg' ? `${r.s.closed} closes` : m === 'real' ? `${kmoney(r.s.profit)} of ${kmoney(r.s.pot)}` : m === 'canc' ? `of ${r.s.done}` : '' }))
+        .filter(r => isFinite(r.v) && r.v > 0).sort((a, c) => b.asc ? a.v - c.v : c.v - a.v);
+      const total = rows.length; rows = rows.slice(0, lim); rows.total = total;
+      const mx = (m === 'rate' || m === 'crate' || m === 'real') ? Math.max(1, ...rows.map(r => r.v)) : (rows[0] ? rows[0].v : 1);
+      rows.forEach(r => r.w = b.asc ? mx / r.v : r.v / mx);
+    }
+    const col = b.color || (b.id === 'big' ? 'green' : '');
+    const items = rows.length ? rows.map((r, i) => `<li class="${b.click || r.id ? 'click' : ''}" ${r.id ? `data-deal="${r.id}"` : b.click ? `data-key="${esc(r.key)}"` : ''}><span class="r">${i + 1}</span><span class="nm">${esc(r.name)}${r.small ? `<small>${esc(r.small)}</small>` : ''}</span><span class="val">${r.txt}</span><span class="bar">${b.ghost ? `<b class="ghost" style="width:100%"></b>` : ''}<b class="${col}" style="width:${Math.max(2, r.w * 100).toFixed(1)}%"></b></span></li>`).join('') : PEOPLE[b.key] && !OPTS[b.key].some(o => o.hub) ? `<li class="empty">No one is in the ${KINDS[b.key]} department in the Hub yet</li>` : '<li class="empty">Nothing matches the filters</li>';
+    const toggles = b.metrics && b.metrics.length > 1 ? `<div class="mini" data-board="${b.id}">${b.metrics.map(([k, l]) => `<button data-m="${k}" class="${k === m ? 'on' : ''}">${l}</button>`).join('')}</div>` : '';
+    const more = (rows.total || 0) > 5 || (b.deals && list.filter(d => d.status === 'closed').length > 5) ? `<button class="more" data-more="${b.id}">${boardMore[b.id] ? 'Show Top 5' : 'Show Top 10'}</button>` : '';
+    return `<article class="card board" data-b="${b.id}"><div class="board-h"><div><h3 class="h3" style="font-size:16px">${b.t}</h3><p>${b.p}</p></div>${toggles}</div><ol class="rank">${items}</ol>${more}</article>`;
+  }).join('');
+}
+$('boards').addEventListener('click', e => {
+  const t = e.target.closest('.mini button'); if (t) { boardMetric[t.parentElement.dataset.board] = t.dataset.m; return renderBoards(visible()); }
+  const mo = e.target.closest('[data-more]'); if (mo) { boardMore[mo.dataset.more] = !boardMore[mo.dataset.more]; return renderBoards(visible()); }
+  const dl = e.target.closest('[data-deal]'); if (dl) return openDeal(+dl.dataset.deal);
+  const k = e.target.closest('[data-key]'); if (k) { const b = BOARDS.find(x => x.id === k.closest('[data-b]').dataset.b); b.click && b.click(k.dataset.key); }
+});
+
+// ---------- deal list ----------
+let sortK = 'date', sortDir = -1;
+const COLS = [['status','Status'],['address','Address'],['city','City'],['state','State'],['source','Lead Source'],['acq','ACQ'],['dispo','DISPO'],['fus','FUS'],['potential','Potential','r'],['actual','Actual','r'],['exit','Exit Strategy'],['signedAt','Signed'],['date','Last Event']];
+function renderTable(list) {
+  const val = (d, k) => k === 'date' ? (d.closedAt || d.signedAt) : k === 'actual' ? (d.actual == null ? -1 : d.actual) : d[k];
+  const rows = [...list].sort((a, b) => { const x = val(a, sortK), y = val(b, sortK); return (x > y ? 1 : x < y ? -1 : 0) * sortDir; });
+  $('dlSub').textContent = `${rows.length} deals match the filters · click a row to edit · click a heading to sort`;
+  $('table').innerHTML = `<thead><tr>${COLS.map(([k, l, c]) => `<th class="${c || ''}" data-k="${k}">${l}${sortK === k ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody>${rows.map(d => `<tr data-id="${d.id}"><td><span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span></td><td class="addr">${esc(d.address)}${d.edits.includes('added') ? '<span class="edited">Added</span>' : d.edits.length ? '<span class="edited">Edited</span>' : ''}${d.flags.length ? `<div class="flagline">⚑ ${esc(d.flags[0])}${d.flags.length > 1 ? ` · +${d.flags.length - 1} more` : ''}</div>` : ''}</td><td>${esc(d.city)}</td><td>${d.state}</td><td>${esc(d.source)}</td><td>${esc(d.acq)}</td><td>${esc(d.dispo)}</td><td>${esc(d.fus || '—')}</td><td class="r num">${money(d.potential)}</td><td class="r num">${money(d.actual)}</td><td>${esc(d.exit || '—')}</td><td class="num">${fdate(d.signedAt)}</td><td class="num">${fdate(d.closedAt || d.signedAt)}</td></tr>`).join('')}</tbody>`;
+}
+$('table').addEventListener('click', e => {
+  const th = e.target.closest('th'); if (th) { const k = th.dataset.k; sortDir = sortK === k ? -sortDir : (k === 'potential' || k === 'actual' || k === 'date' ? -1 : 1); sortK = k; return renderTable(visible()); }
+  const tr = e.target.closest('tr[data-id]'); if (tr) openDeal(+tr.dataset.id);
+});
+
+// ---------- deal drawer: view, fix, add, delete ----------
+let draft = null, confirmDel = false, NEWD = null, zipsP = null;
+const FIELDS = [['address','Street Address','text','full'],['city','City','text'],['state','State','state'],['zip','ZIP','zip'],['source','Lead Source','opt'],['exit','Exit Strategy','opt'],['acq','ACQ','opt'],['dispo','DISPO','opt'],['fus','FUS','opt'],['potential','Potential Profit','money'],['actual','Actual Profit','money'],['created','Lead Came In','date'],['signedAt','Date Signed','date'],['closedAt','Date Closed Or Cancelled','date'],['feedback','Cancel Feedback','textarea','full']];
+const LABEL = Object.fromEntries([['status', 'Status'], ...FIELDS.map(f => [f[0], f[1]])]);
+const toDay = t => t ? new Date(t).toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) : '';
+const fromDay = v => v ? new Date(v + 'T12:00:00-05:00').getTime() : null;
+const titleCase = v => String(v).toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
+const ensureZips = () => zipsP || (zipsP = fetch('zips.json').then(r => r.json()).then(z => (ZIPS = z)).catch(() => { zipsP = null; return null; }));
+// find the deal's spot: its ZIP, or else the first ZIP of its city and state
+function locate(o) {
+  if (!ZIPS) return o.lat != null;
+  let z = o.zip && ZIPS[o.zip];
+  if (!z && o.city && o.state) { const c = norm(o.city); const hit = Object.values(ZIPS).find(v => v[3] === o.state && norm(v[2]) === c); if (hit) z = hit; }
+  if (!z) { o.lat = o.lon = null; return false; }
+  o.lat = z[0]; o.lon = z[1]; if (!o.city) o.city = titleCase(z[2]); if (!o.state) o.state = z[3]; return true;
+}
+const BLANK = () => ({ id: null, feedback: '', status: 'signed', address: '', city: '', state: '', zip: '', source: '', acq: '', dispo: '', fus: '', exit: '', potential: null, actual: null, created: NOW, signedAt: NOW, closedAt: null, lat: null, lon: null, hist: [], flags: [], edits: [] });
+function openDrawer(d) { draft = { ...d }; confirmDel = false; hideTip(); ensureZips(); renderDrawer(d); $('drawer').classList.add('open'); $('drawer').setAttribute('aria-hidden', 'false'); $('scrim').classList.add('open'); renderMap(visible()); }
+function openDeal(id) { const d = deals.find(x => x.id === id); if (!d) return; selected = id; openDrawer(d); }
+function openAdd() { NEWD = BLANK(); selected = 'new'; openDrawer(NEWD); setTimeout(() => { const a = $('f-address'); if (a) a.focus(); }, 280); }
+function closeDeal() { $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); $('scrim').classList.remove('open'); selected = null; draft = null; NEWD = null; renderMap(visible()); }
+$('scrim').onclick = closeDeal;
+document.addEventListener('click', e => { if (e.target.closest('[data-add]')) openAdd(); });
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); });
+function renderDrawer(d) {
+  const isNew = !d.id, stOpts = MAP.states.map(x => x.a).sort();
+  const input = ([k, l, t, w]) => {
+    let ctl;
+    if (t === 'opt' || t === 'state') {
+      const opts = t === 'opt' ? OPTS[k].map(o => ({ v: o.name, l: o.name, tag: optTag(o) })) : stOpts.map(a => ({ v: a, l: a + ' · ' + stName(a) }));
+      ctl = dd({ id: 'f-' + k, value: draft[k], options: opts, cls: 'field-dd', label: l, onChange: v => { draft[k] = v; renderDrawer(d); } });
+    }
+    else if (t === 'money') ctl = `<input id="f-${k}" data-k="${k}" inputmode="decimal" class="num" value="${draft[k] == null ? '' : (draft[k] < 0 ? '-$' : '$') + Math.abs(draft[k]).toLocaleString()}" placeholder="${k === 'actual' && draft.status === 'signed' ? 'Fills in at closing' : k === 'potential' ? 'Not filled in GoHighLevel yet' : '$0'}">`;
+    else if (t === 'date') ctl = `<input type="date" id="f-${k}" data-k="${k}" value="${toDay(draft[k])}">`;
+    else if (t === 'textarea') ctl = `<textarea id="f-${k}" data-k="${k}" rows="3" placeholder="${draft.status === 'cancelled' ? 'Why the deal fell through (the Feedback field in GoHighLevel)' : 'Fills in when a deal is cancelled'}">${esc(draft[k] || '')}</textarea>`;
+    else if (t === 'zip') ctl = `<input id="f-zip" data-k="zip" inputmode="numeric" maxlength="5" class="num" value="${esc(draft.zip || '')}" placeholder="5 Digits">`;
+    else ctl = `<input id="f-${k}" data-k="${k}" value="${esc(draft[k] || '')}"${k === 'address' ? ' placeholder="123 Main St"' : ''}>`;
+    return `<div class="field ${w || ''} ${!isNew && draft[k] !== d[k] ? 'changed' : ''}"><label for="f-${k}">${l}<span class="dot2"></span>${t === 'opt' ? `<button type="button" class="lnk" data-editlist="${k}">${PEOPLE[k] ? 'From The Hub' : 'Edit List'}</button>` : ''}</label>${ctl}</div>`;
+  };
+  const spread = draft.actual != null && draft.potential != null && draft.status === 'closed' ? draft.actual - draft.potential : null;
+  const where = [d.city, d.state].filter(Boolean).join(', ') + (d.zip ? ' ' + d.zip : '');
+  const foot = confirmDel
+    ? `<span class="delq">Delete this deal for everyone? This can't be undone.</span><button class="btn ghost" id="drKeep">Keep It</button><button class="btn pri danger" id="drDelGo">Delete Deal</button>`
+    : `${isNew ? '' : '<button class="btn ghost danger" id="drDel">Delete</button>'}<span class="muted" id="chgCount" style="margin-right:auto"></span><button class="btn ghost" id="drCancel">Cancel</button><button class="btn pri" id="drSave" disabled>${isNew ? 'Add Deal' : 'Save Changes'}</button>`;
+  $('drawer').innerHTML = `
+    <div class="dr-h"><div style="min-width:0">${isNew ? '<span class="stp signed"><i></i>New</span><h2 class="h3" style="margin-top:6px">Add A Deal</h2><div class="muted">Fill in what you know. You can fix it any time.</div>'
+      : `<span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span><h2 class="h3" style="margin-top:6px">${esc(d.address)}</h2><div class="muted">${esc(where || 'No City Yet')} · ${d.contactId ? 'GoHighLevel Contact' : d.origin === 'manual' ? 'Added By Hand' : 'CSV History'}${d.x == null ? ' · Not On The Map' : ''}</div>`}</div><button class="x" id="drX" aria-label="Close">✕</button></div>
+    <div class="dr-b">
+      ${d.flags.length ? `<div class="flags"><b>⚑ Needs Review</b><ul>${d.flags.map((f, i) => `<li><span>${esc(f)}</span><button type="button" class="lnk" data-fix="${i}">Mark Fixed</button></li>`).join('')}</ul></div>` : ''}
+      <div class="field"><label>Status ${isNew ? '' : '<span class="muted" style="font-weight:600">· From The CRM, Fix It Here If It\'s Wrong</span>'}</label><div class="statusseg" id="stSeg">${ORDER.map(st => `<button data-s="${st}" class="${st} ${draft.status === st ? 'on' : ''}"><i style="background:var(${STATUS[st].v})"></i>${STATUS[st].label}</button>`).join('')}</div></div>
+      ${d.closings && d.closings.length > 1 ? `<div class="closings"><b>Fix & Flip · ${d.closings.length} Closings</b>${d.closings.map(c => `<div class="crow"><span>${esc(c.label)} · ${fdate(c.t)}${c.exit ? ' · ' + esc(c.exit) : ''}</span><b class="num">${money(c.revenue)}</b></div>`).join('')}<div class="crow total"><span>Actual Profit, Both Closings</span><b class="num">${money(d.closings.reduce((t, c) => t + (c.revenue || 0), 0))}</b></div></div>` : ''}
+      <div class="fgrid">${FIELDS.map(input).join('')}</div>
+      ${draft.potential != null ? `<div class="spread"><span>Projected <b class="num">${money(draft.potential)}</b></span><span>Actual <b class="num">${money(draft.actual)}</b></span><span>Difference <b class="num" style="color:${spread == null ? 'inherit' : spread >= 0 ? 'var(--st-closed)' : 'var(--st-cancel)'}">${spread == null ? '—' : (spread >= 0 ? '+' : '−') + money(Math.abs(spread))}</b></span></div>` : ''}
+      ${isNew ? '' : `<div><h3 class="h3" style="font-size:15px;margin-bottom:10px">History</h3><ul class="hist">${[...d.hist].reverse().map(h => `<li class="${h.wh ? 'wh' : ''}">${esc(h.text)}<div class="w">${esc(h.by || (h.event ? 'GoHighLevel' : 'CSV History'))} · ${fdate(h.t)}</div></li>`).join('')}</ul></div>`}
+      <div class="note">${isNew ? 'The pin goes on the map at the ZIP code, or at the city when there is no ZIP. ' : ''}Changes here fix the map and leaderboards. Whether they also write back to the CRM is still to decide. The lead source and exit lists are kept in Settings (click your photo, or Edit List above).</div>
+    </div>
+    <div class="dr-f">${foot}</div>`;
+  $('drX').onclick = closeDeal;
+  if (confirmDel) { $('drKeep').onclick = () => { confirmDel = false; renderDrawer(d); }; $('drDelGo').onclick = () => deleteDeal(d); return; }
+  $('drCancel').onclick = closeDeal; $('drSave').onclick = saveDeal;
+  if ($('drDel')) $('drDel').onclick = () => { confirmDel = true; renderDrawer(d); };
+  $('drawer').querySelectorAll('[data-editlist]').forEach(b => b.onclick = e => { e.preventDefault(); openSettings(b.dataset.editlist); });
+  $('drawer').querySelectorAll('[data-fix]').forEach(b => b.onclick = async () => { const f = d.flags[+b.dataset.fix];
+    try { await api('deal', { id: d.docId, flags: d.flags.filter(x => x !== f), note: 'Marked fixed: ' + f }); const doc = d.docId; await refresh(); const nd = deals.find(x => x.docId === doc); if (nd) openDeal(nd.id); } catch (e) { toast('Not saved: ' + e.message, '--red-500', 5200); } });
+  // view-only accounts see the deal without changing it
+  if (!ME.canEdit) $('drawer').querySelectorAll('.dr-b input, .dr-b textarea, .dr-b .dd, #stSeg button').forEach(el => { el.disabled = true; });
+  $('stSeg').onclick = e => { const b = e.target.closest('[data-s]'); if (!b) return; draft.status = b.dataset.s; if (draft.status === 'cancelled') draft.actual = 0; if (draft.status === 'signed') { draft.actual = null; draft.closedAt = null; } if (draft.status !== 'signed' && !draft.closedAt) draft.closedAt = NOW; renderDrawer(d); };
+  $('drawer').querySelectorAll('input[data-k], textarea[data-k]').forEach(el => el.addEventListener(el.type === 'date' ? 'change' : 'input', () => {
+    const k = el.dataset.k, t = FIELDS.find(f => f[0] === k)[2]; let v = el.value;
+    if (t === 'money') { const n = v.replace(/[^\d.-]/g, ''); v = n === '' || n === '-' ? null : Math.round(+n * 100) / 100; }
+    else if (t === 'date') v = fromDay(v);
+    else if (t === 'zip') { v = v.replace(/\D/g, '').slice(0, 5); if (el.value !== v) el.value = v; }
+    draft[k] = v; if (!isNew) el.closest('.field').classList.toggle('changed', draft[k] !== d[k]); updateChg(d);
+    // a full ZIP fills in the city and state
+    if (t === 'zip' && v.length === 5) ensureZips().then(z => { const hit = z && z[v]; if (!hit || draft !== draft) return; draft.city = titleCase(hit[2]); draft.state = hit[3]; renderDrawer(d); const f = $('f-zip'); if (f) { f.focus(); f.setSelectionRange(5, 5); } });
+  }));
+  updateChg(d);
+}
+const changes = d => ['status', ...FIELDS.map(f => f[0])].filter(k => draft[k] !== d[k]);
+function updateChg(d) { const c = changes(d), btn = $('drSave'); if (!btn) return; btn.disabled = !d.id ? !norm(draft.address) : !c.length; $('chgCount').textContent = d.id && c.length ? `${c.length} change${c.length > 1 ? 's' : ''}` : ''; }
+const NOMAP = 'No City Or ZIP, So It Is Not On The Map';
+async function saveDeal() {
+  const isNew = selected === 'new', d = isNew ? NEWD : deals.find(x => x.id === selected); if (!d || !draft) return;
+  const c = changes(d);
+  if (isNew && !norm(draft.address)) { toast('Add the street address first', '--red-500'); return; }
+  if (!isNew && !c.length) return;
+  if (isNew || ['zip', 'city', 'state'].some(k => c.includes(k))) { await ensureZips(); locate(draft); }
+  // edits that answer a flag clear it
+  const flags = (d.flags || []).filter(f => !(f === NOMAP && draft.lat != null) && !(f === 'No ACQ' && draft.acq) && !(f.startsWith('Closed Without A DISPO') && ((draft.dispo && draft.dispo !== 'TCHB') || draft.status !== 'closed')) && !(/^Open For 120/.test(f) && draft.status !== 'signed'));
+  if (draft.lat == null && !flags.includes(NOMAP)) flags.push(NOMAP);
+  const fmt = (k, v) => k === 'potential' || k === 'actual' ? money(v) : k === 'status' ? STATUS[v].label : /At$|created/.test(k) ? fdate(v) : (v || '—');
+  const fields = {}; ['status', ...FIELDS.map(f => f[0])].forEach(k => { fields[k] = draft[k]; });
+  const note = isNew ? '' : 'Edited ' + c.filter(k => !['lat', 'lon'].includes(k)).map(k => `${LABEL[k]}: ${fmt(k, d[k])} → ${fmt(k, draft[k])}`).join(' · ');
+  const btn = $('drSave'); if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    const r = await api('deal', { id: isNew ? null : d.docId, fields, flags, note });
+    closeDeal(); await refresh();
+    const off = r.deal && r.deal.lat == null;
+    toast(isNew ? `Added ${r.deal.address}${off ? ' · add a ZIP to put it on the map' : ''}` : 'Saved · map and leaderboards updated', off ? '--red-500' : '--green-500', off ? 4800 : 3200);
+  } catch (e) { toast('Not saved: ' + e.message, '--red-500', 5200); if (btn) { btn.disabled = false; btn.textContent = isNew ? 'Add Deal' : 'Save Changes'; } }
+}
+async function deleteDeal(d) {
+  try { await api('deal', { id: d.docId, delete: true }); closeDeal(); await refresh(); toast(`Deleted ${d.address}`, '--red-500'); }
+  catch (e) { toast('Not deleted: ' + e.message, '--red-500', 5200); }
+}
+
+// ---------- latest activity feed ----------
+const EV_ICON = { signed: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>', closed: '<path d="M20 6 9 17l-5-5"/>', cancelled: '<path d="M18 6 6 18M6 6l12 12"/>' };
+function renderFeed(newId) {
+  $('feed').innerHTML = [...events].sort((a, b) => b.t - a.t).slice(0, 30).map(ev => { const d = deals.find(x => x.id === ev.id); if (!d) return ''; return `<li data-id="${d.id}" class="${ev.fresh && ev === events[events.length - 1] && newId ? 'new' : ''}"><span class="ev" style="background:var(${STATUS[ev.s].v.replace('--st-signed','--st-signed-bg').replace('--st-closed','--st-closed-bg').replace('--st-cancel','--st-cancel-bg')});color:var(${STATUS[ev.s].v})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${EV_ICON[ev.s]}</svg></span><div style="min-width:0"><div class="t">${STATUS[ev.s].ev}${ev.s === 'closed' && d.actual ? ` · ${kmoney(d.actual)}` : ''}</div><div class="a">${esc(d.address)}, ${esc(d.city)} ${d.state}</div><div class="m">${esc(d.acq)} · ${esc(d.source)} · ${ago(ev.t)}</div>${(ev.adds || []).map(a => `<span class="newopt">+ New ${ONE[a.k]}: ${esc(a.name)}</span>`).join(' ')}</div></li>`; }).join('');
+}
+$('feed').addEventListener('click', e => { const li = e.target.closest('li[data-id]'); if (li) openDeal(+li.dataset.id); });
+let tt; function toast(msg, v, ms) { const t = $('toast'); t.querySelector('span').textContent = msg; t.querySelector('i').style.background = `var(${v})`; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), ms || 3200); }
+
+// ---------- header bits ----------
+function tick() {
+  const n = new Date(), o = { timeZone: 'America/New_York' };
+  $('clkDate').textContent = n.toLocaleDateString('en-US', { ...o, weekday: 'short' }) + ' ' + n.toLocaleDateString('en-US', { ...o, month: '2-digit', day: '2-digit', year: 'numeric' });
+  $('clkTime').textContent = n.toLocaleTimeString('en-US', { ...o, hour: 'numeric', minute: '2-digit', second: '2-digit' }) + ' EST';
+}
+function currentTheme() { const a = document.documentElement.getAttribute('data-theme'); return a || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+function setTheme(t) { document.documentElement.setAttribute('data-theme', t); try { localStorage.setItem('tchb-heat-theme', t); } catch (e) {} paintTheme(); render(); }
+function paintTheme() { const t = currentTheme(); $('thL').classList.toggle('on', t === 'light'); $('thD').classList.toggle('on', t === 'dark'); }
+$('thL').onclick = () => setTheme('light'); $('thD').onclick = () => setTheme('dark');
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { paintTheme(); render(); });
+function measure() { document.documentElement.style.setProperty('--hdr', $('hdr').offsetHeight + 'px'); }
+const tabs = [...document.querySelectorAll('.tabs a')];
+tabs.forEach(a => a.addEventListener('click', e => { e.preventDefault(); document.getElementById(a.dataset.tab).scrollIntoView({ behavior: 'smooth' }); }));
+window.addEventListener('scroll', () => {
+  const f = $('filters'); f.classList.toggle('stuck', f.getBoundingClientRect().top <= $('hdr').offsetHeight + 2);
+  let cur = 'map'; ['leaderboards', 'deals'].forEach(id => { if (document.getElementById(id).getBoundingClientRect().top < innerHeight * .45) cur = id; });
+  tabs.forEach(a => a.classList.toggle('on', a.dataset.tab === cur));
+}, { passive: true });
+
+// ---------- glass dropdowns ----------
+const DD = {}; let ddSeq = 0, ddBtn = null;
+const CHEV = '<svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1l4 4 4-4"/></svg>';
+function dd({ id, value, options, label, onChange, cls = '', set = false }) {
+  const key = 'dd' + (++ddSeq); DD[key] = { value, options, onChange };
+  const cur = options.find(o => o.v === value), txt = cur ? cur.l : (value || 'Choose…');
+  return `<button type="button" class="dd glass ${cls} ${set ? 'set' : ''}"${id ? ` id="${id}"` : ''} data-dd="${key}" aria-haspopup="listbox" aria-expanded="false"${label ? ` aria-label="${esc(label)}: ${esc(txt)}"` : ''}><span class="ddv">${esc(txt)}</span>${CHEV}</button>`;
+}
+const pop = $('pop');
+function openDD(btn) {
+  const cfg = DD[btn.dataset.dd]; if (!cfg) return;
+  if (ddBtn === btn) return closePop();
+  closePop(); ddBtn = btn; btn.setAttribute('aria-expanded', 'true');
+  const long = cfg.options.length > 10;
+  pop.innerHTML = (long ? '<input class="q" placeholder="Type to search…" aria-label="Search options">' : '') +
+    `<div role="listbox">${cfg.options.map((o, i) => `<button type="button" role="option" class="opt ${o.v === cfg.value ? 'on' : ''}" data-i="${i}" aria-selected="${o.v === cfg.value}"><span class="ck">${o.v === cfg.value ? '✓' : ''}</span><span class="ol">${esc(o.l)}</span>${o.tag ? `<span class="otag">${o.tag}</span>` : ''}</button>`).join('')}</div>`;
+  pop.style.minWidth = '0'; pop.classList.add('open');
+  const r = btn.getBoundingClientRect(); pop.style.minWidth = Math.max(180, r.width) + 'px';
+  const ph = pop.offsetHeight, pw = pop.offsetWidth;
+  let top = r.bottom + 6; if (top + ph > innerHeight - 8 && r.top - ph - 6 > 8) top = r.top - ph - 6;
+  pop.style.top = top + 'px'; pop.style.left = Math.max(8, Math.min(r.left, innerWidth - pw - 8)) + 'px';
+  const on = pop.querySelector('.opt.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+  (pop.querySelector('.q') || on || pop.querySelector('.opt')).focus({ preventScroll: true });
+}
+function closePop(refocus) { if (ddBtn) { ddBtn.setAttribute('aria-expanded', 'false'); if (refocus) ddBtn.focus(); } ddBtn = null; pop.classList.remove('open'); $('acct').classList.remove('open'); }
+pop.addEventListener('click', e => { const o = e.target.closest('.opt'); if (!o || !ddBtn) return; const cfg = DD[ddBtn.dataset.dd]; const v = cfg.options[+o.dataset.i].v; closePop(); if (v !== cfg.value) cfg.onChange(v); });
+pop.addEventListener('input', e => { if (!e.target.classList.contains('q')) return; const q = norm(e.target.value); pop.querySelectorAll('.opt').forEach(o => { o.hidden = !!q && !norm(o.textContent).includes(q); }); });
+pop.addEventListener('keydown', e => {
+  const opts = [...pop.querySelectorAll('.opt:not([hidden])')], i = opts.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown') { e.preventDefault(); (opts[i + 1] || opts[0]).focus(); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); (opts[i - 1] || opts[opts.length - 1]).focus(); }
+  else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closePop(true); }
+  else if (e.key === 'Enter' && e.target.classList.contains('q') && opts[0]) { e.preventDefault(); opts[0].click(); }
+  else if (e.key === 'Tab') closePop();
+});
+document.addEventListener('keydown', e => { const b = e.target.closest && e.target.closest('[data-dd]'); if (b && e.key === 'ArrowDown') { e.preventDefault(); openDD(b); } });
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-dd]'); if (b) { e.stopPropagation(); return openDD(b); }
+  if (e.target.closest('#avatarBtn')) { e.stopPropagation(); return $('acct').classList.contains('open') ? closePop() : openAcct(); }
+  if (!e.target.closest('#pop') && !e.target.closest('#acct')) closePop();
+}, true);
+window.addEventListener('scroll', e => { if ((ddBtn || $('acct').classList.contains('open')) && !(e.target instanceof Node && (pop.contains(e.target) || $('acct').contains(e.target)))) closePop(); }, true);
+window.addEventListener('resize', () => closePop());
+
+// ---------- photo menu ----------
+const ICON = {
+  gear: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  help: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
+  out: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>',
+  trash: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'
+};
+function openAcct() {
+  closePop();
+  const n = crmCount(), t = currentTheme(), p = $('acct');
+  p.innerHTML = `<div class="acct-me"><span class="avatar">${initials(ME.name || '?')}</span><div style="min-width:0"><div class="nm">${esc(ME.name)}</div><div class="muted" style="font-size:12px;text-transform:none;overflow:hidden;text-overflow:ellipsis">${esc(ME.email)}</div><div class="role">${ROLE_LABEL[ME.role] || ''}${ME.canEdit ? '' : ' · View Only'}</div></div></div><div class="div"></div>
+    <div class="mob-only acct-theme"><span>Theme</span><div class="theme glass"><button data-th="light" class="${t === 'light' ? 'on' : ''}" aria-label="Light theme">☀</button><button data-th="dark" class="${t === 'dark' ? 'on' : ''}" aria-label="Dark theme">☾</button></div></div>
+    <button class="mi" role="menuitem" data-act="settings">${ICON.gear}Settings${n ? `<span class="bubble red">${n} new</span>` : ''}</button>
+    <button class="mi" role="menuitem" data-act="help">${ICON.help}Help</button>
+    <button class="mi" role="menuitem" data-act="out">${ICON.out}Sign Out</button>`;
+  p.classList.add('open');
+  const r = $('avatarBtn').getBoundingClientRect();
+  p.style.top = (r.bottom + 8) + 'px'; p.style.left = Math.max(8, Math.min(r.right - p.offsetWidth, innerWidth - p.offsetWidth - 8)) + 'px';
+  p.querySelector('.mi').focus({ preventScroll: true });
+}
+$('acct').addEventListener('click', e => {
+  const th = e.target.closest('[data-th]'); if (th) { setTheme(th.dataset.th); return openAcct(); }
+  const m = e.target.closest('[data-act]'); if (!m) return;
+  closePop();
+  if (m.dataset.act === 'settings') openSettings();
+  else if (m.dataset.act === 'out') auth && auth.signOut();
+  else toast('Questions about the Heat Map? Ask Remy.', '--indigo-500');
+});
+$('acct').addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); closePop(); $('avatarBtn').focus(); } });
+
+// ---------- settings: dropdown options ----------
+let setKind = 'source', removing = null, moveTo = '', setErr = '';
+const uses = (k, name) => deals.filter(d => d[k] === name).length;
+const crmCount = () => Object.values(OPTS).reduce((s, l) => s + l.filter(o => o.crm).length, 0);
+function openSettings(kind) { if (kind) setKind = kind; removing = null; setErr = ''; renderSettings(); $('settings').classList.add('open'); $('setScrim').classList.add('open'); }
+function closeSettings() { $('settings').classList.remove('open'); $('setScrim').classList.remove('open'); closePop(); }
+$('setScrim').onclick = closeSettings;
+function syncDrawer(kind, from, to) { if (!draft) return; const d = deals.find(x => x.id === selected); if (draft[kind] === from) draft[kind] = to; renderDrawer(d); }
+const LINK = {};
+function renderPeopleTab(list) {
+  const hub = list.filter(o => o.hub), out = list.filter(o => !o.hub);
+  const hubOpts = hub.map(x => ({ v: x.name, l: x.name }));
+  return `<div class="hubhead"><span class="hubtag">From The Hub</span><span class="muted">Names from your CSVs for now · the ${KINDS[setKind]} department in the Hub's Team Members once live</span></div>${hub.length ? '' : `<div class="empty">No one is in the ${KINDS[setKind]} department in the Hub yet.</div>`}
+    <ul class="optlist">${hub.map(o => { const u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${o.role}${o.email ? ' · ' + esc(o.email) : ''}${o.aliases.length ? ' · Also matches ' + o.aliases.map(esc).join(', ') : ''}</small></span><span class="uses num">${u} deal${u === 1 ? '' : 's'}</span></li>`; }).join('')}</ul>
+    ${out.length ? `<div class="hubhead"><span class="hubtag warn">Not In The Hub</span><span class="muted">Names the CRM sent that match no one in the Hub</span></div>
+    <ul class="optlist">${out.map(o => { const i = list.indexOf(o), u = uses(setKind, o.name); if (!hubOpts.some(h => h.v === LINK[o.name])) { const first = norm(o.name.split(' ')[0]).replace(/\.$/, ''), guess = hub.find(h => norm(h.name).startsWith(first)) || hub[0]; LINK[o.name] = guess && guess.name; }
+      return `<li class="optrow person out ${o.crm ? 'crm' : ''}"><span class="pav out">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${u} deal${u === 1 ? '' : 's'} · From The CRM</small></span>
+        <div class="linkbox">${hub.length ? `<span class="muted">Link To</span>${dd({ value: LINK[o.name], options: hubOpts, label: 'Link ' + o.name + ' to', onChange: v => { LINK[o.name] = v; renderSettings(); } })}<button class="btn pri sm" data-link="${i}">Link</button>` : ''}${o.crm ? `<button class="btn ghost sm" data-ok="${i}">Keep As Is</button>` : ''}</div></li>`; }).join('')}</ul>` : ''}
+    <div class="note">People come from the Hub. To add someone, rename them or move them to another department, use Team Members in the Hub, and the change shows here. When the CRM sends a person, it's matched to the Hub by email first, then by full name, or by first name when only one person in the department has it, so "carlos" lands on Carlos Caballero. A name that matches no one is listed under Not In The Hub with its deals kept. Link it to the right person once and every later webhook with that name goes to them.</div>`;
+}
+function renderSettings() {
+  setTimeout(() => { if (!ME.canEdit) $('settings').querySelectorAll('.optname').forEach(el => { el.readOnly = true; }); });
+  const list = OPTS[setKind], people = !!PEOPLE[setKind];
+  const rmBox = (o, i, u) => {
+    const others = list.filter((x, j) => j !== i);
+    if (!others.length) return `<div class="rmbox">Add another ${ONE[setKind]} first so these deals have somewhere to go.<button class="btn ghost sm" data-cancelrm>OK</button></div>`;
+    if (!others.some(x => x.name === moveTo)) moveTo = others[0].name;
+    return `<div class="rmbox"><span>${u} deal${u > 1 ? 's use' : ' uses'} “${esc(o.name)}”. Move ${u > 1 ? 'them' : 'it'} to</span>${dd({ value: moveTo, options: others.map(x => ({ v: x.name, l: x.name })), label: 'Move deals to', onChange: v => { moveTo = v; renderSettings(); } })}<button class="btn pri sm" data-confirm="${i}">Move &amp; Remove</button><button class="btn ghost sm" data-cancelrm>Cancel</button></div>`;
+  };
+  $('settings').innerHTML = `
+    <div class="dr-h"><div><h2 class="h3" id="setTitle" style="font-size:22px">Settings</h2><div class="muted">Dropdown options for deals, filters and leaderboards</div></div><button class="x" data-close aria-label="Close">✕</button></div>
+    <div class="set-tabs"><div class="seg">${Object.entries(KINDS).map(([k, l]) => { const n = OPTS[k].filter(o => o.crm).length; return `<button data-kind="${k}" class="${k === setKind ? 'on' : ''}">${l}${n ? `<span class="ndot">${n}</span>` : ''}</button>`; }).join('')}</div></div>
+    <div class="set-b">${people ? renderPeopleTab(list) : `
+      <ul class="optlist">${list.map((o, i) => { const u = uses(setKind, o.name); return `<li class="optrow ${o.crm ? 'crm' : ''}">
+        <input class="optname" id="opt-${setKind}-${i}" data-i="${i}" value="${esc(o.name)}" aria-label="Rename ${esc(o.name)}">
+        <span class="uses num">${u} deal${u === 1 ? '' : 's'}</span>
+        ${o.crm ? `<button class="crm-badge" data-ok="${i}" title="Keep it and clear the badge">New From CRM ✓</button>` : '<span></span>'}
+        <button class="rm" data-rm="${i}" aria-label="Remove ${esc(o.name)}">${ICON.trash}</button>
+        ${o.aliases.length ? `<div class="alias">Also matches from the CRM: ${o.aliases.map(esc).join(', ')}</div>` : ''}
+        ${removing === i ? rmBox(o, i, u) : ''}
+      </li>`; }).join('')}</ul>
+      ${setErr ? `<div class="set-err">${esc(setErr)}</div>` : ''}
+      <form class="addrow" id="addOpt"><input id="newOpt" placeholder="Add ${ART[setKind]}…" autocomplete="off" aria-label="New option"><button class="btn pri" type="submit">Add</button></form>
+      <div class="note">When the CRM sends ${ART[setKind]} that isn't on this list, it's added here automatically and marked <b>New From CRM</b>. Matching ignores capital letters and extra spaces, so "ppc" lands on PPC. If a new one is really an existing option spelled another way, remove it and move its deals to the right one. Its spelling is remembered, so the next webhook with it maps there. Renaming keeps the old name as a match too.</div>`}
+    </div>`;
+}
+function after(msg) { setErr = ''; if (msg) toast(msg, '--green-500'); renderSettings(); render(); }
+// a list change: the server updates the list and moves the deals, then the page reloads both
+async function serverOpt(payload, msg) {
+  try { const r = await api('options', { kind: setKind, ...payload }); removing = null; await refresh(); after(typeof msg === 'function' ? msg(r) : msg); }
+  catch (e) { setErr = e.message; renderSettings(); }
+}
+// fold option i into another: its deals move over and its spellings become matches for the target
+function mergeOpt(i, tgtName, link) {
+  const o = OPTS[setKind][i]; if (!o || !tgtName) return;
+  serverOpt({ op: 'merge', name: o.name, to: tgtName }, r => link ? `Linked “${o.name}” to ${tgtName} · ${r.moved} deal${r.moved === 1 ? '' : 's'} moved, future webhooks match` : `Moved ${r.moved} deal${r.moved === 1 ? '' : 's'} to “${tgtName}” · reports updated`);
+}
+$('settings').addEventListener('click', e => {
+  const t = e.target;
+  if (t.closest('[data-close]')) return closeSettings();
+  const kd = t.closest('[data-kind]'); if (kd) { setKind = kd.dataset.kind; removing = null; setErr = ''; return renderSettings(); }
+  const list = OPTS[setKind];
+  const ok = t.closest('[data-ok]'); if (ok) return serverOpt({ op: 'ok', name: list[+ok.dataset.ok].name });
+  const rm = t.closest('[data-rm]'); if (rm) { const i = +rm.dataset.rm, o = list[i], u = uses(setKind, o.name);
+    if (!u) return serverOpt({ op: 'remove', name: o.name }, `Removed “${o.name}”`);
+    removing = removing === i ? null : i; return renderSettings(); }
+  if (t.closest('[data-cancelrm]')) { removing = null; return renderSettings(); }
+  const cf = t.closest('[data-confirm]'); if (cf) return mergeOpt(+cf.dataset.confirm, moveTo);
+  const lk = t.closest('[data-link]'); if (lk) { const i = +lk.dataset.link; return mergeOpt(i, LINK[list[i].name], true); }
+});
+$('settings').addEventListener('change', e => {
+  if (!e.target.classList.contains('optname')) return;
+  const list = OPTS[setKind], i = +e.target.dataset.i, o = list[i], name = e.target.value.trim().replace(/\s+/g, ' ');
+  if (!name || name === o.name) return renderSettings();
+  if (list.some((x, j) => j !== i && norm(x.name) === norm(name))) { setErr = `“${name}” is already on the list. To merge them, remove “${o.name}” and move its deals there.`; return renderSettings(); }
+  const old = o.name;
+  serverOpt({ op: 'rename', name: old, to: name }, r => `Renamed to “${name}” · ${r.moved} deals and every report updated`).then(() => { if (F[FKEY[setKind]] === old) { F[FKEY[setKind]] = name; render(); } });
+});
+$('settings').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.classList.contains('optname')) { e.preventDefault(); e.target.blur(); } });
+$('settings').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('newOpt').value.trim().replace(/\s+/g, ' '); if (!v) return;
+  if (OPTS[setKind].some(x => norm(x.name) === norm(v) || x.aliases.some(a => norm(a) === norm(v)))) { setErr = `“${v}” is already on the list.`; return renderSettings(); }
+  serverOpt({ op: 'add', name: v }, `Added “${v}” to ${KINDS[setKind]}`);
+});
+
+// ---------- render ----------
+function render(fromHook) {
+  const b = base(), v = b.filter(d => F.status.has(d.status));
+  renderFilterDDs(); renderTools();
+  renderKpis(b); renderChips(b); renderMap(v); renderBoards(v); renderTable(v); renderFeed(fromHook);
+  $('avDot').hidden = !crmCount();
+  const today = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) + 'T00:00:00-05:00').getTime();
+  $('hookCt').textContent = events.filter(e => e.t >= today).length;
+  Object.keys(DD).forEach(k => { if (!document.querySelector(`[data-dd="${k}"]`)) delete DD[k]; });
+  $('lbSub').textContent = `Every board follows the filters above · ${v.length} deals in view`;
+}
+
+// every request carries the signed-in person's Google token; the server decides what they may do
+async function api(op, payload) {
+  const token = await auth.currentUser.getIdToken();
+  const r = await fetch('/api/app/' + op, payload ? { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(payload) } : { headers: { Authorization: 'Bearer ' + token } });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw Object.assign(new Error(j.error || 'The server did not answer. Try again.'), { status: r.status });
+  return j;
+}
+async function refresh() {
+  const j = await api('data');
+  ME = j.me; SERVER_OPTS = j.options || null;
+  document.body.classList.toggle('ro', !ME.canEdit);
+  $('avTxt').textContent = initials(ME.name || '?');
+  loadDeals(j.deals);
+  const off = deals.filter(d => d.x == null).length;
+  $('importNote').textContent = `From GoHighLevel and the CSV history · pins sit at each ZIP code${off ? ` · ${off} without a city or ZIP are in the list, not on the map` : ''}`;
+  render();
+}
+const gate = (msg, showButton) => { $('gate').hidden = false; $('gateMsg').textContent = msg; $('signIn').hidden = !showButton; };
+let started = false;
+async function start() {
+  try { await refresh(); $('gate').hidden = true; }
+  catch (e) { if (e.status === 403 || e.status === 401) { gate(e.message, true); auth.signOut(); } else gate('Could not load the deals: ' + e.message, false); return; }
+  if (started) return; started = true;
+  setInterval(() => renderFeed(false), 30000);
+  // new deals from GoHighLevel: refresh every minute while nothing is open for editing
+  setInterval(() => { if (!selected && !$('settings').classList.contains('open') && !document.hidden) refresh().catch(() => {}); }, 60000);
+}
+try { const t = localStorage.getItem('tchb-heat-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+paintTheme(); measure(); tick(); setInterval(tick, 1000);
+Promise.all([fetch('map.json').then(r => r.json()), fetch('/api/app/config').then(r => r.json())]).then(([m, c]) => {
+  MAP = m; drawStatesBase();
+  if (!c.firebase || !window.firebase) return gate('Sign-in is not set up yet. In Vercel, add HEATMAP_FIREBASE_WEB_CONFIG, then redeploy.', false);
+  fb = firebase.initializeApp(c.firebase); auth = firebase.auth();
+  $('signIn').onclick = () => { const p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' }); auth.signInWithPopup(p).catch(e => gate(e.code === 'auth/popup-closed-by-user' ? 'Sign in with your company Google account.' : 'Sign-in failed: ' + e.message, true)); };
+  auth.onAuthStateChanged(u => { if (u) { gate('Loading the deals…', false); start(); } else { started = false; gate('Sign in with your company Google account.', true); } });
+}).catch(e => gate('Could not reach the Heat Map: ' + e.message, false));
+})();
+</script>
+</body>
+</html>
