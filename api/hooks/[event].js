@@ -11,9 +11,11 @@
 // HEATMAP_FIREBASE_SERVICE_ACCOUNT (the Heat Map's own Firebase project, separate from the Hub). Logs counts only.
 const { EVENTS, eventOf, parseBody, keyOk } = require('../_lib/hooks');
 const { extract, applyEvent } = require('../_lib/deals');
+const { geocode, addrKey } = require('../_lib/geo');
+const { intake } = require('../_lib/options');
 const { db, rawBody, send } = require('../_lib/store');
 
-const HOOKS = 'heatmap_hooks', DEALS = 'heatmap_deals';
+const HOOKS = 'heatmap_hooks', DEALS = 'heatmap_deals', OPTIONS = 'heatmap_meta/options';
 const limitOf = (url, def, max) => Math.min(max, Math.max(1, parseInt(url.searchParams.get('limit'), 10) || def));
 
 module.exports = async (req, res) => {
@@ -46,9 +48,23 @@ module.exports = async (req, res) => {
   if (!f.contactId) return send(res, 400, { error: 'No contact_id in the hook. Deals are matched by contact ID.' });
   try {
     const out = await db().runTransaction(async tx => {
-      const snap = await tx.get(db().collection(DEALS).where('contactId', '==', f.contactId));
-      const latest = snap.docs.map(d => ({ ref: d.ref, data: d.data() })).sort((a, b) => (b.data.createdAt || 0) - (a.data.createdAt || 0))[0];
+      const newest = docs => docs.map(d => ({ ref: d.ref, data: d.data() })).sort((a, b) => (b.data.createdAt || 0) - (a.data.createdAt || 0))[0];
+      const optRef = db().doc(OPTIONS), optSnap = await tx.get(optRef);
+      let latest = newest((await tx.get(db().collection(DEALS).where('contactId', '==', f.contactId))).docs);
+      // a deal from the CSV history has no contact ID yet: find it by house number and ZIP, and adopt it
+      let adopted = false;
+      if (!latest && addrKey(f)) {
+        const c = newest((await tx.get(db().collection(DEALS).where('addrKey', '==', addrKey(f)))).docs.filter(d => !d.data().contactId));
+        if (c) { latest = c; latest.data.contactId = f.contactId; adopted = true; }
+      }
+      // the Settings lists: known spellings map to one name; new lead sources and exits are added, marked as from the CRM
+      const options = optSnap.exists ? optSnap.data() : null;
+      if (intake(options, f, now)) tx.set(optRef, { ...options, updatedAt: now });
+      const prevZip = latest ? latest.data.zip : null;
       const { deal, isNew } = applyEvent(latest ? latest.data : null, event, f, now);
+      if (adopted) deal.hist.splice(deal.hist.length - 1, 0, { t: now, event, text: 'Matched to the deal from the CSV history by address' });
+      if (deal.lat == null || deal.zip !== prevZip) geocode(deal);
+      deal.addrKey = addrKey(deal);
       const ref = isNew ? db().collection(DEALS).doc() : latest.ref;
       tx.set(ref, deal);
       tx.set(db().collection(HOOKS).doc(), { event, receivedAt: now, contactId: f.contactId, dealId: ref.id, fields: f });
