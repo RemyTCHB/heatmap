@@ -16,12 +16,45 @@ GoHighLevel sends the same payload to each address. The address says which event
 | Closed Deal | `POST https://<your-domain>/api/hooks/closed?key=<HEATMAP_WEBHOOK_KEY>` |
 | Cancelled Deal | `POST https://<your-domain>/api/hooks/cancelled?key=<HEATMAP_WEBHOOK_KEY>` |
 
-Every hook is saved as it arrived in the Firestore collection `heatmap_hooks` (event, time received, contact ID, the
-whole body). For now that is all they do: the field mapping is built from these real payloads, then the hooks start
-updating the map.
+Each hook updates the deal for its **contact ID** in the Firestore collection `heatmap_deals`, and a short log entry
+with only the mapped fields goes to `heatmap_hooks`. The rest of the payload (call transcripts, phone numbers,
+recording links) is not stored.
 
-To see what arrived: `GET https://<your-domain>/api/hooks/inbox?key=<HEATMAP_WEBHOOK_KEY>&limit=10`, newest first.
-Add `&event=closed` for one event. The key is a secret: anyone with it can read the saved hooks.
+### Rules
+
+- **The date of each event is when its hook arrives.** A Signed hook today is signed today; a Closed hook tomorrow is
+  closed tomorrow.
+- **Signed** starts a deal for the contact. A repeat Signed while the deal is open only refreshes its details; a
+  Signed after a cancel or a close starts a new deal.
+- **Closed** closes the deal; its profit is `AB Profit (TC)`. A closed deal with no DISPO gets `TCHB` and a flag.
+- **A second Closed** on a contact whose deal already closed is the **Fix & Flip resale**; its profit is `BC Profit`,
+  and the deal's actual profit is both closings added up.
+- **Cancelled** cancels the open deal and keeps the Feedback. A Cancelled after a close is kept in history and flagged.
+- Hooks that arrive without a Signed one first still make a deal, flagged to check.
+
+### Field mapping (confirmed by the owner)
+
+| Heat Map field | Hook key |
+| --- | --- |
+| Contact ID | `contact_id` |
+| Street, city, state, ZIP | `address1`, `city`, `state`, `postal_code` |
+| Lead source | `Lead Source` |
+| Date lead came in | `Date Created` |
+| ACQ / FUS / DISPO | `ACQ Manager` / `FUS Manager` / `Dispo Manager` |
+| Potential profit | `Potential Profit` |
+| Exit strategy | `Final Exit Strategy` |
+| Cancel feedback | `FEEDBACK (MUST FILL)` |
+| Profit at the closing | `AB Profit (TC)` |
+| Profit at the Fix & Flip resale | `BC Profit` |
+| Kept for reference | `AB Date Signed`, `AB Actual Closing Date`, `BC Date Signed`, `Actual Sold Date` |
+
+### Reading the data
+
+- `GET https://<your-domain>/api/hooks/deals?key=<HEATMAP_WEBHOOK_KEY>&limit=50`: deals, most recently updated first.
+- `GET https://<your-domain>/api/hooks/inbox?key=<HEATMAP_WEBHOOK_KEY>&limit=10`: the hook log, newest first. Add
+  `&event=closed` for one event.
+
+The key can also go in an `X-Heatmap-Key` header. It is a secret: anyone with it can read the deals.
 
 ## Setup (Vercel)
 

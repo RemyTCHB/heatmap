@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const { eventOf, parseBody, contactIdOf, keyOk, record, MAX_BODY } = require('../api/_lib/hooks');
+const { eventOf, parseBody, contactIdOf, keyOk, MAX_BODY } = require('../api/_lib/hooks');
 
 test('the event comes from the address', () => {
   assert.strictEqual(eventOf({ query: { event: 'Closed' } }), 'closed');
@@ -30,9 +30,4 @@ test('the key must match', () => {
   assert.strictEqual(keyOk('nope', 's3cret'), false);
   assert.strictEqual(keyOk('', 's3cret'), false);
   assert.strictEqual(keyOk('s3cret', ''), false);
-});
-
-test('the stored record', () => {
-  const r = record('signed', parseBody('{"contact_id":"c1","city":"Akron"}'), 'application/json', 5);
-  assert.deepStrictEqual(r, { event: 'signed', receivedAt: 5, contactId: 'c1', format: 'json', contentType: 'application/json', body: { contact_id: 'c1', city: 'Akron' } });
 });
