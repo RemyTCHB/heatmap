@@ -1,5 +1,5 @@
-// The parts of the webhook receiver that need no network: which events exist, reading a body, checking the key,
-// and the record that gets stored. Kept pure so tests can run them.
+// The parts of the webhook receiver that need no network: which events exist, reading a body and checking the key.
+// Kept pure so tests can run them.
 const crypto = require('crypto');
 
 // GoHighLevel sends the same payload to each address; the address says which event happened.
@@ -37,9 +37,4 @@ function keyOk(given, want) {
   return crypto.timingSafeEqual(h(given), h(want));
 }
 
-const record = (event, parsed, contentType, now = Date.now()) => ({
-  event, receivedAt: now, contactId: contactIdOf(parsed.body), format: parsed.format,
-  contentType: String(contentType || '').slice(0, 120), body: parsed.body
-});
-
-module.exports = { EVENTS, MAX_BODY, eventOf, parseBody, contactIdOf, keyOk, record };
+module.exports = { EVENTS, MAX_BODY, eventOf, parseBody, contactIdOf, keyOk };

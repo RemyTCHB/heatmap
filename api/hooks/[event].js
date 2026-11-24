@@ -2,14 +2,19 @@
 //   POST /api/hooks/signed?key=<HEATMAP_WEBHOOK_KEY>
 //   POST /api/hooks/closed?key=...
 //   POST /api/hooks/cancelled?key=...
-// Each hook is saved as it arrived in Firestore heatmap_hooks, so the field mapping is built from real payloads.
-//   GET  /api/hooks/inbox?key=...&limit=10   the latest saved hooks, newest first (add &event=closed for one event)
-// Vercel settings: HEATMAP_WEBHOOK_KEY and HEATMAP_FIREBASE_SERVICE_ACCOUNT (the Heat Map's own Firebase project,
-// separate from the Hub). Logs counts only.
-const { EVENTS, eventOf, parseBody, keyOk, record } = require('../_lib/hooks');
+// Each hook updates the deal for its contact ID in Firestore heatmap_deals (rules in api/_lib/deals.js), and a short
+// log entry with only the mapped fields goes to heatmap_hooks. The rest of the payload (transcripts, phones, links)
+// is not stored.
+//   GET  /api/hooks/deals?key=...&limit=50    deals, most recently updated first
+//   GET  /api/hooks/inbox?key=...&limit=10    the hook log, newest first (add &event=closed for one event)
+// The key can also go in an X-Heatmap-Key header. Vercel settings: HEATMAP_WEBHOOK_KEY and
+// HEATMAP_FIREBASE_SERVICE_ACCOUNT (the Heat Map's own Firebase project, separate from the Hub). Logs counts only.
+const { EVENTS, eventOf, parseBody, keyOk } = require('../_lib/hooks');
+const { extract, applyEvent } = require('../_lib/deals');
 const { db, rawBody, send } = require('../_lib/store');
 
-const COLLECTION = 'heatmap_hooks';
+const HOOKS = 'heatmap_hooks', DEALS = 'heatmap_deals';
+const limitOf = (url, def, max) => Math.min(max, Math.max(1, parseInt(url.searchParams.get('limit'), 10) || def));
 
 module.exports = async (req, res) => {
   const want = process.env.HEATMAP_WEBHOOK_KEY;
@@ -18,26 +23,39 @@ module.exports = async (req, res) => {
   if (!keyOk(given, want)) return send(res, 401, { error: 'Bad key.' });
   const event = eventOf(req);
 
-  if (event === 'inbox') {
+  if (event === 'inbox' || event === 'deals') {
     if (req.method !== 'GET') return send(res, 405, { error: 'GET only' });
-    const limit = Math.min(50, Math.max(1, parseInt(url.searchParams.get('limit'), 10) || 10)), only = url.searchParams.get('event');
     try {
+      if (event === 'deals') {
+        const snap = await db().collection(DEALS).orderBy('updatedAt', 'desc').limit(limitOf(url, 50, 500)).get();
+        return send(res, 200, { deals: snap.docs.map(d => ({ id: d.id, ...d.data() })) });
+      }
       // filter by event in code: a Firestore filter plus this order would need an index set up by hand
-      const snap = await db().collection(COLLECTION).orderBy('receivedAt', 'desc').limit(EVENTS.includes(only) ? 200 : limit).get();
+      const only = url.searchParams.get('event'), limit = limitOf(url, 10, 50);
+      const snap = await db().collection(HOOKS).orderBy('receivedAt', 'desc').limit(EVENTS.includes(only) ? 200 : limit).get();
       const hooks = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(h => !EVENTS.includes(only) || h.event === only).slice(0, limit);
       return send(res, 200, { hooks });
-    } catch (e) { console.error('inbox failed', e.code || '', e.message || ''); return send(res, 500, { error: 'Could not read the saved hooks.' }); }
+    } catch (e) { console.error(event + ' failed', e.code || '', e.message || ''); return send(res, 500, { error: 'Could not read the Heat Map data.' }); }
   }
 
   if (!EVENTS.includes(event)) return send(res, 404, { error: 'Unknown event. Use signed, closed or cancelled.' });
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
   const parsed = parseBody(await rawBody(req), req.headers['content-type']);
   if (!parsed.ok) return send(res, 400, { error: parsed.error });
+  const f = extract(parsed.body), now = Date.now();
+  if (!f.contactId) return send(res, 400, { error: 'No contact_id in the hook. Deals are matched by contact ID.' });
   try {
-    const rec = record(event, parsed, req.headers['content-type']);
-    const ref = await db().collection(COLLECTION).add(rec);
-    console.log(`heatmap hook: ${event}, ${parsed.format}, contact id ${rec.contactId ? 'present' : 'missing'}`);
-    send(res, 200, { ok: true, event, id: ref.id, contactId: rec.contactId || null });
+    const out = await db().runTransaction(async tx => {
+      const snap = await tx.get(db().collection(DEALS).where('contactId', '==', f.contactId));
+      const latest = snap.docs.map(d => ({ ref: d.ref, data: d.data() })).sort((a, b) => (b.data.createdAt || 0) - (a.data.createdAt || 0))[0];
+      const { deal, isNew } = applyEvent(latest ? latest.data : null, event, f, now);
+      const ref = isNew ? db().collection(DEALS).doc() : latest.ref;
+      tx.set(ref, deal);
+      tx.set(db().collection(HOOKS).doc(), { event, receivedAt: now, contactId: f.contactId, dealId: ref.id, fields: f });
+      return { dealId: ref.id, status: deal.status, isNew };
+    });
+    console.log(`heatmap hook: ${event} -> ${out.isNew ? 'new' : 'existing'} deal, now ${out.status}`);
+    send(res, 200, { ok: true, event, ...out });
   } catch (e) {
     console.error('heatmap hook failed', e.code || '', e.message || '');
     send(res, 500, { error: 'Could not save the hook. GoHighLevel can retry.' });
