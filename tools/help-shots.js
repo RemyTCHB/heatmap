@@ -94,7 +94,7 @@ const shot = (loc, name, o = {}) => loc.screenshot({ path: path.join(OUT, name +
   await p.click('[data-act="team"]'); await p.waitForTimeout(300); await shot(p.locator('#teamWin'), 'team-members'); await p.keyboard.press('Escape'); await p.waitForTimeout(300);
   await p.click('#avatarBtn'); await p.click('[data-act="settings"]'); await p.waitForTimeout(300); await shot(p.locator('#settings'), 'settings-lists');
   await p.click('[data-kind="fus"]'); await p.waitForTimeout(300); await shot(p.locator('#settings'), 'settings-people'); await p.keyboard.press('Escape'); await p.waitForTimeout(300);
-  await p.locator('.addchip').click(); await p.waitForTimeout(500); await shot(p.locator('#drawer'), 'add-deal'); await p.keyboard.press('Escape');
+  await p.locator('#deals [data-add]').click(); await p.waitForTimeout(500); await shot(p.locator('#drawer'), 'add-deal'); await p.keyboard.press('Escape');
   const v = await open(browser, url, 'viewer', { viewport: { width: 1440, height: 900 } });
   await v.evaluate(() => document.getElementById('deals').scrollIntoView()); await v.waitForTimeout(300); await v.locator('#table tbody tr').first().click(); await v.waitForTimeout(500);
   await shot(v.locator('#drawer'), 'deal-panel-view');
