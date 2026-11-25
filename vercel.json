@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "api/app/[op].js": { "maxDuration": 30 },
+    "api/hooks/[event].js": { "maxDuration": 15 }
+  }
+}
