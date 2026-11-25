@@ -42,6 +42,8 @@ function apply(options, { kind, op, name, to }) {
   }
   if (i < 0) throw new Error(`"${name}" is not on the list.`);
   if (op === 'ok') { delete list[i].crm; return { options: o, move: null }; }
+  // people who are real but not in the Hub: no login (AI agents, some FUS), or former members whose name stays on their deals
+  if (op === 'tag') { const tag = ['noLogin', 'former'].includes(arguments[1].tag) ? arguments[1].tag : ''; if (tag) list[i].tag = tag; else delete list[i].tag; delete list[i].crm; return { options: o, move: null }; }
   if (op === 'remove') { list.splice(i, 1); return { options: o, move: null }; }
   if (op === 'rename') {
     if (!to || to === name) throw new Error('Type the new name.');
