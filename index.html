@@ -162,7 +162,13 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 .sub{text-align:center;color:var(--text-muted);font-size:13px;margin-top:4px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center}
 .sample{display:inline-flex;gap:6px;align-items:center;background:var(--surface-accent);color:var(--text-heading);border-radius:999px;padding:2px 10px;font-weight:700;font-size:12px}
 .kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px}
-.kpi{background:var(--surface-card);border:1px solid var(--border-default);border-radius:16px;padding:14px 14px 12px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi{position:relative;overflow:hidden;background:var(--surface-card);border:1px solid var(--border-default);border-radius:16px;padding:14px 14px 12px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:2px;min-width:0;transition:transform .22s cubic-bezier(.2,.9,.3,1.2),box-shadow .22s,border-color .22s}
+.kpi::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--bar-fill);transform:scaleX(0);transform-origin:0 50%;transition:transform .3s ease}
+.kpi:hover{transform:translateY(-4px) scale(1.02);border-color:color-mix(in srgb,var(--indigo-500) 35%,transparent);box-shadow:var(--shadow-raised),0 0 0 4px color-mix(in srgb,var(--indigo-500) 10%,transparent)}
+.kpi:hover::after{transform:scaleX(1)}
+.kpi:hover .v{color:var(--text-heading)}
+.kpi:hover .ring{transform:rotate(-8deg) scale(1.06)}
+.kpi .v,.kpi .ring{transition:color .2s,transform .3s cubic-bezier(.2,.9,.3,1.3)}
 .kpi .v{font-family:var(--font-display);font-weight:800;font-size:24px;color:var(--text-strong);line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
 .kpi .l{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
 .kpi .l i{width:8px;height:8px;border-radius:50%;display:inline-block}
@@ -318,8 +324,8 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 .mapbox svg{cursor:default}
 .mapbox svg.drag{cursor:grabbing}
 .mapbox svg.drag{cursor:grabbing}
-.st{fill:var(--map-land);stroke:none;transition:fill .2s}
-.st.hov{fill:var(--map-hover)}
+.st{fill:var(--map-land);stroke:none;transform-box:fill-box;transform-origin:center;transition:fill .2s,transform .2s cubic-bezier(.2,.9,.3,1.3),filter .2s}
+.st.hov{fill:var(--map-hover);transform:scale(1.05);filter:drop-shadow(0 4px 8px rgba(34,29,84,.35));stroke:var(--surface-card);stroke-width:.8}
 .borders{fill:none;stroke:var(--map-line);stroke-linejoin:round}
 .pin{stroke:var(--surface-card);cursor:pointer;transition:opacity .2s}
 .pin:hover{filter:brightness(1.1)}
@@ -930,7 +936,7 @@ function renderHex(list, k) {
 }
 function renderLegend(min, max, hx) {
   const lg = $('legend');
-  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k">${KEY_ICON[s]}${STATUS[s].label}</span>`).join('')}<span class="k"><i class="ring2"></i>Signed In The Last 14 Days</span></div>`;
+  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k">${KEY_ICON[s]}${STATUS[s].label}</span>`).join('')}<span class="k"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.6" fill="none" stroke="var(--st-signed)" stroke-width="1.4" opacity=".55"/><circle cx="8" cy="8" r="3.6" fill="var(--st-signed)"/></svg>Signed In The Last 14 Days</span></div>`;
   else if (mode === 'heat') { const f = hexMetric === 'profit' ? kmoney : hexMetric === 'close' ? pct : (v => Math.round(v)); lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(--seq-lo),var(--seq-hi))"></div><div class="ends num"><span>${f(min)}</span><span>${f(max)}</span></div>`; }
   else {
     const f = stateMetric === 'profit' ? kmoney : stateMetric === 'deals' ? (v => Math.round(v)) : pct;
@@ -967,7 +973,7 @@ svg.addEventListener('pointermove', e => {
     showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>Deals</span><b>${o.n}</b></div><div class="tr"><span>Signed · Closed · Cancelled</span><b>${o.signed} · ${o.closed} · ${o.canc}</b></div><div class="tr"><span>Close rate</span><b>${done ? pct(o.closed / done) : '—'}</b></div><div class="tr"><span>Actual profit</span><b>${money(o.profit)}</b></div><div class="tr"><span>Avg per close</span><b>${o.closed ? money(o.profit / o.closed) : '—'}</b></div>`, e); return; }
   setHov(null); hideTip();
 });
-function setHov(el) { if (hovState === el) return; if (hovState) hovState.classList.remove('hov'); hovState = el; if (el && mode !== 'states') el.classList.add('hov'); }
+function setHov(el) { if (hovState === el) return; if (hovState) hovState.classList.remove('hov'); hovState = el; if (el) { el.parentNode.appendChild(el); el.classList.add('hov'); } }
 svg.addEventListener('pointerleave', () => { setHov(null); hideTip(); });
 svg.addEventListener('click', e => {
   if (drag && drag.moved) return;
