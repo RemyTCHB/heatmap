@@ -100,6 +100,18 @@ The key can also go in an `X-Heatmap-Key` header. It is a secret: anyone with it
 7. The team mirror: `HEAT_MAP_SECRET`, the same value as `HEAT_MAP_SECRET` in the Hub's project (the Hub's team
    endpoint must list it among the secrets it accepts). Read only: the Heat Map never writes to the Hub.
 
+## The Guide
+
+Photo menu → **Help** opens the guide for the person's role: the **Editor Guide** for Remy, Monz and Jan (the editing
+tools first, then everything else), and the **Viewer Guide** for everyone else. Editors can switch to the Viewer Guide.
+
+- The text is in `docs/guide/viewer.md` and `docs/guide/editor.md`.
+- `node tools/help-shots.js` retakes the screenshots into `help/img/` (needs Playwright with Chromium). It fills the page
+  with **made-up sample deals**, never real ones.
+- `node tools/help-build.mjs` builds `help/guides.json`, which the page loads.
+
+Edit the Markdown, retake the screenshots if the screens changed, then run the build.
+
 ## Tests
 
 `npm test`
