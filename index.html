@@ -101,7 +101,7 @@ button{text-transform:inherit}
 input,textarea,code{text-transform:none}
 ::placeholder{text-transform:capitalize}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--header-bg)}
-button,select,input{font:inherit;color:inherit}
+button,select,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--indigo-500) 45%,transparent);border-radius:8px}
 .num{font-variant-numeric:tabular-nums}
@@ -121,7 +121,7 @@ header.bar.slim .bar-row{padding-block:6px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo.lt{display:none} :root:not([data-theme="light"]) .logo.dk{display:block}}
 .glass{background:var(--glass-bg);border:1px solid var(--glass-border);box-shadow:var(--glass-shadow);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .pill{height:40px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 14px;font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--text-strong);white-space:nowrap}
-.clock{position:relative;overflow:hidden;border:1px solid transparent;cursor:pointer;letter-spacing:.03em;transition:background .2s,color .2s}
+.clock{position:relative;overflow:hidden;flex:none;border:1px solid transparent;cursor:pointer;letter-spacing:.03em;transition:background .2s,color .2s}
 .clock.ready{background:var(--green-050);color:var(--green-600);border-color:color-mix(in srgb,var(--green-500) 35%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--green-500) 10%,transparent),0 2px 14px color-mix(in srgb,var(--green-500) 28%,transparent)}
 .clock.saving{background:var(--indigo-050);color:var(--text-heading)} .clock.saving .dot{background:var(--indigo-500);animation:none}
 .clock.error{background:var(--red-050);color:var(--red-500)} .clock.error .dot{background:var(--red-500);animation:none}
@@ -249,6 +249,30 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 .hubtag{border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--indigo-050);color:var(--text-heading);font-family:var(--font-display)}
 .hubtag.warn{background:var(--st-cancel-bg);color:var(--st-cancel)}
 .optrow.person{grid-template-columns:auto minmax(0,1fr) auto;padding:8px 10px}
+.modal.help{width:min(1060px,calc(100% - 32px));height:calc(100% - 48px);max-height:none}
+.help-b{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:0;flex:1}
+.help-nav{border-right:1px solid var(--border-default);overflow:auto;padding:12px 10px;display:flex;flex-direction:column;gap:2px}
+.help-nav button{border:0;background:transparent;text-align:left;padding:7px 10px;border-radius:10px;font-family:var(--font-display);font-weight:700;font-size:13.5px;color:var(--text-body);display:flex;gap:8px}
+.help-nav button .n{color:var(--red-500);min-width:16px}
+.help-nav button:hover,.help-nav button.on{background:color-mix(in srgb,var(--indigo-500) 12%,transparent);color:var(--text-heading)}
+.guide{overflow:auto;padding:4px 28px 40px;text-transform:none}
+.guide .g-lead{margin:16px 0 6px;font-size:16px;line-height:1.6;color:var(--text-muted)}
+.guide h2{font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1.25;color:var(--text-heading);margin:30px 0 8px;padding-top:14px;border-top:1px solid var(--border-default);text-transform:capitalize;scroll-margin-top:8px}
+.guide h2 .n{color:var(--red-500);margin-right:10px}
+.guide h3{font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--text-heading);margin:20px 0 6px;text-transform:capitalize}
+.guide p{margin:0 0 12px;font-size:15px;line-height:1.6;color:var(--text-body)}
+.guide ul,.guide ol{margin:0 0 12px;padding-left:22px;font-size:15px;line-height:1.6;color:var(--text-body)}
+.guide li{margin:0 0 5px}
+.guide b{color:var(--text-strong)}
+.guide code{font-size:13px;background:var(--indigo-050);color:var(--text-heading);padding:1px 5px;border-radius:5px}
+.guide .g-table{overflow-x:auto;margin:8px 0 14px;border:1px solid var(--border-default);border-radius:12px}
+.guide table{width:100%;border-collapse:collapse;font-size:14px;min-width:0}
+.guide th{position:static;padding:9px 12px;text-align:left;font-family:var(--font-display);font-weight:700;font-size:13px;color:#fff;background:var(--action);text-transform:none;letter-spacing:0}
+.guide td{padding:9px 12px;border-top:1px solid var(--border-default);white-space:normal}
+.guide figure{margin:10px 0 18px;text-align:center}
+.guide figure img{display:block;margin:0 auto;max-width:100%;height:auto;border-radius:12px;border:1px solid var(--border-default);box-shadow:var(--shadow-card)}
+.guide figure.phone img{width:260px;max-width:70%;border-radius:18px}
+.guide figcaption{margin-top:6px;font-size:13px;color:var(--text-muted)}
 .optrow.person.tm{grid-template-columns:auto minmax(0,1fr) auto}
 .optrow.person.out{grid-template-columns:auto minmax(130px,1fr) auto}
 .pav{width:32px;height:32px;border-radius:50%;background:var(--indigo-500);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:12px;flex:none}
@@ -318,6 +342,9 @@ svg.intro .pin{animation:pinIn .55s cubic-bezier(.2,1.5,.4,1) backwards}
 @keyframes pinPulse{from{transform:scale(1);opacity:.85}to{transform:scale(3.6);opacity:0}}
 .legend .ramp{width:160px;height:8px;border-radius:4px}
 .legend .ends{display:flex;justify-content:space-between;width:160px;color:var(--text-muted)}
+.maplabel.ab{fill:var(--text-muted);font-weight:700;opacity:.85}
+.hex{cursor:zoom-in;transition:opacity .15s}
+.hex:hover{opacity:.82}
 .maplabel{font-family:var(--font-display);font-weight:700;fill:var(--text-strong);paint-order:stroke;stroke:var(--surface-card);stroke-linejoin:round;pointer-events:none}
 
 .side-h{padding:16px 16px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -515,6 +542,11 @@ td.addr{font-weight:700;color:var(--text-strong)}
   .tablewrap{display:none} .dcards{display:flex}
   .ins,.trends{grid-template-columns:1fr}
   .modal{left:0;right:0;top:auto;bottom:0;width:100%;max-height:92vh;border-radius:20px 20px 0 0;transform:translateY(100%)}
+  .modal.help{width:100%;height:92vh}
+  .help-b{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .help-nav{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--border-default);padding:8px 12px}
+  .help-nav button{white-space:nowrap}
+  .guide{padding:4px 16px 40px}
   .modal.open{transform:none}
   .dr-f{flex-wrap:wrap}
   .sec-h .btn{padding:8px 14px;font-size:13px}
@@ -596,11 +628,10 @@ td.addr{font-weight:700;color:var(--text-strong)}
         <span class="muted" id="mapHint">Click a pin to view or fix a deal · click a state to filter</span>
       </div>
       <div class="mapbox" id="mapbox">
-        <canvas id="heat"></canvas>
         <svg id="svg" viewBox="0 0 975 610" role="img" aria-label="Map of deals across the USA">
           <g id="gStates"></g>
           <path id="borders" class="borders"/>
-          <image id="heatImg" preserveAspectRatio="none" style="pointer-events:none"/>
+          <g id="gHex"></g>
           <g id="gLabels"></g>
           <g id="gPins"></g>
           <g id="gFx"></g>
@@ -650,6 +681,8 @@ td.addr{font-weight:700;color:var(--text-strong)}
 <div class="pop acct" id="acct" role="menu"></div>
 <div class="mscrim" id="setScrim"></div>
 <div class="mscrim" id="teamScrim"></div>
+<div class="mscrim" id="helpScrim"></div>
+<section class="modal help" id="helpWin" role="dialog" aria-modal="true" aria-labelledby="helpTitle"></section>
 <section class="modal" id="teamWin" role="dialog" aria-modal="true" aria-labelledby="teamTitle"></section>
 <section class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle"></section>
 <div class="toast" id="toast"><i></i><span></span></div>
@@ -813,7 +846,9 @@ function renderFilterDDs() {
     one('acq', 'acq', 'All ACQ') + one('dispo', 'dispo', 'All DISPO') + one('fus', 'fus', 'All FUS') + one('src', 'source', 'All Lead Sources') + one('exit', 'exit', 'All Exits');
 }
 const METRICS = [['deals','Shade By Deals'],['profit','Shade By Actual Profit'],['close','Shade By Close Rate'],['cancel','Shade By Cancel Rate']];
-function renderTools() { const m = $('ddMetric'); m.hidden = mode !== 'states'; m.innerHTML = mode === 'states' ? dd({ value: stateMetric, options: METRICS.map(([v, l]) => ({ v, l })), label: 'Shade states by', onChange: v => { stateMetric = v; render(); } }) : ''; }
+function renderTools() { const m = $('ddMetric'); m.hidden = mode === 'pins';
+  m.innerHTML = mode === 'states' ? dd({ value: stateMetric, options: METRICS.map(([v, l]) => ({ v, l })), label: 'Shade states by', onChange: v => { stateMetric = v; render(); } })
+    : mode === 'heat' ? dd({ value: hexMetric, options: HEX_METRICS.map(([v, l]) => ({ v, l })), label: 'Shade hexagons by', onChange: v => { hexMetric = v; render(); } }) : ''; }
 
 // ---------- map ----------
 const svg = $('svg'), NS = 'http://www.w3.org/2000/svg';
@@ -863,54 +898,40 @@ function renderMap(list) {
         if (d.status !== 'signed') { const shape = d.status === 'closed' ? diamondPath(x, y, r * 1.25) : xPath(x, y, r * 1.45, r * .42);
           return `<path class="${cls}" data-id="${d.id}" d="${shape}" stroke-width="${sw}" stroke-linejoin="round" fill="var(${STATUS[d.status].v})"${delay}/>`; }
         return `<circle class="${cls}" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" stroke-width="${sw}" fill="var(${STATUS[d.status].v})"${delay}/>`; }).join('');
-  } else if (mode === 'heat') {
-    g.innerHTML = list.filter(d => d.px != null).map(d => { const [x, y] = pinPos(d); return `<circle class="pin" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(5 * pk).toFixed(2)}" fill="transparent" stroke="none"/>`; }).join('');
   } else g.innerHTML = '';
-  // labels: top cities in heat mode, state abbreviations with deals in states mode
-  const L = $('gLabels'); const fs = 11 * pk;
-  if (mode === 'heat') {
-    const byCity = {}; list.filter(d => d.x != null && d.city).forEach(d => { const key = d.city + ', ' + d.state; (byCity[key] = byCity[key] || { n: 0, x: d.x, y: d.y }).n++; });
-    L.innerHTML = Object.entries(byCity).sort((a, b) => b[1].n - a[1].n).slice(0, 6).map(([n, o]) => `<text class="maplabel" x="${o.x + 9 * pk}" y="${o.y - 9 * pk}" font-size="${fs}" stroke-width="${3 * pk}">${esc(n.split(',')[0])} · ${o.n}</text>`).join('');
-  } else if (mode === 'states') {
-    L.innerHTML = MAP.states.filter(s => stats[s.a] && !['RI','DE','DC','CT','NJ','MD','MA','NH','VT'].includes(s.a)).map(s => `<text class="maplabel" text-anchor="middle" x="${s.c[0]}" y="${s.c[1] + 4 * pk}" font-size="${fs}" stroke-width="${3 * pk}">${s.a}</text>`).join('');
-  } else L.innerHTML = '';
+  const hx = mode === 'heat' ? renderHex(list, k) : null;
+  if (!hx) $('gHex').innerHTML = '';
+  // labels: state initials on every map; the small northeastern states only once zoomed in
+  const L = $('gLabels'), fs = (mode === 'states' ? 11 : 9.5) * pk, tiny = ['RI', 'DE', 'DC', 'CT', 'NJ', 'MD', 'MA', 'NH', 'VT'];
+  L.innerHTML = MAP.states.filter(s => (mode !== 'states' || stats[s.a]) && (k < .6 || !tiny.includes(s.a))).map(s => `<text class="maplabel ${mode === 'states' ? '' : 'ab'}" text-anchor="middle" x="${s.c[0]}" y="${s.c[1] + 4 * pk}" font-size="${fs.toFixed(2)}" stroke-width="${(3 * pk).toFixed(2)}">${s.a}</text>`).join('');
   drawHeat(list);
-  renderLegend(min, max);
+  renderLegend(hx ? hx.min : min, hx ? hx.max : max, hx);
 }
-function drawHeat(list) {
-  const cv = $('heat'), box = $('mapbox'), W = box.clientWidth, H = box.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
-  cv.width = W * dpr; cv.height = H * dpr;
-  const c = cv.getContext('2d'); c.clearRect(0, 0, cv.width, cv.height);
-  const im = $('heatImg');
-  if (mode !== 'heat' || !W) { im.removeAttribute('href'); return; }
-  const R = 30 * dpr * Math.pow(975 / vb[2], .45) * (W / 975) * 1.25;
-  list.filter(d => d.px != null).forEach(d => {
-    const [x, y] = pinPos(d), sx = (x - vb[0]) / vb[2] * W * dpr, sy = (y - vb[1]) / vb[3] * H * dpr;
-    const w = d.status === 'closed' ? Math.min(1.6, .6 + (d.actual || 0) / 40000) : 1;
-    const gr = c.createRadialGradient(sx, sy, 0, sx, sy, R);
-    gr.addColorStop(0, `rgba(0,0,0,${.22 * w})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
-    c.fillStyle = gr; c.fillRect(sx - R, sy - R, R * 2, R * 2);
+function drawHeat() {}
+// hexagons on the map, binned from each deal's spot; finer as you zoom in
+const HEX_METRICS = [['deals', 'Shade By Deals'], ['profit', 'Shade By Actual Profit'], ['close', 'Shade By Close Rate']];
+let hexMetric = 'deals', HEX = [];
+function renderHex(list, k) {
+  const r = 14 * Math.pow(k, .65), dx = Math.sqrt(3) * r, dy = 1.5 * r, bins = {};
+  list.filter(d => d.x != null).forEach(d => {
+    let pj = d.y / dy, pj0 = Math.round(pj), pi = d.x / dx - (pj0 & 1) / 2, pi0 = Math.round(pi); const py1 = pj - pj0;
+    if (Math.abs(py1) * 3 > 1) { const px1 = pi - pi0, pi1 = pi0 + (pi < pi0 ? -1 : 1) / 2, pj1 = pj0 + (pj < pj0 ? -1 : 1), px2 = pi - pi1, py2 = pj - pj1;
+      if (px1 * px1 + py1 * py1 > px2 * px2 + py2 * py2) { pi0 = pi1 + (pj0 & 1 ? 1 : -1) / 2; pj0 = pj1; } }
+    const key = pi0 + ',' + pj0; (bins[key] = bins[key] || { cx: (pi0 + (pj0 & 1) / 2) * dx, cy: pj0 * dy, ds: [] }).ds.push(d);
   });
-  // colourise the alpha with the brand ramp
-  const rampC = document.createElement('canvas'); rampC.width = 256; rampC.height = 1;
-  const rc = rampC.getContext('2d'), lg = rc.createLinearGradient(0, 0, 256, 0);
-  lg.addColorStop(0, 'rgba(0,0,0,0)'); lg.addColorStop(.18, css('--heat-a')); lg.addColorStop(.45, css('--heat-b')); lg.addColorStop(.72, css('--heat-c')); lg.addColorStop(1, css('--heat-d'));
-  rc.fillStyle = lg; rc.fillRect(0, 0, 256, 1);
-  const ramp = rc.getImageData(0, 0, 256, 1).data;
-  const img = c.getImageData(0, 0, cv.width, cv.height), px = img.data;
-  for (let i = 0; i < px.length; i += 4) {
-    const a = px[i + 3]; if (!a) continue;
-    const j = Math.min(255, Math.round(a * 1.15)) * 4;
-    px[i] = ramp[j]; px[i + 1] = ramp[j + 1]; px[i + 2] = ramp[j + 2]; px[i + 3] = Math.min(235, a * 2.4);
-  }
-  c.putImageData(img, 0, 0);
-  ['x', 'y', 'width', 'height'].forEach((a, i) => im.setAttribute(a, vb[i]));
-  im.setAttribute('href', cv.toDataURL());
+  HEX = Object.values(bins).map(b => ({ ...b, s: summarize(b.ds) }));
+  const val = b => hexMetric === 'profit' ? b.s.profit : hexMetric === 'close' ? (b.s.done ? b.s.rate : null) : b.s.n;
+  const vs = HEX.map(val).filter(v => v != null), max = Math.max(...vs, 1e-9), min = hexMetric === 'close' ? Math.min(...vs) : 0;
+  const lo = css('--seq-lo'), hi = css('--seq-hi'), corner = i => { const a = i * Math.PI / 3; return [Math.sin(a) * r * .94, -Math.cos(a) * r * .94]; };
+  $('gHex').innerHTML = HEX.map((b, i) => { const v = val(b), t = v == null ? 0 : max > min ? (hexMetric === 'close' ? (v - min) / (max - min) : Math.sqrt(v / max)) : 1;
+    const pts = [0, 1, 2, 3, 4, 5].map(j => { const [x, y] = corner(j); return (b.cx + x).toFixed(1) + ',' + (b.cy + y).toFixed(1); }).join(' ');
+    return `<polygon class="hex" data-hi="${i}" points="${pts}" fill="${v == null ? 'var(--gray-300)' : mix(lo, hi, .18 + .82 * t)}" stroke="var(--surface-card)" stroke-width="${(.8 * k).toFixed(2)}"/>`; }).join('');
+  return { min, max };
 }
-function renderLegend(min, max) {
+function renderLegend(min, max, hx) {
   const lg = $('legend');
   if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k">${KEY_ICON[s]}${STATUS[s].label}</span>`).join('')}<span class="k"><i class="ring2"></i>Signed In The Last 14 Days</span></div>`;
-  else if (mode === 'heat') lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(--heat-a),var(--heat-b),var(--heat-c),var(--heat-d))"></div><div class="ends"><span>Fewer deals</span><span>More</span></div>`;
+  else if (mode === 'heat') { const f = hexMetric === 'profit' ? kmoney : hexMetric === 'close' ? pct : (v => Math.round(v)); lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(--seq-lo),var(--seq-hi))"></div><div class="ends num"><span>${f(min)}</span><span>${f(max)}</span></div>`; }
   else {
     const f = stateMetric === 'profit' ? kmoney : stateMetric === 'deals' ? (v => Math.round(v)) : pct;
     const lo = stateMetric === 'cancel' ? '--seqr-lo' : '--seq-lo', hi = stateMetric === 'cancel' ? '--seqr-hi' : '--seq-hi';
@@ -921,7 +942,7 @@ $('modeSeg').addEventListener('click', e => {
   const b = e.target.closest('[data-m]'); if (!b) return;
   mode = b.dataset.m;
   $('modeSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
-  $('mapHint').textContent = mode === 'pins' ? 'Click a pin to view or fix a deal · click a state to filter' : mode === 'heat' ? 'Pick Cancelled above to see where deals fall through' : 'Hover a state for its numbers · click to filter';
+  $('mapHint').textContent = mode === 'pins' ? 'Click a pin to view or fix a deal · click a state to filter' : mode === 'heat' ? 'Hover a hexagon for its numbers · click to zoom in' : 'Hover a state for its numbers · click to filter';
   render();
 });
 
@@ -935,6 +956,10 @@ svg.addEventListener('pointermove', e => {
   const pin = e.target.closest('.pin');
   if (pin) { const d = deals.find(x => x.id === +pin.dataset.id); setHov(null);
     showTip(`<div class="th">${esc(d.address)}, ${esc(d.city)} ${d.state}</div><div class="tr"><span>Status</span><b style="color:var(${STATUS[d.status].v})">${STATUS[d.status].label}</b></div><div class="tr"><span>ACQ / DISPO</span><b>${esc(d.acq.split(' ')[0])} / ${esc(d.dispo.split(' ')[0])}</b></div><div class="tr"><span>FUS</span><b>${esc(d.fus || '—')}</b></div><div class="tr"><span>Potential</span><b>${money(d.potential)}</b></div><div class="tr"><span>Actual</span><b>${money(d.actual)}</b></div><div class="tr"><span>Exit</span><b>${esc(d.exit || '—')}</b></div>${d.cancelReason ? `<div style="margin-top:6px;color:var(--text-body)">“${esc(d.cancelReason)}”</div>` : ''}`, e); return; }
+  const hxEl = e.target.closest('.hex');
+  if (hxEl) { setHov(null); const b = HEX[+hxEl.dataset.hi]; if (!b) return; const o = b.s, cities = {}; b.ds.forEach(d => { if (d.city) cities[d.city + ', ' + d.state] = (cities[d.city + ', ' + d.state] || 0) + 1; });
+    const top = Object.entries(cities).sort((a, c) => c[1] - a[1]).slice(0, 3).map(([n, c]) => `${esc(n)} (${c})`).join(', ');
+    showTip(`<div class="th">${top || 'This Area'}</div><div class="tr"><span>Deals</span><b>${o.n}</b></div><div class="tr"><span>Signed · Closed · Cancelled</span><b>${o.signed} · ${o.closed} · ${o.canc}</b></div><div class="tr"><span>Close rate</span><b>${o.done ? pct(o.rate) : '—'}</b></div><div class="tr"><span>Actual profit</span><b>${money(o.profit)}</b></div>`, e); return; }
   const st = e.target.closest('.st');
   if (st) { setHov(st); const a = st.dataset.a, o = stateStats(base())[a];
     if (!o) return showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>No deals yet</span></div>`, e);
@@ -947,6 +972,7 @@ svg.addEventListener('pointerleave', () => { setHov(null); hideTip(); });
 svg.addEventListener('click', e => {
   if (drag && drag.moved) return;
   const pin = e.target.closest('.pin'); if (pin) return openDeal(+pin.dataset.id);
+  const hxEl = e.target.closest('.hex'); if (hxEl) { const b = HEX[+hxEl.dataset.hi]; if (b) zoomAt(2.2, b.cx, b.cy); return; }
   const st = e.target.closest('.st'); if (st) { F.state = F.state === st.dataset.a ? '' : st.dataset.a; render(); }
 });
 // zoom + pan
@@ -1086,7 +1112,7 @@ function openAdd() { NEWD = BLANK(); selected = 'new'; openDrawer(NEWD); setTime
 function closeDeal() { $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); $('scrim').classList.remove('open'); selected = null; draft = null; NEWD = null; renderMap(visible()); }
 $('scrim').onclick = closeDeal;
 document.addEventListener('click', e => { if (e.target.closest('[data-add]')) openAdd(); });
-document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('teamWin').classList.contains('open')) closeTeam(); else if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); });
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('helpWin').classList.contains('open')) closeHelp(); else if ($('teamWin').classList.contains('open')) closeTeam(); else if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); });
 function renderDrawer(d) {
   const isNew = !d.id, stOpts = MAP.states.map(x => x.a).sort();
   const input = ([k, l, t, w]) => {
@@ -1095,7 +1121,7 @@ function renderDrawer(d) {
       const opts = t === 'opt' ? OPTS[k].map(o => ({ v: o.name, l: o.name, tag: optTag(o) })) : stOpts.map(a => ({ v: a, l: a + ' · ' + stName(a) }));
       ctl = dd({ id: 'f-' + k, value: draft[k], options: opts, cls: 'field-dd', label: l, onChange: v => { draft[k] = v; renderDrawer(d); } });
     }
-    else if (t === 'money') ctl = `<input id="f-${k}" data-k="${k}" inputmode="decimal" class="num" value="${draft[k] == null ? '' : (draft[k] < 0 ? '-$' : '$') + Math.abs(draft[k]).toLocaleString()}" placeholder="${k === 'actual' && draft.status === 'signed' ? 'Fills in at closing' : k === 'potential' ? 'Not filled in GoHighLevel yet' : '$0'}">`;
+    else if (t === 'money') ctl = `<input id="f-${k}" data-k="${k}" inputmode="decimal" class="num" value="${draft[k] == null ? '' : (draft[k] < 0 ? '-$' : '$') + Math.abs(draft[k]).toLocaleString()}" placeholder="${k === 'actual' && draft.status === 'signed' ? 'Fills in at closing' : k === 'potential' ? 'Not in GoHighLevel yet' : '$0'}">`;
     else if (t === 'date') ctl = `<input type="date" id="f-${k}" data-k="${k}" value="${toDay(draft[k])}">`;
     else if (t === 'textarea') ctl = `<textarea id="f-${k}" data-k="${k}" rows="3" placeholder="${k === 'cancelReason' ? (draft.status === 'cancelled' ? 'Why the deal fell through' : 'Fills in when the deal is cancelled') : 'Notes from GoHighLevel’s Feedback field'}">${esc(draft[k] || '')}</textarea>`;
     else if (t === 'zip') ctl = `<input id="f-zip" data-k="zip" inputmode="numeric" maxlength="5" class="num" value="${esc(draft.zip || '')}" placeholder="5 Digits">`;
@@ -1290,7 +1316,7 @@ $('acct').addEventListener('click', e => {
   else if (m.dataset.act === 'out') { beat(true); auth && auth.signOut(); }
   else if (m.dataset.act === 'online') openActive($('avatarBtn'));
   else if (m.dataset.act === 'team') openTeam();
-  else toast('The guide is on its way. Questions in the meantime? Ask Remy.', '--indigo-500');
+  else openHelp();
 });
 $('acct').addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); closePop(); $('avatarBtn').focus(); } });
 
@@ -1439,6 +1465,32 @@ $('teamWin').addEventListener('click', async e => {
     catch (e2) { toast('Not refreshed: ' + e2.message, '--red-500', 5200); }
     teamBusy = false; renderTeam();
   }
+});
+
+// ---------- help: the guide for your role, built from docs/guide by tools/help-build.mjs ----------
+let GUIDES = null, helpKind = null;
+async function openHelp() {
+  $('helpWin').classList.add('open'); $('helpScrim').classList.add('open');
+  if (!helpKind) helpKind = ME.canEdit ? 'editor' : 'viewer';
+  if (!GUIDES) { $('helpWin').innerHTML = '<div class="dr-h"><h2 class="h3" id="helpTitle">Help</h2><button class="x" data-hclose aria-label="Close">✕</button></div><div class="iempty" style="padding:20px">Loading the guide…</div>';
+    try { GUIDES = await fetch('help/guides.json').then(r => r.json()); } catch (e) { $('helpWin').querySelector('.iempty').textContent = 'The guide could not load. Try again.'; return; } }
+  renderHelp();
+}
+function closeHelp() { $('helpWin').classList.remove('open'); $('helpScrim').classList.remove('open'); }
+$('helpScrim').onclick = closeHelp;
+function renderHelp() {
+  const g = GUIDES[helpKind];
+  $('helpWin').innerHTML = `<div class="dr-h"><div><h2 class="h3" id="helpTitle" style="font-size:22px">${esc(g.title)}</h2><div class="muted">The Deals Heat Map, step by step</div></div>
+      <div style="display:flex;gap:10px;align-items:center">${ME.canEdit ? `<div class="seg"><button data-hk="editor" class="${helpKind === 'editor' ? 'on' : ''}">Editor Guide</button><button data-hk="viewer" class="${helpKind === 'viewer' ? 'on' : ''}">Viewer Guide</button></div>` : ''}<button class="x" data-hclose aria-label="Close">✕</button></div></div>
+    <div class="help-b"><nav class="help-nav" aria-label="Sections">${g.sections.map((x, i) => `<button data-hs="${x.id}"><span class="n">${i + 1}</span><span>${esc(x.title)}</span></button>`).join('')}</nav><article class="guide" id="guide">${g.html}</article></div>`;
+  const art = $('guide'), btns = [...$('helpWin').querySelectorAll('[data-hs]')];
+  const mark = () => { let cur = g.sections[0].id; g.sections.forEach(x => { const h = document.getElementById(x.id); if (h && h.offsetTop - art.offsetTop <= art.scrollTop + 40) cur = x.id; }); btns.forEach(b => b.classList.toggle('on', b.dataset.hs === cur)); };
+  art.addEventListener('scroll', mark, { passive: true }); mark();
+}
+$('helpWin').addEventListener('click', e => {
+  if (e.target.closest('[data-hclose]')) return closeHelp();
+  const k = e.target.closest('[data-hk]'); if (k) { helpKind = k.dataset.hk; return renderHelp(); }
+  const sec = e.target.closest('[data-hs]'); if (sec) { const h = document.getElementById(sec.dataset.hs); if (h) $('guide').scrollTo({ top: h.offsetTop - $('guide').offsetTop - 4, behavior: 'smooth' }); }
 });
 
 // ---------- month by month ----------
