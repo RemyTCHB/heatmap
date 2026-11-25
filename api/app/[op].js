@@ -8,7 +8,7 @@
 //   POST /api/app/geocode   move pins from the ZIP to the exact address, a batch at a time (owner or webhook key)
 //   POST /api/app/import    one-time load of the CSV history (webhook key only)
 // Vercel settings: HEATMAP_FIREBASE_WEB_CONFIG (the web app's config JSON from Firebase), plus those in auth.js.
-const { db, rawBody, send, touch, quotaHit, QUOTA_MSG, STAMP } = require('../_lib/store');
+const { app, db, rawBody, send, touch, quotaHit, QUOTA_MSG, STAMP } = require('../_lib/store');
 const { who, roleOf } = require('../_lib/auth');
 const { blank } = require('../_lib/deals');
 const { geocode, exact, addrKey } = require('../_lib/geo');
@@ -60,6 +60,19 @@ const teamOut = t => t ? { team: t.people.map(p => ({ ...p, canEdit: ['owner', '
 // the last full read of the contracts, kept while this server stays warm and the stamp has not moved
 let CACHE = null; const CACHE_MS = 6 * 60 * 60 * 1000;
 
+// Firestore rules: the server's admin key is not bound by them. Signed-in company accounts may only watch the stamp,
+// so open pages reload the moment a webhook or an edit lands; everything else stays server-only.
+const RULES = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /heatmap_meta/stamp {
+      allow read: if request.auth != null && request.auth.token.email_verified == true
+        && request.auth.token.email.matches('.*@(totalchb|kpidriver)[.]com');
+    }
+  }
+}
+`;
+
 async function loadOptions() {
   const snap = await db().doc(OPTIONS).get();
   if (snap.exists) return snap.data();
@@ -97,6 +110,16 @@ module.exports = async (req, res) => {
       try { return send(res, 200, teamOut(await team(db(), true))); }
       catch (e) { const code = (String(e.message).match(/answered (\d+)/) || [])[1];
         return send(res, 502, { error: code === '401' ? 'The Hub refused the key: HEAT_MAP_SECRET must be the same in the Hub and Heat Map projects, and both redeployed.' : code === '503' ? 'The Hub has no app secrets set up yet.' : code ? `The Hub answered ${code}. Try again in a minute.` : 'The Hub did not answer. Try again in a minute.' }); }
+    }
+
+    // one-time setup, webhook key only: GET shows the project's Firestore rules, POST { apply: true } sets the Heat Map's
+    if (op === 'rules') {
+      if (!me.viaKey) return send(res, 403, { error: 'Needs the webhook key.' });
+      const sr = app().securityRules();
+      if (req.method === 'GET') { const r = await sr.getFirestoreRuleset().catch(e => ({ error: e.message })); return send(res, 200, r.error ? r : { name: r.name, source: r.source.map(f => f.content).join('\n') }); }
+      const b = await body(req) || {}; if (!b.apply) return send(res, 400, { error: 'Send { apply: true }.' });
+      const r = await sr.releaseFirestoreRulesetFromSource(RULES); console.log('firestore rules released', r.name);
+      return send(res, 200, { ok: true, name: r.name });
     }
 
     if (op === 'presence') {
