@@ -24,7 +24,7 @@ Edits change the Heat Map only; they do not write back to GoHighLevel.
 
 ## Adding A Deal
 
-Press **+ Add Deal** (in the filters, or above the deal list). Fill in what you know: the street address is the only must. Type the ZIP to fill in the city and state, pick the status and the people, and press **Add Deal**. The pin goes on the map at the street address. The deal is marked **Added** in the list, and its history says you added it.
+Press **+ Add Deal** above the deal list. Fill in what you know: the street address is the only must. Type the ZIP to fill in the city and state, pick the status and the people, and press **Add Deal**. The pin goes on the map at the street address. The deal is marked **Added** in the list, and its history says you added it.
 
 ![Adding a deal](add-deal.jpg)
 
