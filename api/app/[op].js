@@ -83,7 +83,8 @@ module.exports = async (req, res) => {
     if (op === 'team') {
       if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
       try { return send(res, 200, teamOut(await team(db(), true))); }
-      catch (e) { return send(res, 502, { error: 'The Hub did not answer. Try again in a minute.' }); }
+      catch (e) { const code = (String(e.message).match(/answered (\d+)/) || [])[1];
+        return send(res, 502, { error: code === '401' ? 'The Hub refused the key: HEAT_MAP_SECRET must be the same in the Hub and Heat Map projects, and both redeployed.' : code === '503' ? 'The Hub has no app secrets set up yet.' : code ? `The Hub answered ${code}. Try again in a minute.` : 'The Hub did not answer. Try again in a minute.' }); }
     }
 
     if (op === 'presence') {
