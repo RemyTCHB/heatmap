@@ -22,7 +22,9 @@ and Settings, in the Hub's look. People sign in with their company Google accoun
 - **Pins sit at the exact street address** (US Census geocoder), or at the ZIP when the address is not found.
 - **Where To Market** suggests where to market more and where to pull back (close rate and profit against the team),
   and groups cancel reasons into themes with fixes.
-- The page refreshes the deals every minute, so new hooks show up without reloading.
+- The page checks for changes every minute, so new hooks show up without reloading. Each check costs one database read
+  (`heatmap_meta/stamp` moves on every write); the contracts are read again only when something changed. Who is online
+  lives in one document, `heatmap_meta/presence`. This keeps the Firebase free plan's 50,000 reads a day far away.
 
 The page says **Contracts** and **Revenue**; the data underneath (the hook keys such as `AB Profit (TC)`, the stored fields and the API names) keeps its original `deal` and `profit` names, so receiving is unchanged.
 

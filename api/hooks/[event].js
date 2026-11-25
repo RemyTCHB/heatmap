@@ -13,7 +13,7 @@ const { EVENTS, eventOf, parseBody, keyOk } = require('../_lib/hooks');
 const { extract, applyEvent } = require('../_lib/deals');
 const { geocode, exact, addrKey } = require('../_lib/geo');
 const { intake } = require('../_lib/options');
-const { db, rawBody, send } = require('../_lib/store');
+const { db, rawBody, send, touch, quotaHit, QUOTA_MSG } = require('../_lib/store');
 
 const HOOKS = 'heatmap_hooks', DEALS = 'heatmap_deals', OPTIONS = 'heatmap_meta/options';
 const limitOf = (url, def, max) => Math.min(max, Math.max(1, parseInt(url.searchParams.get('limit'), 10) || def));
@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
       const snap = await db().collection(HOOKS).orderBy('receivedAt', 'desc').limit(EVENTS.includes(only) ? 200 : limit).get();
       const hooks = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(h => !EVENTS.includes(only) || h.event === only).slice(0, limit);
       return send(res, 200, { hooks });
-    } catch (e) { console.error(event + ' failed', e.code || '', e.message || ''); return send(res, 500, { error: 'Could not read the Heat Map data.' }); }
+    } catch (e) { console.error(event + ' failed', e.code || '', e.message || ''); return send(res, quotaHit(e) ? 503 : 500, { error: quotaHit(e) ? QUOTA_MSG : 'Could not read the Heat Map data.' }); }
   }
 
   if (!EVENTS.includes(event)) return send(res, 404, { error: 'Unknown event. Use signed, closed or cancelled.' });
@@ -73,11 +73,12 @@ module.exports = async (req, res) => {
     });
     // the exact street address when the Census geocoder knows it; the ZIP spot stays otherwise
     if (out.spot && await exact(out.spot)) await out.ref.update({ lat: out.spot.lat, lon: out.spot.lon, geo: 'address', geoTried: now });
+    await touch();   // open pages pick the change up on their next check
     const { ref: _r, spot: _s, ...reply } = out;
     console.log(`heatmap hook: ${event} -> ${out.isNew ? 'new' : 'existing'} deal, now ${out.status}`);
     send(res, 200, { ok: true, event, ...reply });
   } catch (e) {
     console.error('heatmap hook failed', e.code || '', e.message || '');
-    send(res, 500, { error: 'Could not save the hook. GoHighLevel can retry.' });
+    send(res, quotaHit(e) ? 503 : 500, { error: quotaHit(e) ? QUOTA_MSG + ' GoHighLevel can retry.' : 'Could not save the hook. GoHighLevel can retry.' });
   }
 };
