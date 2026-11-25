@@ -398,6 +398,30 @@ svg.intro .pin{animation:pinIn .55s cubic-bezier(.2,1.5,.4,1) backwards}
 .board .more{border:0;background:transparent;color:var(--text-heading);font-weight:800;font-size:12.5px;align-self:flex-start;padding:2px 0}
 .empty{color:var(--text-muted);font-size:13px;padding:8px 0}
 
+/* ---------- full screen: the map or the deal list fills the window ---------- */
+.mt-r{display:flex;align-items:center;gap:12px;min-width:0}
+.sec-act{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dealsbox{display:flex;flex-direction:column;gap:inherit;min-width:0}
+.fsbtn{display:inline-flex;align-items:center;gap:6px;flex:none;border:1px solid var(--border-default);background:var(--surface-card);color:var(--text-heading);border-radius:999px;padding:6px 12px;font-family:var(--font-display);font-weight:700;font-size:13px;box-shadow:0 1px 2px rgba(34,29,84,.08);transition:transform .15s,box-shadow .15s,border-color .15s}
+.fsbtn:hover{transform:translateY(-1px);border-color:var(--border-strong);box-shadow:0 4px 12px rgba(34,29,84,.14)}
+.fsbtn svg{display:block}
+.fsbtn .ex,.fs .fsbtn .en{display:none}
+.fs .fsbtn .ex{display:inline}
+body.fsmode{overflow:hidden}
+body.fsmode main{z-index:46}
+.fs{position:fixed!important;inset:0;z-index:46;margin:0!important;border-radius:0!important;border:0!important;box-shadow:none!important;height:100vh;height:100dvh}
+.mapcard.fs .maparea{display:flex;flex-direction:column;min-height:0;padding:calc(14px + env(safe-area-inset-top,0px)) 20px calc(16px + env(safe-area-inset-bottom,0px)) calc(20px + env(safe-area-inset-left,0px))}
+.mapcard.fs .mapbox{margin:auto auto 0;flex:none}
+.mapcard.fs .maparea::after{content:"";margin-top:auto}
+.mapcard.fs .mapside{min-height:0;padding-top:env(safe-area-inset-top,0px)}
+.mapcard.fs .feed{max-height:none}
+.rotate-hint{display:none;text-align:center;font-size:13px;padding-top:10px}
+@media (orientation:portrait) and (max-width:700px){ .mapcard.fs .rotate-hint{display:block} .mapcard.fs .maparea{padding-left:12px;padding-right:12px} }
+.dealsbox.fs{background:var(--surface-subtle);padding:calc(16px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) calc(20px + env(safe-area-inset-left,0px));gap:16px}
+.dealsbox.fs #deals{margin-top:0!important}
+.dealsbox.fs .tablewrap{flex:1;min-height:0;max-height:none}
+.dealsbox.fs .dcards{flex:1;min-height:0;overflow:auto}
+
 /* ---------- deal list ---------- */
 .tablewrap{overflow:auto;max-height:520px;border-radius:20px}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:1080px}
@@ -532,7 +556,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
 
 /* ---------- responsive ---------- */
 @media (max-width:1240px){ .bar-mid{order:3;flex-basis:100%;display:flex;justify-content:center} .kpis{grid-template-columns:repeat(4,minmax(0,1fr))} }
-@media (max-width:1020px){ .mapcard{grid-template-columns:1fr} .mapside{border-left:0;border-top:1px solid var(--border-default)} .feed{max-height:340px} .boards{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:1020px){ .mapcard.fs{grid-template-columns:1fr} .mapcard.fs .mapside{display:none} .mapcard{grid-template-columns:1fr} .mapside{border-left:0;border-top:1px solid var(--border-default)} .feed{max-height:340px} .boards{grid-template-columns:repeat(2,minmax(0,1fr))} }
 @media (max-width:640px){
   .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .bar-row{padding-block:8px;gap:10px;flex-wrap:nowrap}
@@ -629,7 +653,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
           <button data-m="pins" class="on">Pins</button><button data-m="heat">Heat</button><button data-m="states">States</button>
         </div>
         <span id="ddMetric" hidden></span>
-        <span class="muted" id="mapHint">Click a pin to view or fix a deal · click a state to filter</span>
+        <div class="mt-r"><span class="muted" id="mapHint">Click a pin to view or fix a deal · click a state to filter</span><button class="fsbtn" data-fs="map" aria-label="Full screen map"><svg class="en" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ex" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span class="en">Full Screen</span><span class="ex">Exit Full Screen</span></button></div>
       </div>
       <div class="mapbox" id="mapbox">
         <svg id="svg" viewBox="0 0 975 610" role="img" aria-label="Map of deals across the USA">
@@ -644,6 +668,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
         <div class="legend glass" id="legend"></div>
         <div class="zoom glass"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zReset" aria-label="Reset zoom" style="font-size:13px">⤢</button></div>
       </div>
+      <div class="rotate-hint muted">Turn Your Phone Sideways For A Bigger Map</div>
     </div>
     <aside class="mapside">
       <div class="side-h"><h2 class="h3">Latest Activity</h2><span class="live-tag"><span class="dot"></span>Live</span></div>
@@ -651,12 +676,14 @@ td.addr{font-weight:700;color:var(--text-strong)}
     </aside>
   </section>
 
+  <div class="dealsbox" id="dealsBox">
   <section id="deals" class="sec-h" style="margin-top:8px">
     <div><h2 class="h2">Deal <span>List</span></h2><div class="muted" id="dlSub"></div></div>
-    <button class="btn pri" data-add>+ Add Deal</button>
+    <div class="sec-act"><button class="fsbtn" data-fs="dealsBox" aria-label="Full screen deal list"><svg class="en" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ex" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span class="en">Full Screen</span><span class="ex">Exit Full Screen</span></button><button class="btn pri" data-add>+ Add Deal</button></div>
   </section>
   <div class="card tablewrap"><table id="table"></table></div>
   <ul class="dcards" id="dcards"></ul>
+  </div>
 
   <section id="trends" class="sec-h" style="margin-top:8px">
     <div><h2 class="h2">Month By <span>Month</span></h2><div class="muted">The last 12 months · follows the filters above</div></div>
@@ -907,7 +934,7 @@ function renderMap(list) {
   if (!hx) $('gHex').innerHTML = '';
   // labels: state initials on every map; the small northeastern states only once zoomed in
   const L = $('gLabels'), fs = (mode === 'states' ? 11 : 9.5) * pk, tiny = ['RI', 'DE', 'DC', 'CT', 'NJ', 'MD', 'MA', 'NH', 'VT'];
-  L.innerHTML = MAP.states.filter(s => (mode !== 'states' || stats[s.a]) && (k < .6 || !tiny.includes(s.a))).map(s => `<text class="maplabel ${mode === 'states' ? '' : 'ab'}" text-anchor="middle" x="${s.c[0]}" y="${s.c[1] + 4 * pk}" font-size="${fs.toFixed(2)}" stroke-width="${(3 * pk).toFixed(2)}">${s.a}</text>`).join('');
+  L.innerHTML = MAP.states.filter(s => k < .6 || !tiny.includes(s.a)).map(s => `<text class="maplabel ${mode === 'states' ? '' : 'ab'}" text-anchor="middle" x="${s.c[0]}" y="${s.c[1] + 4 * pk}" font-size="${fs.toFixed(2)}" stroke-width="${(3 * pk).toFixed(2)}">${s.a}</text>`).join('');
   drawHeat(list);
   renderLegend(hx ? hx.min : min, hx ? hx.max : max, hx);
 }
@@ -988,7 +1015,7 @@ const toMap = e => { const r = svg.getBoundingClientRect(); return [vb[0] + (e.c
 let hintT;
 const zoomHint = txt => { $('zhintTxt').textContent = txt; $('zhint').classList.add('show'); clearTimeout(hintT); hintT = setTimeout(() => $('zhint').classList.remove('show'), 1400); };
 svg.addEventListener('wheel', e => {
-  if (!e.ctrlKey && !e.metaKey) { zoomHint(/Mac|iPhone|iPad/.test(navigator.platform) ? 'Hold ⌘ And Scroll To Zoom The Map' : 'Hold Ctrl And Scroll To Zoom The Map'); return; }
+  if (!e.ctrlKey && !e.metaKey && FS !== 'map') { zoomHint(/Mac|iPhone|iPad/.test(navigator.platform) ? 'Hold ⌘ And Scroll To Zoom The Map' : 'Hold Ctrl And Scroll To Zoom The Map'); return; }
   e.preventDefault(); const [x, y] = toMap(e); zoomAt(Math.exp(-Math.max(-50, Math.min(50, e.deltaY)) * 0.01), x, y);
 }, { passive: false });
 // mouse: drag to move a zoomed map. Touch: one finger scrolls the page, two fingers pinch and move the map.
@@ -1019,7 +1046,31 @@ window.addEventListener('pointerup', e => { if (e.pointerType === 'touch') retur
 $('zIn').onclick = () => zoomAt(1.5, vb[0] + vb[2] / 2, vb[1] + vb[3] / 2);
 $('zOut').onclick = () => zoomAt(1 / 1.5, vb[0] + vb[2] / 2, vb[1] + vb[3] / 2);
 $('zReset').onclick = () => { vb = [0, 0, 975, 610]; renderMap(visible()); };
-window.addEventListener('resize', () => { measure(); drawHeat(visible()); });
+window.addEventListener('resize', () => { measure(); fitFs(); drawHeat(visible()); });
+
+// ---------- full screen: the map card or the deal list covers the page (and the browser goes full screen where it can) ----------
+let FS = null;
+function fitFs() {
+  const box = $('mapbox'); if (FS !== 'map') { box.style.width = ''; return; }
+  const a = $('map').querySelector('.maparea'), cs = getComputedStyle(a), px = v => parseFloat(v) || 0;
+  const w = a.clientWidth - px(cs.paddingLeft) - px(cs.paddingRight), h = a.clientHeight - px(cs.paddingTop) - px(cs.paddingBottom) - a.querySelector('.maptools').offsetHeight - a.querySelector('.rotate-hint').offsetHeight - 16;
+  box.style.width = Math.max(240, Math.min(w, h * 975 / 610)) + 'px';
+}
+function enterFs(id) {
+  if (FS) exitFs(true);
+  FS = id === 'map' ? 'map' : id; $(id).classList.add('fs'); document.body.classList.add('fsmode'); hideTip();
+  const de = document.documentElement; const turn = () => { if (FS === 'map' && matchMedia('(pointer:coarse)').matches && screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); };
+  if (de.requestFullscreen && !document.fullscreenElement) de.requestFullscreen().then(turn).catch(() => {}); else turn();
+  requestAnimationFrame(() => { fitFs(); if (FS === 'map') renderMap(visible()); });
+}
+function exitFs(keepBrowser) {
+  if (!FS) return; const id = FS; FS = null; $(id).classList.remove('fs'); document.body.classList.remove('fsmode'); fitFs();
+  try { screen.orientation && screen.orientation.unlock && screen.orientation.unlock(); } catch (e) {}
+  if (!keepBrowser && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+  if (id === 'map') renderMap(visible());
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-fs]'); if (!b) return; const id = b.dataset.fs; if (FS === id) exitFs(); else enterFs(id); });
+document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && FS) exitFs(true); else fitFs(); });
 
 // ---------- leaderboards ----------
 function group(list, key) { const m = {}; list.forEach(d => { const k = typeof key === 'function' ? key(d) : d[key]; (m[k] = m[k] || []).push(d); }); return m; }
@@ -1079,13 +1130,15 @@ $('boards').addEventListener('click', e => {
 
 // ---------- deal list ----------
 let sortK = 'date', sortDir = -1, cardsShown = 30;
-const COLS = [['date','Last Event'],['signedAt','Signed'],['status','Status'],['address','Address'],['city','City'],['state','State'],['source','Lead Source'],['acq','ACQ'],['dispo','DISPO'],['fus','FUS'],['potential','Potential','r'],['actual','Actual','r'],['exit','Exit Strategy']];
+const COLS = [['date','Last Event'],['signedAt','Signed'],['status','Status'],['address','Address'],['source','Lead Source'],['acq','ACQ'],['dispo','DISPO'],['fus','FUS'],['potential','Potential','r'],['actual','Actual','r'],['exit','Exit Strategy']];
+// the full address for display only: the street, city, state and ZIP stay separate fields on the deal
+const fullAddr = d => { const tail = [d.state, d.zip].filter(Boolean).join(' '); return [d.address, d.city, tail].filter(Boolean).join(', '); };
 function renderTable(list) {
-  const val = (d, k) => k === 'date' ? (d.closedAt || d.signedAt) : k === 'actual' ? (d.actual == null ? -1 : d.actual) : d[k];
+  const val = (d, k) => k === 'date' ? (d.closedAt || d.signedAt) : k === 'actual' ? (d.actual == null ? -1 : d.actual) : k === 'address' ? fullAddr(d).toLowerCase() : d[k];
   const rows = [...list].sort((a, b) => { const x = val(a, sortK), y = val(b, sortK); return (x > y ? 1 : x < y ? -1 : 0) * sortDir; });
   $('dlSub').textContent = `${rows.length} deals match the filters · click a row to edit · click a heading to sort`;
-  $('table').innerHTML = `<thead><tr>${COLS.map(([k, l, c]) => `<th class="${c || ''}" data-k="${k}">${l}${sortK === k ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody>${rows.map(d => `<tr data-id="${d.id}"><td class="num">${fdate(d.closedAt || d.signedAt)}</td><td class="num">${fdate(d.signedAt)}</td><td><span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span></td><td class="addr">${esc(d.address)}${d.edits.includes('added') ? '<span class="edited">Added</span>' : d.edits.length ? '<span class="edited">Edited</span>' : ''}${d.flags.length ? `<div class="flagline">⚑ ${esc(d.flags[0])}${d.flags.length > 1 ? ` · +${d.flags.length - 1} more` : ''}</div>` : ''}</td><td>${esc(d.city)}</td><td>${d.state}</td><td>${esc(d.source)}</td><td>${esc(d.acq)}</td><td>${esc(d.dispo)}</td><td>${esc(d.fus || '—')}</td><td class="r num">${money(d.potential)}</td><td class="r num">${money(d.actual)}</td><td>${esc(d.exit || '—')}</td></tr>`).join('')}</tbody>`;
-  $('dcards').innerHTML = rows.slice(0, cardsShown).map(d => `<li data-id="${d.id}"><div class="dc-top"><span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span><span class="num muted">${fdate(d.closedAt || d.signedAt)}</span></div><div class="dc-a">${esc(d.address)}</div><div class="muted">${esc([d.city, d.state].filter(Boolean).join(', '))}${d.acq ? ' · ' + esc(d.acq) : ''}</div>${d.status === 'closed' && d.actual != null ? `<div class="dc-v num">${money(d.actual)}</div>` : ''}${d.flags.length ? `<div class="flagline">⚑ ${esc(d.flags[0])}</div>` : ''}</li>`).join('') + (rows.length > cardsShown ? `<li class="more-li"><button class="btn ghost" data-morecards>Show More (${rows.length - cardsShown} Left)</button></li>` : '');
+  $('table').innerHTML = `<thead><tr>${COLS.map(([k, l, c]) => `<th class="${c || ''}" data-k="${k}">${l}${sortK === k ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody>${rows.map(d => `<tr data-id="${d.id}"><td class="num">${fdate(d.closedAt || d.signedAt)}</td><td class="num">${fdate(d.signedAt)}</td><td><span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span></td><td class="addr">${esc(fullAddr(d))}${d.edits.includes('added') ? '<span class="edited">Added</span>' : d.edits.length ? '<span class="edited">Edited</span>' : ''}${d.flags.length ? `<div class="flagline">⚑ ${esc(d.flags[0])}${d.flags.length > 1 ? ` · +${d.flags.length - 1} more` : ''}</div>` : ''}</td><td>${esc(d.source)}</td><td>${esc(d.acq)}</td><td>${esc(d.dispo)}</td><td>${esc(d.fus || '—')}</td><td class="r num">${money(d.potential)}</td><td class="r num">${money(d.actual)}</td><td>${esc(d.exit || '—')}</td></tr>`).join('')}</tbody>`;
+  $('dcards').innerHTML = rows.slice(0, cardsShown).map(d => `<li data-id="${d.id}"><div class="dc-top"><span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span><span class="num muted">${fdate(d.closedAt || d.signedAt)}</span></div><div class="dc-a">${esc(d.address)}</div><div class="muted">${esc([d.city, [d.state, d.zip].filter(Boolean).join(' ')].filter(Boolean).join(', '))}${d.acq ? ' · ' + esc(d.acq) : ''}</div>${d.status === 'closed' && d.actual != null ? `<div class="dc-v num">${money(d.actual)}</div>` : ''}${d.flags.length ? `<div class="flagline">⚑ ${esc(d.flags[0])}</div>` : ''}</li>`).join('') + (rows.length > cardsShown ? `<li class="more-li"><button class="btn ghost" data-morecards>Show More (${rows.length - cardsShown} Left)</button></li>` : '');
 }
 $('table').addEventListener('click', e => {
   const th = e.target.closest('th'); if (th) { const k = th.dataset.k; sortDir = sortK === k ? -sortDir : (k === 'potential' || k === 'actual' || k === 'date' ? -1 : 1); sortK = k; return renderTable(visible()); }
@@ -1116,7 +1169,7 @@ function openAdd() { NEWD = BLANK(); selected = 'new'; openDrawer(NEWD); setTime
 function closeDeal() { $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); $('scrim').classList.remove('open'); selected = null; draft = null; NEWD = null; renderMap(visible()); }
 $('scrim').onclick = closeDeal;
 document.addEventListener('click', e => { if (e.target.closest('[data-add]')) openAdd(); });
-document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('helpWin').classList.contains('open')) closeHelp(); else if ($('teamWin').classList.contains('open')) closeTeam(); else if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); });
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('helpWin').classList.contains('open')) closeHelp(); else if ($('teamWin').classList.contains('open')) closeTeam(); else if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); else if (FS) exitFs(); });
 function renderDrawer(d) {
   const isNew = !d.id, stOpts = MAP.states.map(x => x.a).sort();
   const input = ([k, l, t, w]) => {
