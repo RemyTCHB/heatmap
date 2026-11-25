@@ -18,7 +18,7 @@ Click a pin, a row in the contract list or a Latest Activity item to open the co
 - **Address**: typing a 5-digit **ZIP** fills in the city and state. When you change the address, the pin moves to the new street address after you save (or to the ZIP when the address cannot be found). The contract list shows the address on one line, but the street, city, state and ZIP stay separate fields here, the same as they arrive from GoHighLevel.
 - **Lead Source, Exit Strategy, ACQ, DISPO, FUS**: pick from the lists. **Edit List** (or **From The Hub**) opens that list in Settings.
 - **Revenue and dates**: type the numbers; negative revenue is allowed for a loss.
-- **Feedback and Cancel Reason**: notes. The cancel reason feeds Fix The Fall-Outs in Where To Market.
+- **Feedback**: the Feedback field from GoHighLevel. On a cancelled contract it is why the contract fell through, and it feeds Fix The Fall-Outs in Where To Market.
 
 Edits change the Heat Map only; they do not write back to GoHighLevel.
 

@@ -108,7 +108,7 @@ Clicking a pin, a row or a Latest Activity item opens the contract on the right:
 ![A contract, as everyone sees it](deal-panel-view.jpg)
 
 - **Fix & Flips** show both closings: the purchase and the resale, each with its date and revenue. Actual revenue is the two added together.
-- **Feedback** is the general Feedback field from GoHighLevel. **Cancel Reason** is the feedback a contract carried when it was cancelled.
+- **Feedback** is the Feedback field from GoHighLevel. On a cancelled contract it says why the contract fell through.
 - **History** lists what happened and who did it: GoHighLevel for the hooks, CSV History for the contracts loaded from the old sheets, or the name of the person who changed it.
 - **Needs Review** at the top lists anything to check, such as a closed contract with no DISPO.
 
@@ -119,7 +119,7 @@ Contracts come from GoHighLevel. When a contract moves to **Contract Signed**, *
 - **The date of each event is the day it happens.** A contract signed today shows signed today; a contract that closes tomorrow shows closed tomorrow.
 - **Closed** records the revenue from **AB Profit (TC)**.
 - **A second Closed** on the same contract is a **Fix & Flip** resale: its revenue (**BC Profit**) is added to the contract.
-- **Cancelled** keeps the **Feedback** as the cancel reason.
+- **Cancelled** keeps the **Feedback**, which says why it fell through.
 - A new lead source or exit strategy from GoHighLevel is added to the lists on its own, marked **New From CRM**.
 - Contracts from before go-live came from the old Signed, Cancelled and Revenues sheets and are marked **CSV History**.
 
@@ -146,7 +146,7 @@ Three cards turn the numbers into suggestions. They compare each area with the t
 
 - **Market More Here**: states and cities that close more often than the team and make more per close, with the lead source that brought the most revenue there.
 - **Pull Back Here**: areas with a low close rate, or that close but make well under the team's average.
-- **Fix The Fall-Outs**: cancel reasons grouped into themes (the seller backed out, price, title or probate, repairs, no buyer, financing, an agent or another offer, could not reach the seller), each with a way to prevent it, and examples. Until cancel reasons arrive, it shows where contracts fall out by lead source, ACQ and state.
+- **Fix The Fall-Outs**: the Feedback on cancelled contracts grouped into themes (the seller backed out, price, title or probate, repairs, no buyer, financing, an agent or another offer, could not reach the seller), each with a way to prevent it, and examples. Until cancel reasons arrive, it shows where contracts fall out by lead source, ACQ and state.
 
 ![Where To Market](where-to-market.jpg)
 

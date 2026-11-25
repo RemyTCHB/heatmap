@@ -70,7 +70,7 @@ recording links) is not stored.
 | ACQ / FUS / DISPO | `ACQ Manager` / `FUS Manager` / `Dispo Manager` |
 | Potential profit | `Potential Profit` |
 | Exit strategy | `Final Exit Strategy` |
-| Feedback (on a Cancelled hook it is also the cancel reason) | `FEEDBACK (MUST FILL)` |
+| Feedback (on a cancelled contract it says why it fell through; the page shows only this field) | `FEEDBACK (MUST FILL)` |
 | Profit at the closing | `AB Profit (TC)` |
 | Profit at the Fix & Flip resale | `BC Profit` |
 | Kept for reference | `AB Date Signed`, `AB Actual Closing Date`, `BC Date Signed`, `Actual Sold Date` |
