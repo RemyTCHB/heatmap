@@ -172,7 +172,8 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 
 /* ---------- filters ---------- */
 .filters{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr,81px));z-index:20;display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:16px;transition:background .15s,box-shadow .15s}
-.filters.stuck{background:color-mix(in srgb,var(--surface-card) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--border-default);box-shadow:var(--shadow-card)}
+.filters{border:1px solid transparent}
+.filters.stuck{background:color-mix(in srgb,var(--surface-card) 97%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--border-default);box-shadow:var(--shadow-raised)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{border:1px solid var(--border-default);background:var(--surface-card);border-radius:999px;padding:7px 14px;font-family:var(--font-display);font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:8px;color:var(--text-body);white-space:nowrap}
 .chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -203,7 +204,7 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 .pop .q:focus{outline:none;border-color:var(--indigo-500)}
 /* photo menu */
 .acct{width:260px;padding:8px;overflow-x:hidden}
-.acct.float{width:auto}
+.acct.float{width:auto;max-height:min(600px,calc(100vh - 24px))}
 .acct-me{display:flex;gap:10px;align-items:center;padding:8px 8px 10px}
 .acct-me .nm{font-family:var(--font-display);font-weight:800;color:var(--text-strong);font-size:15px;line-height:1.2}
 .acct-me .role{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red-500)}
@@ -248,6 +249,7 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 .hubtag{border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--indigo-050);color:var(--text-heading);font-family:var(--font-display)}
 .hubtag.warn{background:var(--st-cancel-bg);color:var(--st-cancel)}
 .optrow.person{grid-template-columns:auto minmax(0,1fr) auto;padding:8px 10px}
+.optrow.person.tm{grid-template-columns:auto minmax(0,1fr) auto}
 .optrow.person.out{grid-template-columns:auto minmax(130px,1fr) auto}
 .pav{width:32px;height:32px;border-radius:50%;background:var(--indigo-500);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:12px;flex:none}
 .pav.out{background:var(--gray-300);color:var(--text-strong)}
@@ -311,8 +313,8 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 .pin,.pulse{transform-box:fill-box;transform-origin:center}
 svg.intro .pin{animation:pinIn .55s cubic-bezier(.2,1.5,.4,1) backwards}
 @keyframes pinIn{from{transform:scale(0);opacity:0}}
-.pulse{pointer-events:none;animation:pulse 2.4s ease-out infinite}
-@keyframes pulse{from{transform:scale(1);opacity:.85}to{transform:scale(3.6);opacity:0}}
+.pulse{pointer-events:none;animation:pinPulse 2.4s ease-out infinite}
+@keyframes pinPulse{from{transform:scale(1);opacity:.85}to{transform:scale(3.6);opacity:0}}
 .legend .ramp{width:160px;height:8px;border-radius:4px}
 .legend .ends{display:flex;justify-content:space-between;width:160px;color:var(--text-muted)}
 .maplabel{font-family:var(--font-display);font-weight:700;fill:var(--text-strong);paint-order:stroke;stroke:var(--surface-card);stroke-linejoin:round;pointer-events:none}
@@ -383,6 +385,23 @@ td.addr{font-weight:700;color:var(--text-strong)}
 .dcards .dc-a{font-weight:800;color:var(--text-strong)}
 .dcards .dc-v{font-family:var(--font-display);font-weight:800;color:var(--st-closed)}
 .dcards .more-li{background:transparent;border:0;box-shadow:none;align-items:center}
+.rp{width:300px;max-width:calc(100vw - 32px);padding:8px 6px 6px}
+.rp-h{display:flex;align-items:baseline;gap:8px;padding:2px 6px}
+.rp-t{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--text-heading)}
+.rp-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 4px 4px}
+.rp-m{font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--text-heading)}
+.rp-arr{width:34px;height:34px;border-radius:999px;border:1px solid var(--glass-border);background:var(--glass-bg);background-image:var(--menu-sheen);box-shadow:var(--glass-shadow);font-size:20px;line-height:1;color:var(--text-heading);display:grid;place-items:center;padding:0}
+.rp-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:0 2px}
+.rw{text-align:center;font-family:var(--font-display);font-weight:700;font-size:11px;letter-spacing:.06em;color:var(--text-muted);padding:4px 0}
+.rd{height:36px;border-radius:999px;padding:0;border:1.5px solid transparent;background:transparent;font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--text-body);font-variant-numeric:tabular-nums}
+.rd:hover{border-color:var(--indigo-500)}
+.rd.today{border-color:var(--indigo-500)}
+.rd.future{color:var(--text-muted)}
+.rd.mid{background:color-mix(in srgb,var(--indigo-500) 14%,transparent);border-radius:8px}
+.rd.on{background:var(--action);border-color:var(--action);color:#fff;box-shadow:0 1px 2px rgba(34,29,84,.2)}
+.rp-sum{margin:10px 4px 4px;padding:10px 12px;border-radius:14px;border:1px solid var(--glass-border);background:var(--glass-bg);background-image:var(--menu-sheen);box-shadow:var(--glass-shadow);font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--text-heading)}
+.rp-f{display:flex;justify-content:space-between;gap:8px;padding:8px 4px 2px}
+.btn:disabled{opacity:.45;cursor:default}
 .trends{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .chart{padding:16px 16px 10px;min-width:0}
 .ch-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:6px}
@@ -629,6 +648,8 @@ td.addr{font-weight:700;color:var(--text-strong)}
 <div class="pop" id="pop"></div>
 <div class="pop acct" id="acct" role="menu"></div>
 <div class="mscrim" id="setScrim"></div>
+<div class="mscrim" id="teamScrim"></div>
+<section class="modal" id="teamWin" role="dialog" aria-modal="true" aria-labelledby="teamTitle"></section>
 <section class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle"></section>
 <div class="toast" id="toast"><i></i><span></span></div>
 
@@ -645,6 +666,7 @@ let MAP = null, ZIPS = null;
 const HUB_PEOPLE = [['Brandy Pollack','manager'], ['Remy Ahmed','manager']];
 const ROLE_LABEL = { owner: 'Owner', editor: 'Editor', manager: 'Manager', viewer: 'Viewer', lead: 'Team Leader', member: 'Member' };
 let ME = { name: '', email: '', photo: '', role: 'viewer', canEdit: false };
+let TEAM_AT = 0;
 let SERVER_OPTS = null, fb = null, auth = null, TEAM = null, ONLINE = [];
 const DEPT_OF = { acq: 'ACQ', dispo: 'DISPO', fus: 'FUS' };
 const teamBy = n => TEAM && TEAM.find(p => norm(p.name) === norm(n));
@@ -708,7 +730,7 @@ function loadDeals(list) {
 }
 
 // ---------- state ----------
-const F = { status: new Set(ORDER), period: 'all', acq: '', dispo: '', fus: '', src: '', exit: '', state: '', review: false };
+const F = { status: new Set(ORDER), period: 'all', from: '', to: '', acq: '', dispo: '', fus: '', src: '', exit: '', state: '', review: false };
 let introDone = false, kpiDone = false;
 let mode = 'pins', stateMetric = 'deals', vb = [0, 0, 975, 610], selected = null, hookCount = 0;
 const boardMetric = {}, boardMore = {};
@@ -724,9 +746,10 @@ const stName = a => (MAP.states.find(s => s.a === a) || {}).n || a;
 
 function inPeriod(d) {
   if (F.period === 'all') return true;
-  const t = d.closedAt || d.signedAt;
-  if (F.period === 'ytd') return t >= new Date('2026-01-01T00:00:00-05:00').getTime();
-  return t >= NOW - (+F.period) * DAY;
+  const t = d.closedAt || d.signedAt; if (!t) return false;
+  if (F.period === 'custom') return t >= Date.parse(F.from + 'T00:00:00-05:00') && t <= Date.parse(F.to + 'T23:59:59-05:00');
+  if (F.period === 'ytd') return t >= Date.parse(new Date().getFullYear() + '-01-01T00:00:00-05:00');
+  return t >= Date.now() - (+F.period) * DAY;
 }
 // filters other than status (status is applied separately so chips can show counts)
 const base = () => deals.filter(d => inPeriod(d) && (!F.acq || d.acq === F.acq) && (!F.dispo || d.dispo === F.dispo) && (!F.fus || d.fus === F.fus) && (!F.src || d.source === F.src) && (!F.exit || d.exit === F.exit) && (!F.state || d.state === F.state) && (!F.review || d.flags.length));
@@ -777,13 +800,15 @@ $('statusChips').addEventListener('click', e => {
   render();
 });
 $('stateChip').addEventListener('click', () => { F.state = ''; render(); });
-const PERIODS = [['all','All Time'],['ytd','2026 YTD'],['90','Last 90 Days'],['30','Last 30 Days']];
+const PERIODS = [['all','All Time'],['ytd','This Year'],['90','Last 90 Days'],['30','Last 30 Days'],['custom','Custom Range…']];
+const shortDay = v => { const [y, m, d] = v.split('-'); return MON[+m - 1] + ' ' + (+d) + (y !== String(new Date().getFullYear()) ? ', ' + y : ''); };
+const rangeLabel = () => F.from === F.to ? shortDay(F.from) : shortDay(F.from) + ' – ' + shortDay(F.to);
 const FKEY = { source: 'src', exit: 'exit', acq: 'acq', dispo: 'dispo', fus: 'fus' };
 function renderFilterDDs() {
   Object.entries(FKEY).forEach(([kind, fk]) => { if (F[fk] && !names(kind).includes(F[fk])) F[fk] = ''; });
   const opts = (kind, all) => [{ v: '', l: all }, ...OPTS[kind].map(x => ({ v: x.name, l: x.name, tag: optTag(x) }))];
   const one = (fk, kind, all) => dd({ value: F[fk], options: opts(kind, all), label: ONE[kind], set: !!F[fk], onChange: v => { F[fk] = v; render(); } });
-  $('filterDDs').innerHTML = dd({ value: F.period, options: PERIODS.map(([v, l]) => ({ v, l })), label: 'Period', set: F.period !== 'all', onChange: v => { F.period = v; render(); } }) +
+  $('filterDDs').innerHTML = dd({ id: 'periodDD', value: F.period, options: PERIODS.map(([v, l]) => ({ v, l: v === 'custom' && F.period === 'custom' ? rangeLabel() : l })), label: 'Period', set: F.period !== 'all', onChange: v => { if (v === 'custom') return openRange(); F.period = v; render(); } }) +
     one('acq', 'acq', 'All ACQ') + one('dispo', 'dispo', 'All DISPO') + one('fus', 'fus', 'All FUS') + one('src', 'source', 'All Lead Sources') + one('exit', 'exit', 'All Exits');
 }
 const METRICS = [['deals','Shade By Deals'],['profit','Shade By Actual Profit'],['close','Shade By Close Rate'],['cancel','Shade By Cancel Rate']];
@@ -826,7 +851,7 @@ function renderMap(list) {
     const sorted = list.filter(d => d.px != null).sort((a, b) => ORDER.indexOf(b.status) - ORDER.indexOf(a.status));
     const intro = !introDone && sorted.length; if (intro) { introDone = true; svg.classList.add('intro'); setTimeout(() => svg.classList.remove('intro'), 2200); }
     const recent = Date.now() - 14 * DAY, r = 4.6 * pk, sw = (1.3 * pk).toFixed(2);
-    g.innerHTML = sorted.filter(d => (d.closedAt || d.signedAt || 0) >= recent).map(d => { const [x, y] = pinPos(d); return `<circle class="pulse" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="none" stroke="var(${STATUS[d.status].v})" stroke-width="${(1.4 * pk).toFixed(2)}"/>`; }).join('') +
+    g.innerHTML = sorted.filter(d => d.status === 'signed' && (d.signedAt || 0) >= recent).map(d => { const [x, y] = pinPos(d); return `<circle class="pulse" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="none" stroke="var(${STATUS[d.status].v})" stroke-width="${(1.4 * pk).toFixed(2)}"/>`; }).join('') +
       sorted.map((d, i) => { const [x, y] = pinPos(d), cls = `pin${selected === d.id ? ' sel' : ''}`, delay = intro ? ` style="animation-delay:${Math.min(900, i * 3)}ms"` : '';
         if (d.status === 'cancelled') { const q = r * 1.2; return `<path class="${cls}" data-id="${d.id}" d="M${x.toFixed(1)} ${(y - q).toFixed(1)}L${(x + q).toFixed(1)} ${y.toFixed(1)}L${x.toFixed(1)} ${(y + q).toFixed(1)}L${(x - q).toFixed(1)} ${y.toFixed(1)}Z" stroke-width="${sw}" stroke-linejoin="round" fill="var(${STATUS[d.status].v})"${delay}/>`; }
         return `<circle class="${cls}" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" stroke-width="${sw}" fill="var(${STATUS[d.status].v})"${delay}/>`; }).join('');
@@ -876,7 +901,7 @@ function drawHeat(list) {
 }
 function renderLegend(min, max) {
   const lg = $('legend');
-  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k"><i class="${s === 'cancelled' ? 'dia' : ''}" style="background:var(${STATUS[s].v})"></i>${STATUS[s].label}</span>`).join('')}<span class="k"><i class="ring2"></i>Last 14 Days</span></div>`;
+  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k"><i class="${s === 'cancelled' ? 'dia' : ''}" style="background:var(${STATUS[s].v})"></i>${STATUS[s].label}</span>`).join('')}<span class="k"><i class="ring2"></i>Signed In The Last 14 Days</span></div>`;
   else if (mode === 'heat') lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(--heat-a),var(--heat-b),var(--heat-c),var(--heat-d))"></div><div class="ends"><span>Fewer deals</span><span>More</span></div>`;
   else {
     const f = stateMetric === 'profit' ? kmoney : stateMetric === 'deals' ? (v => Math.round(v)) : pct;
@@ -1053,7 +1078,7 @@ function openAdd() { NEWD = BLANK(); selected = 'new'; openDrawer(NEWD); setTime
 function closeDeal() { $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); $('scrim').classList.remove('open'); selected = null; draft = null; NEWD = null; renderMap(visible()); }
 $('scrim').onclick = closeDeal;
 document.addEventListener('click', e => { if (e.target.closest('[data-add]')) openAdd(); });
-document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); });
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('teamWin').classList.contains('open')) closeTeam(); else if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); });
 function renderDrawer(d) {
   const isNew = !d.id, stOpts = MAP.states.map(x => x.a).sort();
   const input = ([k, l, t, w]) => {
@@ -1155,10 +1180,13 @@ function paintTheme() { const t = currentTheme(); $('thL').classList.toggle('on'
 $('thL').onclick = () => setTheme('light'); $('thD').onclick = () => setTheme('dark');
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { paintTheme(); render(); });
 function measure() { document.documentElement.style.setProperty('--hdr', $('hdr').offsetHeight + 'px'); }
+// the header changes height as it slims: keep the filters' sticky offset in step
+if (window.ResizeObserver) new ResizeObserver(() => { measure(); stuckCheck(); }).observe($('hdr'));
+function stuckCheck() { const f = $('filters'); f.classList.toggle('stuck', f.getBoundingClientRect().top <= $('hdr').getBoundingClientRect().bottom + 1); }
 window.addEventListener('scroll', () => {
-  const f = $('filters'); f.classList.toggle('stuck', f.getBoundingClientRect().top <= $('hdr').offsetHeight + 2);
+  stuckCheck();
   // the header slims past 120px and comes back within 40px of the top, like the Hub
-  const h = $('hdr'); if (scrollY > 120 && !h.classList.contains('slim')) { h.classList.add('slim'); measure(); } else if (scrollY < 40 && h.classList.contains('slim')) { h.classList.remove('slim'); measure(); }
+  const h = $('hdr'); if (scrollY > 120 && !h.classList.contains('slim')) h.classList.add('slim'); else if (scrollY < 40 && h.classList.contains('slim')) h.classList.remove('slim');
   const max = document.documentElement.scrollHeight - innerHeight; $('progress').style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
 }, { passive: true });
 
@@ -1204,7 +1232,7 @@ function openDD(btn) {
   (pop.querySelector('.q') || on || pop.querySelector('.opt')).focus({ preventScroll: true });
 }
 function closePop(refocus) { $('acct').classList.remove('float'); if (ddBtn) { ddBtn.setAttribute('aria-expanded', 'false'); if (refocus) ddBtn.focus(); } ddBtn = null; pop.classList.remove('open'); $('acct').classList.remove('open'); }
-pop.addEventListener('click', e => { const o = e.target.closest('.opt'); if (!o || !ddBtn) return; const cfg = DD[ddBtn.dataset.dd]; const v = cfg.options[+o.dataset.i].v; closePop(); if (v !== cfg.value) cfg.onChange(v); });
+pop.addEventListener('click', e => { const o = e.target.closest('.opt'); if (!o || !ddBtn) return; const cfg = DD[ddBtn.dataset.dd]; const v = cfg.options[+o.dataset.i].v; closePop(); if (v !== cfg.value || v === 'custom') cfg.onChange(v); });
 pop.addEventListener('input', e => { if (!e.target.classList.contains('q')) return; const q = norm(e.target.value); pop.querySelectorAll('.opt').forEach(o => { o.hidden = !!q && !norm(o.textContent).includes(q); }); });
 pop.addEventListener('keydown', e => {
   const opts = [...pop.querySelectorAll('.opt:not([hidden])')], i = opts.indexOf(document.activeElement);
@@ -1225,6 +1253,7 @@ window.addEventListener('resize', () => closePop());
 
 // ---------- photo menu ----------
 const ICON = {
+  team: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg>',
   gear: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
   help: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
   out: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>',
@@ -1237,6 +1266,7 @@ function openAcct() {
     <div class="mob-only acct-theme"><span>Theme</span><div class="theme glass"><button data-th="light" class="${t === 'light' ? 'on' : ''}" aria-label="Light theme">☀</button><button data-th="dark" class="${t === 'dark' ? 'on' : ''}" aria-label="Dark theme">☾</button></div></div>
     <button class="mi mob-only" role="menuitem" data-act="online"><span class="dot"></span>Who's Online<span class="bubble">${ONLINE.length}</span></button>
     <button class="mi" role="menuitem" data-act="settings">${ICON.gear}Settings${n ? `<span class="bubble red">${n} new</span>` : ''}</button>
+    <button class="mi" role="menuitem" data-act="team">${ICON.team}Team Members</button>
     <button class="mi" role="menuitem" data-act="help">${ICON.help}Help</button>
     <button class="mi" role="menuitem" data-act="out">${ICON.out}Sign Out</button>`;
   p.classList.add('open');
@@ -1251,6 +1281,7 @@ $('acct').addEventListener('click', e => {
   if (m.dataset.act === 'settings') openSettings();
   else if (m.dataset.act === 'out') { beat(true); auth && auth.signOut(); }
   else if (m.dataset.act === 'online') openActive($('avatarBtn'));
+  else if (m.dataset.act === 'team') openTeam();
   else toast('The guide is on its way. Questions in the meantime? Ask Remy.', '--indigo-500');
 });
 $('acct').addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); closePop(); $('avatarBtn').focus(); } });
@@ -1341,6 +1372,65 @@ $('settings').addEventListener('submit', e => {
   const v = $('newOpt').value.trim().replace(/\s+/g, ' '); if (!v) return;
   if (OPTS[setKind].some(x => norm(x.name) === norm(v) || x.aliases.some(a => norm(a) === norm(v)))) { setErr = `“${v}” is already on the list.`; return renderSettings(); }
   serverOpt({ op: 'add', name: v }, `Added “${v}” to ${KINDS[setKind]}`);
+});
+
+// ---------- the custom range calendar, like the Hub's due-date picker ----------
+let RP = null;
+const todayStr = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+function openRange() {
+  const t = todayStr(), [y, m] = (F.period === 'custom' ? F.to : t).split('-').map(Number);
+  RP = { vy: y, vm: m - 1, a: F.period === 'custom' ? F.from : '', b: F.period === 'custom' ? F.to : '' };
+  setTimeout(() => { openFloat($('periodDD') || $('filterDDs'), '<div class="rp" id="rp"></div>'); paintRange(); }, 0);
+}
+function paintRange() {
+  const box = $('rp'); if (!box || !RP) return;
+  const pad = n => String(n).padStart(2, '0'), first = new Date(Date.UTC(RP.vy, RP.vm, 1)).getUTCDay(), days = new Date(Date.UTC(RP.vy, RP.vm + 1, 0)).getUTCDate(), t = todayStr();
+  const lo = RP.a && RP.b ? (RP.a < RP.b ? RP.a : RP.b) : RP.a, hi = RP.a && RP.b ? (RP.a < RP.b ? RP.b : RP.a) : RP.a;
+  const cells = [...Array(first).fill(null), ...Array.from({ length: days }, (_, i) => i + 1)].map(d => {
+    if (!d) return '<span></span>'; const v = RP.vy + '-' + pad(RP.vm + 1) + '-' + pad(d), end = v === lo || v === hi, mid = lo && hi && v > lo && v < hi;
+    return `<button type="button" class="rd${end ? ' on' : ''}${mid ? ' mid' : ''}${v === t ? ' today' : ''}${v > t ? ' future' : ''}" data-day="${v}" aria-pressed="${end}" aria-label="${v}">${d}</button>`; }).join('');
+  const sum = lo ? (hi && hi !== lo ? `${shortDay(lo)} – ${shortDay(hi)}` : `${shortDay(lo)} · pick the end day`) : 'Pick the first day';
+  box.innerHTML = `<div class="rp-h"><span class="rp-t">Custom Range</span><span class="muted">Deals by their last event</span></div>
+    <div class="rp-nav"><button type="button" class="rp-arr" data-shift="-1" aria-label="Previous month">‹</button><span class="rp-m">${new Date(Date.UTC(RP.vy, RP.vm, 1)).toLocaleString('en-US', { timeZone: 'UTC', month: 'long', year: 'numeric' })}</span><button type="button" class="rp-arr" data-shift="1" aria-label="Next month">›</button></div>
+    <div class="rp-g">${['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(w => `<span class="rw">${w}</span>`).join('')}${cells}</div>
+    <div class="rp-sum"><span>${sum}</span></div>
+    <div class="rp-f"><button type="button" class="btn ghost sm" data-rclear>All Time</button><button type="button" class="btn pri sm" data-rapply ${lo ? '' : 'disabled'}>Apply</button></div>`;
+}
+$('acct').addEventListener('click', e => {
+  if (!RP || !e.target.closest('#rp')) return;
+  const sh = e.target.closest('[data-shift]'); if (sh) { const mm = RP.vm + +sh.dataset.shift; RP.vy += Math.floor(mm / 12); RP.vm = ((mm % 12) + 12) % 12; return paintRange(); }
+  const dy = e.target.closest('[data-day]'); if (dy) { const v = dy.dataset.day; if (!RP.a || RP.b) { RP.a = v; RP.b = ''; } else RP.b = v; return paintRange(); }
+  if (e.target.closest('[data-rclear]')) { F.period = 'all'; F.from = F.to = ''; RP = null; closePop(); return render(); }
+  if (e.target.closest('[data-rapply]') && RP.a) { const a = RP.a, b = RP.b || RP.a; F.period = 'custom'; F.from = a < b ? a : b; F.to = a < b ? b : a; RP = null; closePop(); render(); }
+});
+
+// ---------- team members: mirrored from the Hub, read only ----------
+let teamBusy = false;
+function openTeam() { renderTeam(); $('teamWin').classList.add('open'); $('teamScrim').classList.add('open'); }
+function closeTeam() { $('teamWin').classList.remove('open'); $('teamScrim').classList.remove('open'); }
+$('teamScrim').onclick = closeTeam;
+function personRow(p, extra) {
+  const ph = p.photo && /^https:/.test(p.photo) ? `<img class="pav" src="${esc(p.photo)}" alt="" referrerpolicy="no-referrer" style="object-fit:cover">` : `<span class="pav">${esc(initials(p.name || '?'))}</span>`;
+  return `<li class="optrow person tm">${ph}<span class="pname">${esc(p.name)}<small>${esc(extra)}${p.email ? ` · <span style="text-transform:none">${esc(p.email)}</span>` : ''}</small></span>${p.canEdit ? '<span class="hubtag">Can Edit</span>' : '<span></span>'}</li>`;
+}
+function renderTeam() {
+  const groups = [['Managers', p => p.role === 'manager'], ...['ACQ', 'DISPO', 'FUS', 'TC', 'OPS'].map(d => [d, p => p.role !== 'manager' && p.dept === d]), ['No Department', p => p.role !== 'manager' && !p.dept]];
+  const tagged = tg => [...new Set(Object.keys(PEOPLE).flatMap(k => OPTS[k].filter(o => o.tag === tg).map(o => o.name)))];
+  const when = TEAM_AT ? new Date(TEAM_AT).toLocaleString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' EST' : '';
+  const body = TEAM ? groups.map(([g, f]) => { const ps = TEAM.filter(f).sort((a, b) => (b.role === 'lead') - (a.role === 'lead') || a.name.localeCompare(b.name)); return ps.length ? `<div class="hubhead"><span class="hubtag">${g}</span><span class="muted">${ps.length}</span></div><ul class="optlist">${ps.map(p => personRow(p, ROLE_LABEL[p.role] || 'Member')).join('')}</ul>` : ''; }).join('')
+      + [['noLogin', 'No Hub Login'], ['former', 'Former Members']].map(([tg, title]) => { const ns = tagged(tg); return ns.length ? `<div class="hubhead"><span class="hubtag warn">${title}</span><span class="muted">Kept on deals, set in Settings</span></div><ul class="optlist">${ns.map(n => personRow({ name: n }, title === 'No Hub Login' ? 'No Hub Login' : 'Former Member')).join('')}</ul>` : ''; }).join('')
+    : `<div class="iempty">The Hub link is not set up yet.</div>`;
+  $('teamWin').innerHTML = `<div class="dr-h"><div><h2 class="h3" id="teamTitle" style="font-size:22px">Team Members</h2><div class="muted">Mirrored from the Hub's Team Members${when ? ' · updated ' + when : ''}. Change people in the Hub.</div></div><button class="x" data-tclose aria-label="Close">✕</button></div>
+    <div class="set-b">${TEAM ? `<button class="btn ghost" data-trefresh ${teamBusy ? 'disabled' : ''} style="align-self:flex-start">${teamBusy ? 'Refreshing…' : 'Refresh From Hub'}</button>` : ''}${body}</div>`;
+}
+$('teamWin').addEventListener('click', async e => {
+  if (e.target.closest('[data-tclose]')) return closeTeam();
+  if (e.target.closest('[data-trefresh]') && !teamBusy) {
+    teamBusy = true; renderTeam();
+    try { const j = await api('team', {}); TEAM = j.team; TEAM_AT = j.teamAt; buildOptions(); render(); toast(`Team refreshed from the Hub · ${TEAM.length} people`, '--green-500'); }
+    catch (e2) { toast('Not refreshed: ' + e2.message, '--red-500', 5200); }
+    teamBusy = false; renderTeam();
+  }
 });
 
 // ---------- month by month ----------
@@ -1475,7 +1565,7 @@ async function api(op, payload) {
 }
 async function refresh() {
   const j = await api('data');
-  ME = j.me; SERVER_OPTS = j.options || null; TEAM = j.team || null; ONLINE = j.online || [];
+  ME = j.me; SERVER_OPTS = j.options || null; TEAM = j.team || null; TEAM_AT = j.teamAt || 0; ONLINE = j.online || [];
   const tm = teamBy(ME.name) || (TEAM || []).find(p => p.email === ME.email); if (tm && tm.photo) ME.photo = tm.photo;
   setLive('ready'); paintActive(); paintAvatar();
   document.body.classList.toggle('ro', !ME.canEdit);
