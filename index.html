@@ -778,7 +778,11 @@ function buildBase() {
   Object.keys(KINDS).forEach(k => { const c = {}; deals.forEach(d => { if (d[k]) c[d[k]] = (c[d[k]] || 0) + 1; });
     OPTS[k] = Object.keys(c).sort((a, b) => c[b] - c[a]).map(n => !PEOPLE[k] ? mkOpt(n) : n === 'TCHB' ? { name: n, aliases: [], hub: true, company: true, role: 'Company · Placeholder Until The Real DISPO Is In' } : NOT_PEOPLE.test(n) ? { name: n, aliases: [], hub: false } : { name: n, aliases: [], hub: true, role: roleOf(n) }); });
 }
-const DAY = 864e5, NOW = new Date('2026-11-24T12:00:00-05:00').getTime();
+const DAY = 864e5;
+// a signed contract open this long with no close or cancel gets a check note (worked out here, never stored);
+// Mark Fixed on it records the check, and the note comes back if it is still open 60 days after that
+const STALE = 'Open 60+ Days: Check Its Stage In GoHighLevel', STALE_DAYS = 60;
+const staleFlags = d => { const f = (d.flags || []).filter(x => x !== STALE); if (d.status === 'signed' && d.signedAt && Date.now() - Math.max(d.signedAt, d.staleChecked || 0) > STALE_DAYS * DAY) f.push(STALE); return f; };
 let deals = [], nid = 1, events = [];
 const proj = window.d3 && d3.geoAlbersUsa ? d3.geoAlbersUsa().scale(1300).translate([487.5, 305]) : null;
 function place(d) { if (!proj) return; d.x = d.y = null; if (d.lat == null) return; const p = proj([d.lon, d.lat]); if (p) { d.x = p[0]; d.y = p[1]; } }
@@ -789,7 +793,7 @@ function layout() {
 }
 // server deals get a small local number for the page; docId is the server's id
 function loadDeals(list) {
-  deals = list.map((d, i) => ({ feedback: '', cancelReason: '', ...d, docId: d.id, id: i + 1, edits: d.origin === 'manual' ? ['added'] : [], flags: d.flags || [], hist: (d.hist || []).map(h => ({ ...h, wh: !h.by })) })); deals.forEach(place);
+  deals = list.map((d, i) => ({ feedback: '', cancelReason: '', ...d, docId: d.id, id: i + 1, edits: d.origin === 'manual' ? ['added'] : [], flags: staleFlags(d), hist: (d.hist || []).map(h => ({ ...h, wh: !h.by })) })); deals.forEach(place);
   nid = Math.max(0, ...deals.map(d => d.id)) + 1; buildOptions(); layout();
   events = []; deals.forEach(d => d.hist.forEach(h => { const s = /^Signed/.test(h.text) ? 'signed' : /^Closed/.test(h.text) ? 'closed' : /^Cancelled/.test(h.text) ? 'cancelled' : ''; if (s && h.t) events.push({ id: d.id, s, t: h.t }); }));
 }
@@ -1162,7 +1166,7 @@ function locate(o) {
   if (!z) { o.lat = o.lon = null; return false; }
   o.lat = z[0]; o.lon = z[1]; if (!o.city) o.city = titleCase(z[2]); if (!o.state) o.state = z[3]; return true;
 }
-const BLANK = () => ({ id: null, feedback: '', cancelReason: '', status: 'signed', address: '', city: '', state: '', zip: '', source: '', acq: '', dispo: '', fus: '', exit: '', potential: null, actual: null, created: NOW, signedAt: NOW, closedAt: null, lat: null, lon: null, hist: [], flags: [], edits: [] });
+const BLANK = () => ({ id: null, feedback: '', cancelReason: '', status: 'signed', address: '', city: '', state: '', zip: '', source: '', acq: '', dispo: '', fus: '', exit: '', potential: null, actual: null, created: Date.now(), signedAt: Date.now(), closedAt: null, lat: null, lon: null, hist: [], flags: [], edits: [] });
 function openDrawer(d) { draft = { ...d }; confirmDel = false; hideTip(); ensureZips(); renderDrawer(d); $('drawer').classList.add('open'); $('drawer').setAttribute('aria-hidden', 'false'); $('scrim').classList.add('open'); renderMap(visible()); }
 function openDeal(id) { const d = deals.find(x => x.id === id); if (!d) return; selected = id; openDrawer(d); }
 function openAdd() { NEWD = BLANK(); selected = 'new'; openDrawer(NEWD); setTimeout(() => { const a = $('f-address'); if (a) a.focus(); }, 280); }
@@ -1194,7 +1198,7 @@ function renderDrawer(d) {
     <div class="dr-h"><div style="min-width:0">${isNew ? '<span class="stp signed"><i></i>New</span><h2 class="h3" style="margin-top:6px">Add A Contract</h2><div class="muted">Fill in what you know. You can fix it any time.</div>'
       : `<span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span><h2 class="h3" style="margin-top:6px">${esc(d.address)}</h2><div class="muted">${esc(where || 'No City Yet')} · ${d.contactId ? 'GoHighLevel Contact' : d.origin === 'manual' ? 'Added By Hand' : 'CSV History'}${d.x == null ? ' · Not On The Map' : ''}</div>`}</div><button class="x" id="drX" aria-label="Close">✕</button></div>
     <div class="dr-b">
-      ${d.flags.length ? `<div class="flags"><b>⚑ Needs Review</b><ul>${d.flags.map((f, i) => `<li><span>${esc(f)}</span><button type="button" class="lnk" data-fix="${i}">Mark Fixed</button></li>`).join('')}</ul></div>` : ''}
+      ${d.flags.length ? `<div class="flags"><b>⚑ Needs Review</b><ul>${d.flags.map((f, i) => `<li><span>${esc(f)}</span><button type="button" class="lnk" data-fix="${i}">${f === STALE ? 'Still Open' : 'Mark Fixed'}</button></li>`).join('')}</ul></div>` : ''}
       <div class="field"><label>Status</label><div class="statusseg" id="stSeg">${ORDER.map(st => `<button data-s="${st}" class="${st} ${draft.status === st ? 'on' : ''}"><i style="background:var(${STATUS[st].v})"></i>${STATUS[st].label}</button>`).join('')}</div></div>
       ${d.closings && d.closings.length > 1 ? `<div class="closings"><b>Fix & Flip · ${d.closings.length} Closings</b>${d.closings.map(c => `<div class="crow"><span>${esc(c.label)} · ${fdate(c.t)}${c.exit ? ' · ' + esc(c.exit) : ''}</span><b class="num">${money(c.revenue)}</b></div>`).join('')}<div class="crow total"><span>Actual Revenue, Both Closings</span><b class="num">${money(d.closings.reduce((t, c) => t + (c.revenue || 0), 0))}</b></div></div>` : ''}
       <div class="fgrid">${FIELDS.map(input).join('')}</div>
@@ -1208,10 +1212,10 @@ function renderDrawer(d) {
   if ($('drDel')) $('drDel').onclick = () => { confirmDel = true; renderDrawer(d); };
   $('drawer').querySelectorAll('[data-editlist]').forEach(b => b.onclick = e => { e.preventDefault(); openSettings(b.dataset.editlist); });
   $('drawer').querySelectorAll('[data-fix]').forEach(b => b.onclick = async () => { const f = d.flags[+b.dataset.fix];
-    try { await api('deal', { id: d.docId, flags: d.flags.filter(x => x !== f), note: 'Marked fixed: ' + f }); const doc = d.docId; await refresh(); const nd = deals.find(x => x.docId === doc); if (nd) openDeal(nd.id); } catch (e) { toast('Not saved: ' + e.message, '--red-500', 5200); } });
+    try { const kept = d.flags.filter(x => x !== f && x !== STALE); await api('deal', f === STALE ? { id: d.docId, fields: { staleChecked: Date.now() }, flags: kept, note: 'Checked in GoHighLevel: still open' } : { id: d.docId, flags: kept, note: 'Marked fixed: ' + f }); const doc = d.docId; await refresh(); const nd = deals.find(x => x.docId === doc); if (nd) openDeal(nd.id); } catch (e) { toast('Not saved: ' + e.message, '--red-500', 5200); } });
   // view-only accounts see the deal without changing it
   if (!ME.canEdit) $('drawer').querySelectorAll('.dr-b input, .dr-b textarea, .dr-b .dd, #stSeg button').forEach(el => { el.disabled = true; });
-  $('stSeg').onclick = e => { const b = e.target.closest('[data-s]'); if (!b) return; draft.status = b.dataset.s; if (draft.status === 'cancelled') draft.actual = 0; if (draft.status === 'signed') { draft.actual = null; draft.closedAt = null; } if (draft.status !== 'signed' && !draft.closedAt) draft.closedAt = NOW; renderDrawer(d); };
+  $('stSeg').onclick = e => { const b = e.target.closest('[data-s]'); if (!b) return; draft.status = b.dataset.s; if (draft.status === 'cancelled') draft.actual = 0; if (draft.status === 'signed') { draft.actual = null; draft.closedAt = null; } if (draft.status !== 'signed' && !draft.closedAt) draft.closedAt = Date.now(); renderDrawer(d); };
   $('drawer').querySelectorAll('input[data-k], textarea[data-k]').forEach(el => el.addEventListener(el.type === 'date' ? 'change' : 'input', () => {
     const k = el.dataset.k, t = FIELDS.find(f => f[0] === k)[2]; let v = el.value;
     if (t === 'money') { const n = v.replace(/[^\d.-]/g, ''); v = n === '' || n === '-' ? null : Math.round(+n * 100) / 100; }
@@ -1233,7 +1237,7 @@ async function saveDeal() {
   if (!isNew && !c.length) return;
   if (isNew || ['zip', 'city', 'state'].some(k => c.includes(k))) { await ensureZips(); locate(draft); }
   // edits that answer a flag clear it
-  const flags = (d.flags || []).filter(f => !(f === NOMAP && draft.lat != null) && !(f === 'No ACQ' && draft.acq) && !(f.startsWith('Closed Without A DISPO') && ((draft.dispo && draft.dispo !== 'TCHB') || draft.status !== 'closed')) && !(/^Open For 120/.test(f) && draft.status !== 'signed'));
+  const flags = (d.flags || []).filter(f => f !== STALE && !(f === NOMAP && draft.lat != null) && !(f === 'No ACQ' && draft.acq) && !(f.startsWith('Closed Without A DISPO') && ((draft.dispo && draft.dispo !== 'TCHB') || draft.status !== 'closed')) && !(/^Open For 120/.test(f) && draft.status !== 'signed'));
   if (draft.lat == null && !flags.includes(NOMAP)) flags.push(NOMAP);
   const fmt = (k, v) => k === 'potential' || k === 'actual' ? money(v) : k === 'status' ? STATUS[v].label : /At$|created/.test(k) ? fdate(v) : (v || '—');
   const fields = {}; ['status', ...FIELDS.map(f => f[0])].forEach(k => { fields[k] = draft[k]; });

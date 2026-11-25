@@ -34,6 +34,7 @@ function cleanFields(f) {
   if ('zip' in f) out.zip = str(f.zip, 5).replace(/\D/g, '');
   for (const k of ['potential', 'actual', 'created', 'signedAt', 'closedAt']) if (k in f) { const n = numOrNull(f[k]); if (n !== undefined) out[k] = n; }
   if ('status' in f && STATUSES.includes(f.status)) out.status = f.status;
+  if ('staleChecked' in f) { const n = numOrNull(f.staleChecked); if (n) out.staleChecked = n; }  // when someone confirmed an old open contract is still open
   return out;
 }
 const cleanFlags = a => Array.isArray(a) ? [...new Set(a.map(x => str(x, 200)).filter(Boolean))].slice(0, 20) : null;
