@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="tchb-mark.png">
-<title>Deals Heat Map</title>
+<title>Contracts Heat Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap">
@@ -606,7 +606,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
 <div class="gate" id="gate">
   <div class="gate-card">
     <img class="logo lt" src="tchb-logo.png" alt="Total Cash Home Buyers"><img class="logo dk" src="tchb-logo-dark.png" alt="Total Cash Home Buyers">
-    <h1 class="title" style="font-size:36px">Deals Heat <span>Map</span></h1>
+    <h1 class="title" style="font-size:36px">Contracts Heat <span>Map</span></h1>
     <p class="muted" id="gateMsg">Sign in with your company Google account.</p>
     <button class="btn pri" id="signIn" hidden>Sign In With Google</button>
   </div>
@@ -634,7 +634,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
 
 <main class="wrap">
   <div>
-    <h1 class="title">Deals Heat <span>Map</span></h1>
+    <h1 class="title">Contracts Heat <span>Map</span></h1>
   </div>
 
   <section class="kpis" id="kpis" aria-label="Totals"></section>
@@ -1537,7 +1537,7 @@ function closeHelp() { $('helpWin').classList.remove('open'); $('helpScrim').cla
 $('helpScrim').onclick = closeHelp;
 function renderHelp() {
   const g = GUIDES[helpKind];
-  $('helpWin').innerHTML = `<div class="dr-h"><div><h2 class="h3" id="helpTitle" style="font-size:22px">${esc(g.title)}</h2><div class="muted">The Deals Heat Map, step by step</div></div>
+  $('helpWin').innerHTML = `<div class="dr-h"><div><h2 class="h3" id="helpTitle" style="font-size:22px">${esc(g.title)}</h2><div class="muted">The Contracts Heat Map, step by step</div></div>
       <div style="display:flex;gap:10px;align-items:center">${ME.canEdit ? `<div class="seg"><button data-hk="editor" class="${helpKind === 'editor' ? 'on' : ''}">Editor Guide</button><button data-hk="viewer" class="${helpKind === 'viewer' ? 'on' : ''}">Viewer Guide</button></div>` : ''}<button class="x" data-hclose aria-label="Close">✕</button></div></div>
     <div class="help-b"><nav class="help-nav" aria-label="Sections">${g.sections.map((x, i) => `<button data-hs="${x.id}"><span class="n">${i + 1}</span><span>${esc(x.title)}</span></button>`).join('')}</nav><article class="guide" id="guide">${g.html}</article></div>`;
   const art = $('guide'), btns = [...$('helpWin').querySelectorAll('[data-hs]')];
