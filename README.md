@@ -22,8 +22,9 @@ and Settings, in the Hub's look. People sign in with their company Google accoun
 - **Pins sit at the exact street address** (US Census geocoder), or at the ZIP when the address is not found.
 - **Where To Market** suggests where to market more and where to pull back (close rate and profit against the team),
   and groups cancel reasons into themes with fixes.
-- The page checks for changes every minute, so new hooks show up without reloading. Each check costs one database read
-  (`heatmap_meta/stamp` moves on every write); the contracts are read again only when something changed. Who is online
+- The page does not check on a timer. It watches `heatmap_meta/stamp`, which the server moves only when a webhook arrives
+  or an editor saves, and reloads the contracts then (Firestore rules let signed-in company accounts read that one
+  document; set once with `POST /api/app/rules` and the webhook key). Who is online (a check-in every two minutes)
   lives in one document, `heatmap_meta/presence`. This keeps the Firebase free plan's 50,000 reads a day far away.
 
 The page says **Contracts** and **Revenue**; the data underneath (the hook keys such as `AB Profit (TC)`, the stored fields and the API names) keeps its original `deal` and `profit` names, so receiving is unchanged.

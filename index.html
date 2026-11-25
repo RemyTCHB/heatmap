@@ -721,6 +721,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (() => {
 // ---------- data ----------
@@ -1170,7 +1171,7 @@ const BLANK = () => ({ id: null, feedback: '', cancelReason: '', status: 'signed
 function openDrawer(d) { draft = { ...d }; confirmDel = false; hideTip(); ensureZips(); renderDrawer(d); $('drawer').classList.add('open'); $('drawer').setAttribute('aria-hidden', 'false'); $('scrim').classList.add('open'); renderMap(visible()); }
 function openDeal(id) { const d = deals.find(x => x.id === id); if (!d) return; selected = id; openDrawer(d); }
 function openAdd() { NEWD = BLANK(); selected = 'new'; openDrawer(NEWD); setTimeout(() => { const a = $('f-address'); if (a) a.focus(); }, 280); }
-function closeDeal() { $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); $('scrim').classList.remove('open'); selected = null; draft = null; NEWD = null; renderMap(visible()); }
+function closeDeal() { $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); $('scrim').classList.remove('open'); selected = null; draft = null; NEWD = null; renderMap(visible()); catchUp(); }
 $('scrim').onclick = closeDeal;
 document.addEventListener('click', e => { if (e.target.closest('[data-add]')) openAdd(); });
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('helpWin').classList.contains('open')) closeHelp(); else if ($('teamWin').classList.contains('open')) closeTeam(); else if ($('settings').classList.contains('open')) closeSettings(); else if (selected) closeDeal(); else if (FS) exitFs(); });
@@ -1386,7 +1387,7 @@ let setKind = 'source', removing = null, moveTo = '', setErr = '';
 const uses = (k, name) => deals.filter(d => d[k] === name).length;
 const crmCount = () => Object.values(OPTS).reduce((s, l) => s + l.filter(o => o.crm).length, 0);
 function openSettings(kind) { if (kind) setKind = kind; removing = null; setErr = ''; renderSettings(); $('settings').classList.add('open'); $('setScrim').classList.add('open'); }
-function closeSettings() { $('settings').classList.remove('open'); $('setScrim').classList.remove('open'); closePop(); }
+function closeSettings() { $('settings').classList.remove('open'); $('setScrim').classList.remove('open'); closePop(); catchUp(); }
 $('setScrim').onclick = closeSettings;
 function syncDrawer(kind, from, to) { if (!draft) return; const d = deals.find(x => x.id === selected); if (draft[kind] === from) draft[kind] = to; renderDrawer(d); }
 const LINK = {};
@@ -1686,6 +1687,20 @@ async function api(op, payload) {
 }
 // the server answers { same: true } when nothing changed since our last copy: one database read instead of every contract
 let DATA_AT = 0;
+// no checking on a timer: the page watches heatmap_meta/stamp, which the server moves only when a webhook arrives or an
+// editor saves, and reloads then. A change that lands while a contract or Settings is open waits until it closes.
+let UNSUB = null, PENDING = false, WATCHING = false;
+const busy = () => !!selected || $('settings').classList.contains('open');
+function catchUp() { if (PENDING && !busy()) { PENDING = false; refresh().catch(e => setLive('error', e.message)); } }
+function watch() {
+  if (UNSUB || !firebase.firestore) return;
+  UNSUB = firebase.firestore().doc('heatmap_meta/stamp').onSnapshot(s => {
+    WATCHING = true; const at = s.exists ? s.data().at : 0;
+    if (!at || at === DATA_AT) return;
+    PENDING = true; catchUp();
+  }, err => { console.warn('live updates unavailable:', err.code); UNSUB = null; WATCHING = false; });
+}
+function unwatch() { if (UNSUB) UNSUB(); UNSUB = null; WATCHING = false; }
 async function refresh() {
   const j = await api(DATA_AT ? 'data?since=' + DATA_AT : 'data');
   if (j.same) { setLive('ready'); return; }
@@ -1716,7 +1731,7 @@ function openActive(anchor) {
 }
 function openLive() {
   const head = { ready: 'Live: Everything Is Saved', saving: 'Saving…', error: 'Not Saved', connecting: 'Connecting…' }[liveSt];
-  const text = { ready: 'Every change is saved for the whole team, and new contracts from GoHighLevel show up within a minute.', saving: 'Your latest change is on its way to the server.', error: liveErr || 'The Heat Map could not reach the server.', connecting: 'Connecting to the Heat Map…' }[liveSt];
+  const text = { ready: 'Every change is saved for the whole team, and new contracts from GoHighLevel show up the moment they arrive.', saving: 'Your latest change is on its way to the server.', error: liveErr || 'The Heat Map could not reach the server.', connecting: 'Connecting to the Heat Map…' }[liveSt];
   const when = lastSync ? 'Last synced ' + new Date(lastSync).toLocaleString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit' }) + ' EST' : 'Not synced yet.';
   openFloat($('clock'), `<div class="livepop"><h4>${head}</h4><p>${esc(text)}</p><div class="w">${when}</div>${liveSt === 'error' ? '<button class="btn pri" data-retry style="margin-top:10px;width:100%">Retry Now</button>' : ''}</div>`);
 }
@@ -1728,10 +1743,11 @@ async function start() {
   catch (e) { if (e.status === 403 || e.status === 401) { gate(e.message, true); auth.signOut(); } else gate('Could not load the contracts: ' + e.message, false); return; }
   if (started) return; started = true;
   setInterval(() => renderFeed(false), 30000);
-  // new deals from GoHighLevel: refresh every minute while nothing is open for editing
-  setInterval(() => { if (!selected && !$('settings').classList.contains('open') && !document.hidden) refresh().catch(e => setLive('error', e.message)); }, 60000);
-  setInterval(() => { if (!document.hidden) beat(); }, 60000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) beat(); });
+  watch();
+  // who is online: a light check-in every two minutes while the page is in view
+  setInterval(() => { if (!document.hidden) beat(); }, 120000);
+  // if live updates are not available, a check (one read) when someone comes back to the tab
+  document.addEventListener('visibilitychange', () => { if (document.hidden) return; beat(); if (!WATCHING && !busy()) refresh().catch(() => {}); });
   window.addEventListener('pagehide', () => beat(true));
 }
 try { const t = localStorage.getItem('tchb-heat-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
@@ -1741,7 +1757,7 @@ Promise.all([fetch('map.json').then(r => r.json()), fetch('/api/app/config').the
   if (!c.firebase || !window.firebase) return gate('Sign-in is not set up yet. In Vercel, add HEATMAP_FIREBASE_WEB_CONFIG, then redeploy.', false);
   fb = firebase.initializeApp(c.firebase); auth = firebase.auth();
   $('signIn').onclick = () => { const p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' }); auth.signInWithPopup(p).catch(e => gate(e.code === 'auth/popup-closed-by-user' ? 'Sign in with your company Google account.' : 'Sign-in failed: ' + e.message, true)); };
-  auth.onAuthStateChanged(u => { if (u) { gate('Loading the contracts…', false); start(); } else { started = false; gate('Sign in with your company Google account.', true); } });
+  auth.onAuthStateChanged(u => { if (u) { gate('Loading the contracts…', false); start(); } else { started = false; unwatch(); gate('Sign in with your company Google account.', true); } });
 }).catch(e => gate('Could not reach the Heat Map: ' + e.message, false));
 })();
 </script>
