@@ -1,6 +1,6 @@
 # Viewer Guide
 
-This guide is for everyone at TCHB: what the Deals Heat Map shows and how to read it. Remy, Monz and Jan can also change contracts; their Editor Guide adds those parts.
+This guide is for everyone at TCHB: what the Contracts Heat Map shows and how to read it. Remy, Monz and Jan can also change contracts; their Editor Guide adds those parts.
 
 ## Getting Started
 

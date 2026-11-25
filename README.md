@@ -1,4 +1,4 @@
-# Deals Heat Map
+# Contracts Heat Map
 
 A live map of TCHB's signed, closed and cancelled deals across the USA, with leaderboards, built in the Universal Team
 Hub's look. Deals come from GoHighLevel webhooks and are matched by **contact ID**.
