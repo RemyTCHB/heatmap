@@ -24,6 +24,8 @@ and Settings, in the Hub's look. People sign in with their company Google accoun
   and groups cancel reasons into themes with fixes.
 - The page refreshes the deals every minute, so new hooks show up without reloading.
 
+The page says **Contracts** and **Revenue**; the data underneath (the hook keys such as `AB Profit (TC)`, the stored fields and the API names) keeps its original `deal` and `profit` names, so receiving is unchanged.
+
 Its endpoints (`api/app/[op].js`): `GET /api/app/config`, `GET /api/app/data`, `POST /api/app/presence`,
 `POST /api/app/deal`, `POST /api/app/options`, `POST /api/app/geocode` (moves pins from the ZIP to the exact address, a
 batch per call, owner only), and `POST /api/app/import` (the one-time CSV history load, webhook key only).

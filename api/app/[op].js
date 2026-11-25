@@ -96,13 +96,13 @@ module.exports = async (req, res) => {
     }
 
     if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
-    if (!me.canEdit) return send(res, 403, { error: 'Only Remy, Monz and Jan can change deals.' });
+    if (!me.canEdit) return send(res, 403, { error: 'Only Remy, Monz and Jan can change contracts.' });
     const b = await body(req); if (!b) return send(res, 400, { error: 'Not JSON.' });
     const now = Date.now(), by = me.name;
 
     if (op === 'deal') {
       if (b.delete) {
-        if (!b.id) return send(res, 400, { error: 'Which deal?' });
+        if (!b.id) return send(res, 400, { error: 'Which contract?' });
         await db().collection(DEALS).doc(String(b.id)).delete();
         console.log('deal deleted');
         return send(res, 200, { ok: true });
@@ -135,7 +135,7 @@ module.exports = async (req, res) => {
         d.updatedAt = now;
         const { _sameAddress, ...save } = d; tx.set(ref, save); return d;
       });
-      if (!out) return send(res, 404, { error: 'That deal no longer exists. Refresh the page.' });
+      if (!out) return send(res, 404, { error: 'That contract no longer exists. Refresh the page.' });
       if (!out._sameAddress || out.geo !== 'address') await pinExactly(ref, out);
       delete out._sameAddress;
       console.log('deal edited');
@@ -173,7 +173,7 @@ module.exports = async (req, res) => {
     if (op === 'import') {
       if (!me.viaKey) return send(res, 403, { error: 'The import needs the webhook key.' });
       const list = Array.isArray(b.deals) ? b.deals : [];
-      if (!list.length) return send(res, 400, { error: 'No deals to import.' });
+      if (!list.length) return send(res, 400, { error: 'No contracts to import.' });
       const existing = await db().collection(DEALS).where('origin', '==', 'csv').limit(1).get();
       if (!existing.empty && !b.replace) return send(res, 409, { error: 'The CSV history is already loaded. Send replace: true to load it again.' });
       for (let i = 0; i < list.length; i += 400) {

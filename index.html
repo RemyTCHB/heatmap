@@ -653,10 +653,10 @@ td.addr{font-weight:700;color:var(--text-strong)}
           <button data-m="pins" class="on">Pins</button><button data-m="heat">Heat</button><button data-m="states">States</button>
         </div>
         <span id="ddMetric" hidden></span>
-        <div class="mt-r"><span class="muted" id="mapHint">Click a pin to view or fix a deal · click a state to filter</span><button class="fsbtn" data-fs="map" aria-label="Full screen map"><svg class="en" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ex" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span class="en">Full Screen</span><span class="ex">Exit Full Screen</span></button></div>
+        <div class="mt-r"><span class="muted" id="mapHint">Click a pin to view or fix a contract · click a state to filter</span><button class="fsbtn" data-fs="map" aria-label="Full screen map"><svg class="en" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ex" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span class="en">Full Screen</span><span class="ex">Exit Full Screen</span></button></div>
       </div>
       <div class="mapbox" id="mapbox">
-        <svg id="svg" viewBox="0 0 975 610" role="img" aria-label="Map of deals across the USA">
+        <svg id="svg" viewBox="0 0 975 610" role="img" aria-label="Map of contracts across the USA">
           <g id="gStates"></g>
           <path id="borders" class="borders"/>
           <g id="gHex"></g>
@@ -678,8 +678,8 @@ td.addr{font-weight:700;color:var(--text-strong)}
 
   <div class="dealsbox" id="dealsBox">
   <section id="deals" class="sec-h" style="margin-top:8px">
-    <div><h2 class="h2">Deal <span>List</span></h2><div class="muted" id="dlSub"></div></div>
-    <div class="sec-act"><button class="fsbtn" data-fs="dealsBox" aria-label="Full screen deal list"><svg class="en" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ex" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span class="en">Full Screen</span><span class="ex">Exit Full Screen</span></button><button class="btn pri" data-add>+ Add Deal</button></div>
+    <div><h2 class="h2">Contract <span>List</span></h2><div class="muted" id="dlSub"></div></div>
+    <div class="sec-act"><button class="fsbtn" data-fs="dealsBox" aria-label="Full screen contract list"><svg class="en" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="ex" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span class="en">Full Screen</span><span class="ex">Exit Full Screen</span></button><button class="btn pri" data-add>+ Add Contract</button></div>
   </section>
   <div class="card tablewrap"><table id="table"></table></div>
   <ul class="dcards" id="dcards"></ul>
@@ -689,8 +689,8 @@ td.addr{font-weight:700;color:var(--text-strong)}
     <div><h2 class="h2">Month By <span>Month</span></h2><div class="muted">The last 12 months · follows the filters above</div></div>
   </section>
   <div class="trends">
-    <article class="card chart"><div class="ch-h"><div><h3 class="h3" style="font-size:16px">Deals Per Month</h3><p>Contracts signed, deals closed and deals cancelled each month</p></div><div class="lgd"><span><i style="background:var(--st-signed)"></i>Signed</span><span><i style="background:var(--st-closed)"></i>Closed</span><span><i style="background:var(--st-cancel)"></i>Cancelled</span></div></div><div class="chbox" id="chDeals"></div></article>
-    <article class="card chart"><div class="ch-h"><div><h3 class="h3" style="font-size:16px">Profit Per Month</h3><p>Actual profit from each month's closings</p></div><div class="ch-total" id="chTotal"></div></div><div class="chbox" id="chProfit"></div></article>
+    <article class="card chart"><div class="ch-h"><div><h3 class="h3" style="font-size:16px">Contracts Per Month</h3><p>Contracts signed, closed and cancelled each month</p></div><div class="lgd"><span><i style="background:var(--st-signed)"></i>Signed</span><span><i style="background:var(--st-closed)"></i>Closed</span><span><i style="background:var(--st-cancel)"></i>Cancelled</span></div></div><div class="chbox" id="chDeals"></div></article>
+    <article class="card chart"><div class="ch-h"><div><h3 class="h3" style="font-size:16px">Revenue Per Month</h3><p>Actual revenue from each month's closings</p></div><div class="ch-total" id="chTotal"></div></div><div class="chbox" id="chProfit"></div></article>
   </div>
 
   <section id="leaderboards" class="sec-h" style="margin-top:8px">
@@ -706,7 +706,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
 </main>
 
 <div class="scrim" id="scrim"></div>
-<aside class="drawer" id="drawer" aria-label="Deal details" aria-hidden="true"></aside>
+<aside class="drawer" id="drawer" aria-label="Contract details" aria-hidden="true"></aside>
 <div class="tip" id="tip"></div>
 <div class="pop" id="pop"></div>
 <div class="pop acct" id="acct" role="menu"></div>
@@ -738,7 +738,7 @@ const teamBy = n => TEAM && TEAM.find(p => norm(p.name) === norm(n));
 const roleOf = n => { const p = HUB_PEOPLE.find(x => x[0] === n); return p ? ROLE_LABEL[p[1]] : 'Member'; };
 const NOT_PEOPLE = /^AI /i;   // the CRM's AI agents work leads too, but they aren't hub team members
 const initials = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
-const STATUS = { signed:{label:'Signed', ev:'Contract Signed', v:'--st-signed'}, closed:{label:'Closed', ev:'Closed Deal', v:'--st-closed'}, cancelled:{label:'Cancelled', ev:'Cancelled Deal', v:'--st-cancel'} };
+const STATUS = { signed:{label:'Signed', ev:'Contract Signed', v:'--st-signed'}, closed:{label:'Closed', ev:'Closed Contract', v:'--st-closed'}, cancelled:{label:'Cancelled', ev:'Cancelled Contract', v:'--st-cancel'} };
 const ORDER = ['signed','closed','cancelled'];
 // the editable dropdown lists (Settings). Each option keeps the other spellings the CRM has sent for it.
 const KINDS = { source: 'Lead Sources', exit: 'Exit Strategies', acq: 'ACQ', dispo: 'DISPO', fus: 'FUS' };
@@ -828,13 +828,13 @@ function renderKpis(b) {
   const pipe = sig.reduce((s, d) => s + d.potential, 0);
   const ringCol = css(rate >= .7 ? '--st-closed' : '--red-500');
   $('kpis').innerHTML = `
-    <div class="kpi"><span class="v" data-n="${b.length}">${b.length}</span><span class="l">Total Deals</span></div>
+    <div class="kpi"><span class="v" data-n="${b.length}">${b.length}</span><span class="l">Total Contracts</span></div>
     <div class="kpi"><span class="v" data-n="${sig.length}">${sig.length}</span><span class="l"><i style="background:var(--st-signed)"></i>Signed · Open</span></div>
     <div class="kpi"><span class="v" data-n="${closed.length}">${closed.length}</span><span class="l"><i style="background:var(--st-closed)"></i>Closed</span></div>
     <div class="kpi"><span class="v" data-n="${canc.length}">${canc.length}</span><span class="l"><i style="background:var(--st-cancel)"></i>Cancelled</span></div>
     <div class="kpi ring-k"><div class="ring" style="background:conic-gradient(${ringCol} ${isFinite(rate) ? rate * 100 : 0}%, var(--gray-100) 0)"><b>${pct(rate)}</b></div><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="v" style="font-size:18px">${closed.length}/${done}</span><span class="l">Close Rate</span></div></div>
-    <div class="kpi"><span class="v" data-n="${act}" data-m="1">${kmoney(act)}</span><span class="l">${potC ? 'Actual Profit · ' + pct(act / potC) + ' of projected' : 'Actual Profit (Revenue)'}</span></div>
-    <div class="kpi"><span class="v"${closed.length ? ` data-n="${act / closed.length}" data-m="1"` : ''}>${closed.length ? kmoney(act / closed.length) : '—'}</span><span class="l">Avg Profit Per Close</span></div>`;
+    <div class="kpi"><span class="v" data-n="${act}" data-m="1">${kmoney(act)}</span><span class="l">${potC ? 'Actual Revenue · ' + pct(act / potC) + ' of projected' : 'Actual Revenue'}</span></div>
+    <div class="kpi"><span class="v"${closed.length ? ` data-n="${act / closed.length}" data-m="1"` : ''}>${closed.length ? kmoney(act / closed.length) : '—'}</span><span class="l">Avg Revenue Per Close</span></div>`;
   if (!kpiDone && b.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     kpiDone = true; const els = [...$('kpis').querySelectorAll('[data-n]')], t0 = performance.now();
     const step = now => { const k = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - k, 3);
@@ -850,7 +850,7 @@ function renderChips(b) {
   const all = F.status.size === 3;
   $('statusChips').innerHTML = `<button class="chip ${all ? 'on' : ''}" data-s="all">All <span class="n">${b.length}</span></button>` +
     ORDER.map(s => `<button class="chip ${!all && F.status.has(s) ? 'on' : ''}" data-s="${s}"><i style="background:var(${STATUS[s].v})"></i>${STATUS[s].label} <span class="n">${cnt(s)}</span></button>`).join('') +
-    `<button class="chip review ${F.review ? 'on' : ''}" data-s="review" title="Deals the import or the owner flagged to check">⚑ Needs Review <span class="n">${deals.filter(d => d.flags.length).length}</span></button>`;
+    `<button class="chip review ${F.review ? 'on' : ''}" data-s="review" title="Contracts the import or the owner flagged to check">⚑ Needs Review <span class="n">${deals.filter(d => d.flags.length).length}</span></button>`;
   const sc = $('stateChip');
   sc.classList.toggle('show', !!F.state);
   sc.innerHTML = F.state ? `State: ${esc(stName(F.state))} <button aria-label="Clear state filter">×</button>` : '';
@@ -876,7 +876,7 @@ function renderFilterDDs() {
   $('filterDDs').innerHTML = dd({ id: 'periodDD', value: F.period, options: PERIODS.map(([v, l]) => ({ v, l: v === 'custom' && F.period === 'custom' ? rangeLabel() : l })), label: 'Period', set: F.period !== 'all', onChange: v => { if (v === 'custom') return openRange(); F.period = v; render(); } }) +
     one('acq', 'acq', 'All ACQ') + one('dispo', 'dispo', 'All DISPO') + one('fus', 'fus', 'All FUS') + one('src', 'source', 'All Lead Sources') + one('exit', 'exit', 'All Exits');
 }
-const METRICS = [['deals','Shade By Deals'],['profit','Shade By Actual Profit'],['close','Shade By Close Rate'],['cancel','Shade By Cancel Rate']];
+const METRICS = [['deals','Shade By Contracts'],['profit','Shade By Actual Revenue'],['close','Shade By Close Rate'],['cancel','Shade By Cancel Rate']];
 function renderTools() { const m = $('ddMetric'); m.hidden = mode === 'pins';
   m.innerHTML = mode === 'states' ? dd({ value: stateMetric, options: METRICS.map(([v, l]) => ({ v, l })), label: 'Shade states by', onChange: v => { stateMetric = v; render(); } })
     : mode === 'heat' ? dd({ value: hexMetric, options: HEX_METRICS.map(([v, l]) => ({ v, l })), label: 'Shade hexagons by', onChange: v => { hexMetric = v; render(); } }) : ''; }
@@ -940,7 +940,7 @@ function renderMap(list) {
 }
 function drawHeat() {}
 // hexagons on the map, binned from each deal's spot; finer as you zoom in
-const HEX_METRICS = [['deals', 'Shade By Deals'], ['profit', 'Shade By Actual Profit'], ['close', 'Shade By Close Rate']];
+const HEX_METRICS = [['deals', 'Shade By Contracts'], ['profit', 'Shade By Actual Revenue'], ['close', 'Shade By Close Rate']];
 let hexMetric = 'deals', HEX = [];
 function renderHex(list, k) {
   const r = 14 * Math.pow(k, .65), dx = Math.sqrt(3) * r, dy = 1.5 * r, bins = {};
@@ -973,7 +973,7 @@ $('modeSeg').addEventListener('click', e => {
   const b = e.target.closest('[data-m]'); if (!b) return;
   mode = b.dataset.m;
   $('modeSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
-  $('mapHint').textContent = mode === 'pins' ? 'Click a pin to view or fix a deal · click a state to filter' : mode === 'heat' ? 'Hover a hexagon for its numbers · click to zoom in' : 'Hover a state for its numbers · click to filter';
+  $('mapHint').textContent = mode === 'pins' ? 'Click a pin to view or fix a contract · click a state to filter' : mode === 'heat' ? 'Hover a hexagon for its numbers · click to zoom in' : 'Hover a state for its numbers · click to filter';
   render();
 });
 
@@ -990,12 +990,12 @@ svg.addEventListener('pointermove', e => {
   const hxEl = e.target.closest('.hex');
   if (hxEl) { setHov(null); const b = HEX[+hxEl.dataset.hi]; if (!b) return; const o = b.s, cities = {}; b.ds.forEach(d => { if (d.city) cities[d.city + ', ' + d.state] = (cities[d.city + ', ' + d.state] || 0) + 1; });
     const top = Object.entries(cities).sort((a, c) => c[1] - a[1]).slice(0, 3).map(([n, c]) => `${esc(n)} (${c})`).join(', ');
-    showTip(`<div class="th">${top || 'This Area'}</div><div class="tr"><span>Deals</span><b>${o.n}</b></div><div class="tr"><span>Signed · Closed · Cancelled</span><b>${o.signed} · ${o.closed} · ${o.canc}</b></div><div class="tr"><span>Close rate</span><b>${o.done ? pct(o.rate) : '—'}</b></div><div class="tr"><span>Actual profit</span><b>${money(o.profit)}</b></div>`, e); return; }
+    showTip(`<div class="th">${top || 'This Area'}</div><div class="tr"><span>Contracts</span><b>${o.n}</b></div><div class="tr"><span>Signed · Closed · Cancelled</span><b>${o.signed} · ${o.closed} · ${o.canc}</b></div><div class="tr"><span>Close rate</span><b>${o.done ? pct(o.rate) : '—'}</b></div><div class="tr"><span>Actual revenue</span><b>${money(o.profit)}</b></div>`, e); return; }
   const st = e.target.closest('.st');
   if (st) { setHov(st); const a = st.dataset.a, o = stateStats(base())[a];
-    if (!o) return showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>No deals yet</span></div>`, e);
+    if (!o) return showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>No contracts yet</span></div>`, e);
     const done = o.closed + o.canc;
-    showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>Deals</span><b>${o.n}</b></div><div class="tr"><span>Signed · Closed · Cancelled</span><b>${o.signed} · ${o.closed} · ${o.canc}</b></div><div class="tr"><span>Close rate</span><b>${done ? pct(o.closed / done) : '—'}</b></div><div class="tr"><span>Actual profit</span><b>${money(o.profit)}</b></div><div class="tr"><span>Avg per close</span><b>${o.closed ? money(o.profit / o.closed) : '—'}</b></div>`, e); return; }
+    showTip(`<div class="th">${esc(stName(a))}</div><div class="tr"><span>Contracts</span><b>${o.n}</b></div><div class="tr"><span>Signed · Closed · Cancelled</span><b>${o.signed} · ${o.closed} · ${o.canc}</b></div><div class="tr"><span>Close rate</span><b>${done ? pct(o.closed / done) : '—'}</b></div><div class="tr"><span>Actual revenue</span><b>${money(o.profit)}</b></div><div class="tr"><span>Avg per close</span><b>${o.closed ? money(o.profit / o.closed) : '—'}</b></div>`, e); return; }
   setHov(null); hideTip();
 });
 function setHov(el) { if (hovState === el) return; if (hovState) hovState.classList.remove('hov'); hovState = el; if (el) { el.parentNode.appendChild(el); el.classList.add('hov'); } }
@@ -1077,21 +1077,21 @@ function group(list, key) { const m = {}; list.forEach(d => { const k = typeof k
 function summarize(arr) { const closed = arr.filter(d => d.status === 'closed'), canc = arr.filter(d => d.status === 'cancelled'), sig = arr.filter(d => d.status === 'signed'); const profit = closed.reduce((s, d) => s + (d.actual || 0), 0), pot = closed.reduce((s, d) => s + d.potential, 0), done = closed.length + canc.length; return { n: arr.length, closed: closed.length, canc: canc.length, signed: sig.length, profit, pot, done, rate: done ? closed.length / done : NaN, crate: done ? canc.length / done : NaN, avg: closed.length ? profit / closed.length : NaN, pipe: sig.reduce((s, d) => s + d.potential, 0), days: avgDays(closed, 'signedAt', 'closedAt'), speed: avgDays(arr, 'created', 'signedAt') }; }
 function avgDays(list, a, b) { const l = list.filter(d => d[a] && d[b] && d[b] >= d[a]); return l.length ? l.reduce((s, d) => s + (d[b] - d[a]), 0) / l.length / DAY : NaN; }
 const BOARDS = [
-  { id: 'acq', t: 'Top ACQ', p: 'Who brings in the best contracts', key: 'acq', metrics: [['profit','Profit'],['closed','Closes'],['rate','Close %']] },
-  { id: 'dispo', t: 'Top DISPO', p: 'Who moves deals to the closing table', key: 'dispo', metrics: [['profit','Profit'],['closed','Closes'],['avg','Avg']] },
-  { id: 'fus', t: 'Top FUS', p: 'Whose follow-ups turn into closed deals', key: 'fus', metrics: [['profit','Profit'],['closed','Closes'],['rate','Close %']], min: { rate: 3 } },
-  { id: 'city', t: 'Top Cities', p: 'Where we do the most business', key: d => d.city + ', ' + d.state, metrics: [['n','Deals'],['profit','Profit'],['rate','Close %']], min: { rate: 3 } },
-  { id: 'state', t: 'Top States', p: 'Click a state to filter the map', key: 'state', label: stName, metrics: [['n','Deals'],['profit','Profit'],['rate','Close %']], min: { rate: 3 }, click: a => { F.state = a; render(); document.getElementById('map').scrollIntoView({ behavior: 'smooth' }); } },
-  { id: 'avgstate', t: 'Highest Avg Profit Per State', p: 'Average actual profit per closed deal, 2+ closes', key: 'state', label: stName, metrics: [['avg','Avg']], min: { avg: 2 } },
-  { id: 'src', t: 'Top Lead Sources', p: 'Which marketing channels pay off', key: 'source', metrics: [['profit','Profit'],['rate','Close %'],['n','Deals']], min: { rate: 3 } },
-  { id: 'lose', t: 'Where We Lose Deals', p: 'Cancel rate by state, 3+ finished deals', key: 'state', label: stName, metrics: [['crate','Cancel %'],['canc','Cancels']], min: { crate: 3 }, color: 'red' },
-  { id: 'acqlose', t: 'Cancels By ACQ', p: 'Which contracts fall through, 3+ finished deals', key: 'acq', metrics: [['crate','Cancel %'],['canc','Cancels']], min: { crate: 3 }, color: 'red' },
+  { id: 'acq', t: 'Top ACQ', p: 'Who brings in the best contracts', key: 'acq', metrics: [['profit','Revenue'],['closed','Closes'],['rate','Close %']] },
+  { id: 'dispo', t: 'Top DISPO', p: 'Who moves contracts to the closing table', key: 'dispo', metrics: [['profit','Revenue'],['closed','Closes'],['avg','Avg']] },
+  { id: 'fus', t: 'Top FUS', p: 'Whose follow-ups turn into closed contracts', key: 'fus', metrics: [['profit','Revenue'],['closed','Closes'],['rate','Close %']], min: { rate: 3 } },
+  { id: 'city', t: 'Top Cities', p: 'Where we do the most business', key: d => d.city + ', ' + d.state, metrics: [['n','Contracts'],['profit','Revenue'],['rate','Close %']], min: { rate: 3 } },
+  { id: 'state', t: 'Top States', p: 'Click a state to filter the map', key: 'state', label: stName, metrics: [['n','Contracts'],['profit','Revenue'],['rate','Close %']], min: { rate: 3 }, click: a => { F.state = a; render(); document.getElementById('map').scrollIntoView({ behavior: 'smooth' }); } },
+  { id: 'avgstate', t: 'Highest Avg Revenue Per State', p: 'Average actual revenue per closed contract, 2+ closes', key: 'state', label: stName, metrics: [['avg','Avg']], min: { avg: 2 } },
+  { id: 'src', t: 'Top Lead Sources', p: 'Which marketing channels pay off', key: 'source', metrics: [['profit','Revenue'],['rate','Close %'],['n','Contracts']], min: { rate: 3 } },
+  { id: 'lose', t: 'Where We Lose Contracts', p: 'Cancel rate by state, 3+ finished contracts', key: 'state', label: stName, metrics: [['crate','Cancel %'],['canc','Cancels']], min: { crate: 3 }, color: 'red' },
+  { id: 'acqlose', t: 'Cancels By ACQ', p: 'Which contracts fall through, 3+ finished contracts', key: 'acq', metrics: [['crate','Cancel %'],['canc','Cancels']], min: { crate: 3 }, color: 'red' },
   { id: 'speed', t: 'Speed To Contract', p: 'Average days from lead in to signed, by ACQ', key: 'acq', metrics: [['speed','Days']], asc: true, color: 'blue', min: { speed: 3 } },
-  { id: 'exit', t: 'Exit Strategy Mix', p: 'Closed deals and profit by exit', key: 'exit', metrics: [['closed','Closes'],['avg','Avg'],['profit','Profit']] },
-  { id: 'pair', t: 'Best ACQ + DISPO Pairs', p: 'Teams that close the most profit together', key: d => d.acq && d.dispo ? d.acq.split(' ')[0] + ' + ' + d.dispo.split(' ')[0] : '', metrics: [['profit','Profit'],['closed','Closes']] },
-  { id: 'big', t: 'Biggest Deals', p: 'Top single deals by actual profit · click to open', deals: true },
+  { id: 'exit', t: 'Exit Strategy Mix', p: 'Closed contracts and revenue by exit', key: 'exit', metrics: [['closed','Closes'],['avg','Avg'],['profit','Revenue']] },
+  { id: 'pair', t: 'Best ACQ + DISPO Pairs', p: 'Teams that close the most revenue together', key: d => d.acq && d.dispo ? d.acq.split(' ')[0] + ' + ' + d.dispo.split(' ')[0] : '', metrics: [['profit','Revenue'],['closed','Closes']] },
+  { id: 'big', t: 'Biggest Contracts', p: 'Top single contracts by actual revenue · click to open', deals: true },
   { id: 'days', t: 'Fastest To Close', p: 'Average days from contract to closing, by DISPO', key: 'dispo', metrics: [['days','Days']], asc: true, color: 'green' },
-  { id: 'pipe', t: 'Open Deals By State', p: 'Signed deals still waiting to close or cancel', key: 'state', label: stName, metrics: [['signed','Open']], color: 'blue' }
+  { id: 'pipe', t: 'Open Contracts By State', p: 'Signed contracts still waiting to close or cancel', key: 'state', label: stName, metrics: [['signed','Open']], color: 'blue' }
 ];
 const fmtMetric = (m, v) => m === 'profit' || m === 'avg' || m === 'pipe' ? kmoney(v) : m === 'rate' || m === 'crate' || m === 'real' ? pct(v) : m === 'days' || m === 'speed' ? Math.round(v) + 'd' : Math.round(v);
 function renderBoards(list) {
@@ -1136,7 +1136,7 @@ const fullAddr = d => { const tail = [d.state, d.zip].filter(Boolean).join(' ');
 function renderTable(list) {
   const val = (d, k) => k === 'date' ? (d.closedAt || d.signedAt) : k === 'actual' ? (d.actual == null ? -1 : d.actual) : k === 'address' ? fullAddr(d).toLowerCase() : d[k];
   const rows = [...list].sort((a, b) => { const x = val(a, sortK), y = val(b, sortK); return (x > y ? 1 : x < y ? -1 : 0) * sortDir; });
-  $('dlSub').textContent = `${rows.length} deals match the filters · click a row to edit · click a heading to sort`;
+  $('dlSub').textContent = `${rows.length} contracts match the filters · click a row to edit · click a heading to sort`;
   $('table').innerHTML = `<thead><tr>${COLS.map(([k, l, c]) => `<th class="${c || ''}" data-k="${k}">${l}${sortK === k ? (sortDir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead><tbody>${rows.map(d => `<tr data-id="${d.id}"><td class="num">${fdate(d.closedAt || d.signedAt)}</td><td class="num">${fdate(d.signedAt)}</td><td><span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span></td><td class="addr">${esc(fullAddr(d))}${d.edits.includes('added') ? '<span class="edited">Added</span>' : d.edits.length ? '<span class="edited">Edited</span>' : ''}${d.flags.length ? `<div class="flagline">⚑ ${esc(d.flags[0])}${d.flags.length > 1 ? ` · +${d.flags.length - 1} more` : ''}</div>` : ''}</td><td>${esc(d.source)}</td><td>${esc(d.acq)}</td><td>${esc(d.dispo)}</td><td>${esc(d.fus || '—')}</td><td class="r num">${money(d.potential)}</td><td class="r num">${money(d.actual)}</td><td>${esc(d.exit || '—')}</td></tr>`).join('')}</tbody>`;
   $('dcards').innerHTML = rows.slice(0, cardsShown).map(d => `<li data-id="${d.id}"><div class="dc-top"><span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span><span class="num muted">${fdate(d.closedAt || d.signedAt)}</span></div><div class="dc-a">${esc(d.address)}</div><div class="muted">${esc([d.city, [d.state, d.zip].filter(Boolean).join(' ')].filter(Boolean).join(', '))}${d.acq ? ' · ' + esc(d.acq) : ''}</div>${d.status === 'closed' && d.actual != null ? `<div class="dc-v num">${money(d.actual)}</div>` : ''}${d.flags.length ? `<div class="flagline">⚑ ${esc(d.flags[0])}</div>` : ''}</li>`).join('') + (rows.length > cardsShown ? `<li class="more-li"><button class="btn ghost" data-morecards>Show More (${rows.length - cardsShown} Left)</button></li>` : '');
 }
@@ -1148,7 +1148,7 @@ $('dcards').addEventListener('click', e => { if (e.target.closest('[data-morecar
 
 // ---------- deal drawer: view, fix, add, delete ----------
 let draft = null, confirmDel = false, NEWD = null, zipsP = null;
-const FIELDS = [['address','Street Address','text','full'],['city','City','text'],['state','State','state'],['zip','ZIP','zip'],['source','Lead Source','opt'],['exit','Exit Strategy','opt'],['acq','ACQ','opt'],['dispo','DISPO','opt'],['fus','FUS','opt'],['potential','Potential Profit','money'],['actual','Actual Profit','money'],['created','Lead Came In','date'],['signedAt','Date Signed','date'],['closedAt','Date Closed Or Cancelled','date'],['feedback','Feedback','textarea','full'],['cancelReason','Cancel Reason','textarea','full']];
+const FIELDS = [['address','Street Address','text','full'],['city','City','text'],['state','State','state'],['zip','ZIP','zip'],['source','Lead Source','opt'],['exit','Exit Strategy','opt'],['acq','ACQ','opt'],['dispo','DISPO','opt'],['fus','FUS','opt'],['potential','Potential Revenue','money'],['actual','Actual Revenue','money'],['created','Lead Came In','date'],['signedAt','Date Signed','date'],['closedAt','Date Closed Or Cancelled','date'],['feedback','Feedback','textarea','full'],['cancelReason','Cancel Reason','textarea','full']];
 const LABEL = Object.fromEntries([['status', 'Status'], ...FIELDS.map(f => [f[0], f[1]])]);
 const toDay = t => t ? new Date(t).toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) : '';
 const fromDay = v => v ? new Date(v + 'T12:00:00-05:00').getTime() : null;
@@ -1180,7 +1180,7 @@ function renderDrawer(d) {
     }
     else if (t === 'money') ctl = `<input id="f-${k}" data-k="${k}" inputmode="decimal" class="num" value="${draft[k] == null ? '' : (draft[k] < 0 ? '-$' : '$') + Math.abs(draft[k]).toLocaleString()}" placeholder="${k === 'actual' && draft.status === 'signed' ? 'Fills in at closing' : k === 'potential' ? 'Not in GoHighLevel yet' : '$0'}">`;
     else if (t === 'date') ctl = `<input type="date" id="f-${k}" data-k="${k}" value="${toDay(draft[k])}">`;
-    else if (t === 'textarea') ctl = `<textarea id="f-${k}" data-k="${k}" rows="3" placeholder="${k === 'cancelReason' ? (draft.status === 'cancelled' ? 'Why the deal fell through' : 'Fills in when the deal is cancelled') : 'Notes from GoHighLevel’s Feedback field'}">${esc(draft[k] || '')}</textarea>`;
+    else if (t === 'textarea') ctl = `<textarea id="f-${k}" data-k="${k}" rows="3" placeholder="${k === 'cancelReason' ? (draft.status === 'cancelled' ? 'Why the contract fell through' : 'Fills in when the contract is cancelled') : 'Notes from GoHighLevel’s Feedback field'}">${esc(draft[k] || '')}</textarea>`;
     else if (t === 'zip') ctl = `<input id="f-zip" data-k="zip" inputmode="numeric" maxlength="5" class="num" value="${esc(draft.zip || '')}" placeholder="5 Digits">`;
     else ctl = `<input id="f-${k}" data-k="${k}" value="${esc(draft[k] || '')}"${k === 'address' ? ' placeholder="123 Main St"' : ''}>`;
     return `<div class="field ${w || ''} ${!isNew && draft[k] !== d[k] ? 'changed' : ''}"><label for="f-${k}">${l}<span class="dot2"></span>${t === 'opt' ? `<button type="button" class="lnk" data-editlist="${k}">${PEOPLE[k] ? 'From The Hub' : 'Edit List'}</button>` : ''}</label>${ctl}</div>`;
@@ -1188,15 +1188,15 @@ function renderDrawer(d) {
   const spread = draft.actual != null && draft.potential != null && draft.status === 'closed' ? draft.actual - draft.potential : null;
   const where = [d.city, d.state].filter(Boolean).join(', ') + (d.zip ? ' ' + d.zip : '');
   const foot = confirmDel
-    ? `<span class="delq">Delete this deal for everyone? This can't be undone.</span><button class="btn ghost" id="drKeep">Keep It</button><button class="btn pri danger" id="drDelGo">Delete Deal</button>`
-    : `${isNew ? '' : '<button class="btn ghost danger" id="drDel">Delete</button>'}<span class="muted" id="chgCount" style="margin-right:auto"></span><button class="btn ghost" id="drCancel">Cancel</button><button class="btn pri" id="drSave" disabled>${isNew ? 'Add Deal' : 'Save Changes'}</button>`;
+    ? `<span class="delq">Delete this contract for everyone? This can't be undone.</span><button class="btn ghost" id="drKeep">Keep It</button><button class="btn pri danger" id="drDelGo">Delete Contract</button>`
+    : `${isNew ? '' : '<button class="btn ghost danger" id="drDel">Delete</button>'}<span class="muted" id="chgCount" style="margin-right:auto"></span><button class="btn ghost" id="drCancel">Cancel</button><button class="btn pri" id="drSave" disabled>${isNew ? 'Add Contract' : 'Save Changes'}</button>`;
   $('drawer').innerHTML = `
-    <div class="dr-h"><div style="min-width:0">${isNew ? '<span class="stp signed"><i></i>New</span><h2 class="h3" style="margin-top:6px">Add A Deal</h2><div class="muted">Fill in what you know. You can fix it any time.</div>'
+    <div class="dr-h"><div style="min-width:0">${isNew ? '<span class="stp signed"><i></i>New</span><h2 class="h3" style="margin-top:6px">Add A Contract</h2><div class="muted">Fill in what you know. You can fix it any time.</div>'
       : `<span class="stp ${d.status}"><i></i>${STATUS[d.status].label}</span><h2 class="h3" style="margin-top:6px">${esc(d.address)}</h2><div class="muted">${esc(where || 'No City Yet')} · ${d.contactId ? 'GoHighLevel Contact' : d.origin === 'manual' ? 'Added By Hand' : 'CSV History'}${d.x == null ? ' · Not On The Map' : ''}</div>`}</div><button class="x" id="drX" aria-label="Close">✕</button></div>
     <div class="dr-b">
       ${d.flags.length ? `<div class="flags"><b>⚑ Needs Review</b><ul>${d.flags.map((f, i) => `<li><span>${esc(f)}</span><button type="button" class="lnk" data-fix="${i}">Mark Fixed</button></li>`).join('')}</ul></div>` : ''}
       <div class="field"><label>Status</label><div class="statusseg" id="stSeg">${ORDER.map(st => `<button data-s="${st}" class="${st} ${draft.status === st ? 'on' : ''}"><i style="background:var(${STATUS[st].v})"></i>${STATUS[st].label}</button>`).join('')}</div></div>
-      ${d.closings && d.closings.length > 1 ? `<div class="closings"><b>Fix & Flip · ${d.closings.length} Closings</b>${d.closings.map(c => `<div class="crow"><span>${esc(c.label)} · ${fdate(c.t)}${c.exit ? ' · ' + esc(c.exit) : ''}</span><b class="num">${money(c.revenue)}</b></div>`).join('')}<div class="crow total"><span>Actual Profit, Both Closings</span><b class="num">${money(d.closings.reduce((t, c) => t + (c.revenue || 0), 0))}</b></div></div>` : ''}
+      ${d.closings && d.closings.length > 1 ? `<div class="closings"><b>Fix & Flip · ${d.closings.length} Closings</b>${d.closings.map(c => `<div class="crow"><span>${esc(c.label)} · ${fdate(c.t)}${c.exit ? ' · ' + esc(c.exit) : ''}</span><b class="num">${money(c.revenue)}</b></div>`).join('')}<div class="crow total"><span>Actual Revenue, Both Closings</span><b class="num">${money(d.closings.reduce((t, c) => t + (c.revenue || 0), 0))}</b></div></div>` : ''}
       <div class="fgrid">${FIELDS.map(input).join('')}</div>
       ${draft.potential != null ? `<div class="spread"><span>Projected <b class="num">${money(draft.potential)}</b></span><span>Actual <b class="num">${money(draft.actual)}</b></span><span>Difference <b class="num" style="color:${spread == null ? 'inherit' : spread >= 0 ? 'var(--st-closed)' : 'var(--st-cancel)'}">${spread == null ? '—' : (spread >= 0 ? '+' : '−') + money(Math.abs(spread))}</b></span></div>` : ''}
       ${isNew ? '' : `<div><h3 class="h3" style="font-size:15px;margin-bottom:10px">History</h3><ul class="hist">${[...d.hist].reverse().map(h => `<li class="${h.wh ? 'wh' : ''}">${esc(h.text)}<div class="w">${esc(h.by || (h.event ? 'GoHighLevel' : 'CSV History'))} · ${fdate(h.t)}</div></li>`).join('')}</ul></div>`}
@@ -1244,7 +1244,7 @@ async function saveDeal() {
     closeDeal(); await refresh();
     const off = r.deal && r.deal.lat == null;
     toast(isNew ? `Added ${r.deal.address}${off ? ' · add a ZIP to put it on the map' : ''}` : 'Saved · map and leaderboards updated', off ? '--red-500' : '--green-500', off ? 4800 : 3200);
-  } catch (e) { toast('Not saved: ' + e.message, '--red-500', 5200); if (btn) { btn.disabled = false; btn.textContent = isNew ? 'Add Deal' : 'Save Changes'; } }
+  } catch (e) { toast('Not saved: ' + e.message, '--red-500', 5200); if (btn) { btn.disabled = false; btn.textContent = isNew ? 'Add Contract' : 'Save Changes'; } }
 }
 async function deleteDeal(d) {
   try { await api('deal', { id: d.docId, delete: true }); closeDeal(); await refresh(); toast(`Deleted ${d.address}`, '--red-500'); }
@@ -1389,13 +1389,13 @@ const LINK = {};
 function renderPeopleTab(list) {
   const hub = list.filter(o => o.hub), out = list.filter(o => !o.hub && !o.tag), tagged = list.filter(o => o.tag);
   const hubOpts = hub.map(x => ({ v: x.name, l: x.name }));
-  return `<div class="hubhead"><span class="hubtag">From The Hub</span><span class="muted">${TEAM ? `The ${KINDS[setKind]} department in the Hub's Team Members` : `Names from your deals until the Hub link is set up`}</span></div>${hub.length ? '' : `<div class="empty">No one is in the ${KINDS[setKind]} department in the Hub yet.</div>`}
-    <ul class="optlist">${hub.map(o => { const u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${o.role}${o.email ? ` · <span style="text-transform:none">${esc(o.email)}</span>` : ''}${o.aliases.length ? ' · Also matches ' + o.aliases.map(esc).join(', ') : ''}</small></span><span class="uses num">${u} deal${u === 1 ? '' : 's'}</span></li>`; }).join('')}</ul>
+  return `<div class="hubhead"><span class="hubtag">From The Hub</span><span class="muted">${TEAM ? `The ${KINDS[setKind]} department in the Hub's Team Members` : `Names from your contracts until the Hub link is set up`}</span></div>${hub.length ? '' : `<div class="empty">No one is in the ${KINDS[setKind]} department in the Hub yet.</div>`}
+    <ul class="optlist">${hub.map(o => { const u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${o.role}${o.email ? ` · <span style="text-transform:none">${esc(o.email)}</span>` : ''}${o.aliases.length ? ' · Also matches ' + o.aliases.map(esc).join(', ') : ''}</small></span><span class="uses num">${u} contract${u === 1 ? '' : 's'}</span></li>`; }).join('')}</ul>
     ${out.length ? `<div class="hubhead"><span class="hubtag warn">Not In The Hub</span><span class="muted">Names the CRM sent that match no one in the Hub</span></div>
     <ul class="optlist">${out.map(o => { const i = list.indexOf(o), u = uses(setKind, o.name); if (!hubOpts.some(h => h.v === LINK[o.name])) { const first = norm(o.name.split(' ')[0]).replace(/\.$/, ''), guess = hub.find(h => norm(h.name).startsWith(first)) || hub[0]; LINK[o.name] = guess && guess.name; }
-      return `<li class="optrow person out ${o.crm ? 'crm' : ''}"><span class="pav out">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${u} deal${u === 1 ? '' : 's'} · From The CRM</small></span>
+      return `<li class="optrow person out ${o.crm ? 'crm' : ''}"><span class="pav out">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${u} contract${u === 1 ? '' : 's'} · From The CRM</small></span>
         <div class="linkbox">${hub.length ? `<span class="muted">Link To</span>${dd({ value: LINK[o.name], options: hubOpts, label: 'Link ' + o.name + ' to', onChange: v => { LINK[o.name] = v; renderSettings(); } })}<button class="btn pri sm" data-link="${i}">Link</button>` : ''}${o.crm ? `<button class="btn ghost sm" data-ok="${i}">Keep As Is</button>` : ''}<button class="btn ghost sm" data-ti="${i}" data-tag="noLogin">No Hub Login</button><button class="btn ghost sm" data-ti="${i}" data-tag="former">Former Member</button></div></li>`; }).join('')}</ul>` : ''}
-    ${[['noLogin', 'No Hub Login', 'Real people and agents without a Hub account'], ['former', 'Former Members', 'No longer on the team; their names stay on their deals']].map(([tg, title, sub]) => { const rows = tagged.filter(o => o.tag === tg); return rows.length ? `<div class="hubhead"><span class="hubtag">${title}</span><span class="muted">${sub}</span></div><ul class="optlist">${rows.map(o => { const i = list.indexOf(o), u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav out">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${u} deal${u === 1 ? '' : 's'}</small></span><button class="btn ghost sm" data-ti="${i}" data-tag="">Undo</button></li>`; }).join('')}</ul>` : ''; }).join('')}
+    ${[['noLogin', 'No Hub Login', 'Real people and agents without a Hub account'], ['former', 'Former Members', 'No longer on the team; their names stay on their contracts']].map(([tg, title, sub]) => { const rows = tagged.filter(o => o.tag === tg); return rows.length ? `<div class="hubhead"><span class="hubtag">${title}</span><span class="muted">${sub}</span></div><ul class="optlist">${rows.map(o => { const i = list.indexOf(o), u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav out">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${u} contract${u === 1 ? '' : 's'}</small></span><button class="btn ghost sm" data-ti="${i}" data-tag="">Undo</button></li>`; }).join('')}</ul>` : ''; }).join('')}
 `;
 }
 function renderSettings() {
@@ -1403,17 +1403,17 @@ function renderSettings() {
   const list = OPTS[setKind], people = !!PEOPLE[setKind];
   const rmBox = (o, i, u) => {
     const others = list.filter((x, j) => j !== i);
-    if (!others.length) return `<div class="rmbox">Add another ${ONE[setKind]} first so these deals have somewhere to go.<button class="btn ghost sm" data-cancelrm>OK</button></div>`;
+    if (!others.length) return `<div class="rmbox">Add another ${ONE[setKind]} first so these contracts have somewhere to go.<button class="btn ghost sm" data-cancelrm>OK</button></div>`;
     if (!others.some(x => x.name === moveTo)) moveTo = others[0].name;
-    return `<div class="rmbox"><span>${u} deal${u > 1 ? 's use' : ' uses'} “${esc(o.name)}”. Move ${u > 1 ? 'them' : 'it'} to</span>${dd({ value: moveTo, options: others.map(x => ({ v: x.name, l: x.name })), label: 'Move deals to', onChange: v => { moveTo = v; renderSettings(); } })}<button class="btn pri sm" data-confirm="${i}">Move &amp; Remove</button><button class="btn ghost sm" data-cancelrm>Cancel</button></div>`;
+    return `<div class="rmbox"><span>${u} contract${u > 1 ? 's use' : ' uses'} “${esc(o.name)}”. Move ${u > 1 ? 'them' : 'it'} to</span>${dd({ value: moveTo, options: others.map(x => ({ v: x.name, l: x.name })), label: 'Move contracts to', onChange: v => { moveTo = v; renderSettings(); } })}<button class="btn pri sm" data-confirm="${i}">Move &amp; Remove</button><button class="btn ghost sm" data-cancelrm>Cancel</button></div>`;
   };
   $('settings').innerHTML = `
-    <div class="dr-h"><div><h2 class="h3" id="setTitle" style="font-size:22px">Settings</h2><div class="muted">Dropdown options for deals, filters and leaderboards</div></div><button class="x" data-close aria-label="Close">✕</button></div>
+    <div class="dr-h"><div><h2 class="h3" id="setTitle" style="font-size:22px">Settings</h2><div class="muted">Dropdown options for contracts, filters and leaderboards</div></div><button class="x" data-close aria-label="Close">✕</button></div>
     <div class="set-tabs"><div class="seg">${Object.entries(KINDS).map(([k, l]) => { const n = OPTS[k].filter(o => o.crm).length; return `<button data-kind="${k}" class="${k === setKind ? 'on' : ''}">${l}${n ? `<span class="ndot">${n}</span>` : ''}</button>`; }).join('')}</div></div>
     <div class="set-b">${people ? renderPeopleTab(list) : `
       <ul class="optlist">${list.map((o, i) => { const u = uses(setKind, o.name); return `<li class="optrow ${o.crm ? 'crm' : ''}">
         <input class="optname" id="opt-${setKind}-${i}" data-i="${i}" value="${esc(o.name)}" aria-label="Rename ${esc(o.name)}">
-        <span class="uses num">${u} deal${u === 1 ? '' : 's'}</span>
+        <span class="uses num">${u} contract${u === 1 ? '' : 's'}</span>
         ${o.crm ? `<button class="crm-badge" data-ok="${i}" title="Keep it and clear the badge">New From CRM ✓</button>` : '<span></span>'}
         <button class="rm" data-rm="${i}" aria-label="Remove ${esc(o.name)}">${ICON.trash}</button>
         ${o.aliases.length ? `<div class="alias">Also matches from the CRM: ${o.aliases.map(esc).join(', ')}</div>` : ''}
@@ -1433,7 +1433,7 @@ async function serverOpt(payload, msg) {
 // fold option i into another: its deals move over and its spellings become matches for the target
 function mergeOpt(i, tgtName, link) {
   const o = OPTS[setKind][i]; if (!o || !tgtName) return;
-  serverOpt({ op: 'merge', name: o.name, to: tgtName }, r => link ? `Linked “${o.name}” to ${tgtName} · ${r.moved} deal${r.moved === 1 ? '' : 's'} moved, future webhooks match` : `Moved ${r.moved} deal${r.moved === 1 ? '' : 's'} to “${tgtName}” · reports updated`);
+  serverOpt({ op: 'merge', name: o.name, to: tgtName }, r => link ? `Linked “${o.name}” to ${tgtName} · ${r.moved} contract${r.moved === 1 ? '' : 's'} moved, future webhooks match` : `Moved ${r.moved} contract${r.moved === 1 ? '' : 's'} to “${tgtName}” · reports updated`);
 }
 $('settings').addEventListener('click', e => {
   const t = e.target;
@@ -1453,9 +1453,9 @@ $('settings').addEventListener('change', e => {
   if (!e.target.classList.contains('optname')) return;
   const list = OPTS[setKind], i = +e.target.dataset.i, o = list[i], name = e.target.value.trim().replace(/\s+/g, ' ');
   if (!name || name === o.name) return renderSettings();
-  if (list.some((x, j) => j !== i && norm(x.name) === norm(name))) { setErr = `“${name}” is already on the list. To merge them, remove “${o.name}” and move its deals there.`; return renderSettings(); }
+  if (list.some((x, j) => j !== i && norm(x.name) === norm(name))) { setErr = `“${name}” is already on the list. To merge them, remove “${o.name}” and move its contracts there.`; return renderSettings(); }
   const old = o.name;
-  serverOpt({ op: 'rename', name: old, to: name }, r => `Renamed to “${name}” · ${r.moved} deals and every report updated`).then(() => { if (F[FKEY[setKind]] === old) { F[FKEY[setKind]] = name; render(); } });
+  serverOpt({ op: 'rename', name: old, to: name }, r => `Renamed to “${name}” · ${r.moved} contracts and every report updated`).then(() => { if (F[FKEY[setKind]] === old) { F[FKEY[setKind]] = name; render(); } });
 });
 $('settings').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.classList.contains('optname')) { e.preventDefault(); e.target.blur(); } });
 $('settings').addEventListener('submit', e => {
@@ -1481,7 +1481,7 @@ function paintRange() {
     if (!d) return '<span></span>'; const v = RP.vy + '-' + pad(RP.vm + 1) + '-' + pad(d), end = v === lo || v === hi, mid = lo && hi && v > lo && v < hi;
     return `<button type="button" class="rd${end ? ' on' : ''}${mid ? ' mid' : ''}${v === t ? ' today' : ''}${v > t ? ' future' : ''}" data-day="${v}" aria-pressed="${end}" aria-label="${v}">${d}</button>`; }).join('');
   const sum = lo ? (hi && hi !== lo ? `${shortDay(lo)} – ${shortDay(hi)}` : `${shortDay(lo)} · pick the end day`) : 'Pick the first day';
-  box.innerHTML = `<div class="rp-h"><span class="rp-t">Custom Range</span><span class="muted">Deals by their last event</span></div>
+  box.innerHTML = `<div class="rp-h"><span class="rp-t">Custom Range</span><span class="muted">Contracts by their last event</span></div>
     <div class="rp-nav"><button type="button" class="rp-arr" data-shift="-1" aria-label="Previous month">‹</button><span class="rp-m">${new Date(Date.UTC(RP.vy, RP.vm, 1)).toLocaleString('en-US', { timeZone: 'UTC', month: 'long', year: 'numeric' })}</span><button type="button" class="rp-arr" data-shift="1" aria-label="Next month">›</button></div>
     <div class="rp-g">${['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(w => `<span class="rw">${w}</span>`).join('')}${cells}</div>
     <div class="rp-sum"><span>${sum}</span></div>
@@ -1509,7 +1509,7 @@ function renderTeam() {
   const tagged = tg => [...new Set(Object.keys(PEOPLE).flatMap(k => OPTS[k].filter(o => o.tag === tg).map(o => o.name)))];
   const when = TEAM_AT ? new Date(TEAM_AT).toLocaleString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit' }) + ' EST' : '';
   const body = TEAM ? groups.map(([g, f]) => { const ps = TEAM.filter(f).sort((a, b) => (b.role === 'lead') - (a.role === 'lead') || a.name.localeCompare(b.name)); return ps.length ? `<div class="hubhead"><span class="hubtag">${g}</span><span class="muted">${ps.length}</span></div><ul class="optlist">${ps.map(p => personRow(p, ROLE_LABEL[p.role] || 'Member')).join('')}</ul>` : ''; }).join('')
-      + [['noLogin', 'No Hub Login'], ['former', 'Former Members']].map(([tg, title]) => { const ns = tagged(tg); return ns.length ? `<div class="hubhead"><span class="hubtag warn">${title}</span><span class="muted">Kept on deals, set in Settings</span></div><ul class="optlist">${ns.map(n => personRow({ name: n }, title === 'No Hub Login' ? 'No Hub Login' : 'Former Member')).join('')}</ul>` : ''; }).join('')
+      + [['noLogin', 'No Hub Login'], ['former', 'Former Members']].map(([tg, title]) => { const ns = tagged(tg); return ns.length ? `<div class="hubhead"><span class="hubtag warn">${title}</span><span class="muted">Kept on contracts, set in Settings</span></div><ul class="optlist">${ns.map(n => personRow({ name: n }, title === 'No Hub Login' ? 'No Hub Login' : 'Former Member')).join('')}</ul>` : ''; }).join('')
     : `<div class="iempty">The Hub link is not set up yet.</div>`;
   $('teamWin').innerHTML = `<div class="dr-h"><div><h2 class="h3" id="teamTitle" style="font-size:22px">Team Members</h2><div class="muted">Mirrored from the Hub's Team Members${when ? ' · updated ' + when : ''}. Change people in the Hub.</div></div><button class="x" data-tclose aria-label="Close">✕</button></div>
     <div class="set-b">${TEAM ? `<button class="btn ghost" data-trefresh ${teamBusy ? 'disabled' : ''} style="align-self:flex-start">${teamBusy ? 'Refreshing…' : 'Refresh From Hub'}</button>` : ''}${body}</div>`;
@@ -1576,7 +1576,7 @@ function renderTrends() {
       ['signed', 'closed', 'cancelled'].forEach((f, j) => { const v = m[f]; if (!v) return; const h = v / max * ih, x = x0 + j * (bw + 2), y = T + ih - h, rr = Math.min(3, bw / 2, h);
         g += `<path d="M${x} ${T + ih}V${y + rr}Q${x} ${y} ${x + rr} ${y}H${x + bw - rr}Q${x + bw} ${y} ${x + bw} ${y + rr}V${T + ih}Z" fill="var(${STATUS[f].v})"/>`; });
       g += `<text class="ax" x="${L + i * gw + gw / 2}" y="${H - 8}" text-anchor="middle">${lab(m.k, i, every)}</text><rect class="hit" data-mi="${i}" x="${L + i * gw}" y="${T}" width="${gw}" height="${ih}" rx="6"/>`; });
-    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Deals signed, closed and cancelled per month">${g}</svg>`; }
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Contracts signed, closed and cancelled per month">${g}</svg>`; }
   // profit: a line with an area under it, a point a month, the latest month in red
   { const el = $('chProfit'), W = Math.max(280, el.clientWidth), H = 220, L = 44, R = 10, T = 12, B = 26, iw = W - L - R, ih = H - T - B;
     const vals = TR.map(m => m.profit), lo = Math.min(0, ...vals), max = niceMax(Math.max(1, ...vals)), span = max - lo, gw = iw / 12, every = gw < 34 ? 2 : 1;
@@ -1586,14 +1586,14 @@ function renderTrends() {
     const pts = TR.map((m, i) => [X(i), Y(m.profit)]), line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
     g += `<path d="${line}L${pts[11][0]} ${Y(Math.max(lo, 0))}L${pts[0][0]} ${Y(Math.max(lo, 0))}Z" fill="url(#pfill)"/><path class="pl" d="${line}"/>`;
     TR.forEach((m, i) => { g += `<circle class="pt${i === 11 ? ' last' : ''}" cx="${pts[i][0]}" cy="${pts[i][1]}" r="${i === 11 ? 5 : 4}"/><text class="ax" x="${X(i)}" y="${H - 8}" text-anchor="middle">${lab(m.k, i, every)}</text><rect class="hit" data-mi="${i}" x="${L + i * gw}" y="${T}" width="${gw}" height="${ih}" rx="6"/>`; });
-    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Actual profit per month">${g}</svg>`;
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Actual revenue per month">${g}</svg>`;
     $('chTotal').textContent = kmoney(vals.reduce((a, b) => a + b, 0)); }
 }
 ['chDeals', 'chProfit'].forEach(id => {
   const box = $(id);
   const show = e => { const h = e.target.closest('.hit'); box.querySelectorAll('.hit.on').forEach(x => x.classList.remove('on')); if (!h) return hideTip(); h.classList.add('on');
     const m = TR[+h.dataset.mi], [y, mo] = m.k.split('-');
-    showTip(`<div class="th">${MON[+mo - 1]} ${y}</div>` + (id === 'chDeals' ? ['signed', 'closed', 'cancelled'].map(f => `<div class="tr"><span>${STATUS[f].label}</span><b>${m[f]}</b></div>`).join('') : `<div class="tr"><span>Actual Profit</span><b>${money(m.profit)}</b></div><div class="tr"><span>Closings</span><b>${m.closed}</b></div><div class="tr"><span>Avg Per Closing</span><b>${m.closed ? money(m.profit / m.closed) : '—'}</b></div>`), e); };
+    showTip(`<div class="th">${MON[+mo - 1]} ${y}</div>` + (id === 'chDeals' ? ['signed', 'closed', 'cancelled'].map(f => `<div class="tr"><span>${STATUS[f].label}</span><b>${m[f]}</b></div>`).join('') : `<div class="tr"><span>Actual Revenue</span><b>${money(m.profit)}</b></div><div class="tr"><span>Closings</span><b>${m.closed}</b></div><div class="tr"><span>Avg Per Closing</span><b>${m.closed ? money(m.profit / m.closed) : '—'}</b></div>`), e); };
   box.addEventListener('pointermove', show); box.addEventListener('click', show);
   box.addEventListener('pointerleave', () => { box.querySelectorAll('.hit.on').forEach(x => x.classList.remove('on')); hideTip(); });
 });
@@ -1605,8 +1605,8 @@ const THEMES = [
   { t: 'Seller Backed Out', re: /back(ed)?\s*out|changed (his|her|their) mind|cold feet|not sell|no longer|decided|keep(ing)? (the )?(house|home|property)|family|spouse|wife|husband|stay/i, tip: 'Re-confirm motivation, timeline and every decision-maker before signing, and keep weekly contact until closing so sellers don\'t drift.' },
   { t: 'Price Or Offer', re: /price|offer|low ?ball|too low|more money|counter|apprais|value|worth|wanted more/i, tip: 'Walk sellers through comps at the appointment and set expectations on the number, so the offer is not a surprise later.' },
   { t: 'Title, Liens Or Probate', re: /title|lien|probate|estate|heir|judg(e)?ment|back tax|taxes|owner(ship)?|deed|divorce|bankrupt/i, tip: 'Check title, liens, probate and heirs on the first call, and order title as soon as the contract is signed.' },
-  { t: 'Repairs Or Condition', re: /repair|inspect|condition|foundation|roof|mold|damage|walk ?through|fire|flood|structural/i, tip: 'Get photos or a walkthrough before signing and price repairs in up front, so inspection does not reopen the deal.' },
-  { t: 'No Buyer Or Dispo', re: /buyer|dispo|assign|couldn.?t sell|no interest|market|jv/i, tip: 'Check buyer demand in the area before contracting, and get deals in front of buyers sooner.' },
+  { t: 'Repairs Or Condition', re: /repair|inspect|condition|foundation|roof|mold|damage|walk ?through|fire|flood|structural/i, tip: 'Get photos or a walkthrough before signing and price repairs in up front, so inspection does not reopen the contract.' },
+  { t: 'No Buyer Or Dispo', re: /buyer|dispo|assign|couldn.?t sell|no interest|market|jv/i, tip: 'Check buyer demand in the area before contracting, and get contracts in front of buyers sooner.' },
   { t: 'Financing Or Funding', re: /financ|fund|lender|loan|proof of funds|pof|cash/i, tip: 'Confirm proof of funds and closing timelines with buyers and lenders early in the contract.' },
   { t: 'Agent Or Another Offer', re: /agent|realtor|list(ed|ing)|another offer|other offer|competit|investor|wholesaler/i, tip: 'Ask about listings and other offers on the first call, and move faster on hot leads.' },
   { t: 'Could Not Reach Seller', re: /no contact|unresponsive|ghost|can.?t reach|could not reach|no answer|stopped answering|disconnected/i, tip: 'Set the next touchpoint at signing and use call, text and email to stay connected.' }
@@ -1621,10 +1621,10 @@ function renderInsights() {
   const topSource = arr => { const g = {}; arr.filter(d => d.status === 'closed').forEach(d => { if (d.source) g[d.source] = (g[d.source] || 0) + (d.actual || 0); }); const b = Object.entries(g).sort((a, c) => c[1] - a[1])[0]; return b ? b[0] : ''; };
   const pills = (s, good) => `<div class="ipills"><span class="ipill ${good ? 'g' : 'r'}">${pct(s.rate)} Close</span><span class="ipill">${kmoney(s.avg)} Avg</span><span class="ipill">${kmoney(s.profit)} Total</span>${s.signed ? `<span class="ipill">${s.signed} Open</span>` : ''}</div>`;
   const item = (x, good) => { const s = x.s, src = good ? topSource(x.arr) : '';
-    const why = good ? `Closes ${pct(s.rate)} of finished deals (team ${pct(teamRate)}) and averages ${kmoney(s.avg)} per close (team ${kmoney(teamAvg)}).`
-      : s.rate <= teamRate - .15 ? `Only ${s.closed} of ${s.done} finished deals closed (${pct(s.rate)} vs team ${pct(teamRate)}): ${s.canc} cancellation${s.canc === 1 ? '' : 's'}.`
-      : `Deals close, but average ${kmoney(s.avg)} per close, ${pct(1 - s.avg / teamAvg)} below the team's ${kmoney(teamAvg)}.`;
-    const tip = good ? (src ? `Put more into ${src} here: it brought the most profit.` : 'Put more marketing here.') : s.rate <= teamRate - .15 ? 'Cut spend here, or screen harder before signing.' : 'Only take deals here with a wider spread.';
+    const why = good ? `Closes ${pct(s.rate)} of finished contracts (team ${pct(teamRate)}) and averages ${kmoney(s.avg)} per close (team ${kmoney(teamAvg)}).`
+      : s.rate <= teamRate - .15 ? `Only ${s.closed} of ${s.done} finished contracts closed (${pct(s.rate)} vs team ${pct(teamRate)}): ${s.canc} cancellation${s.canc === 1 ? '' : 's'}.`
+      : `Contracts close, but average ${kmoney(s.avg)} per close, ${pct(1 - s.avg / teamAvg)} below the team's ${kmoney(teamAvg)}.`;
+    const tip = good ? (src ? `Put more into ${src} here: it brought the most revenue.` : 'Put more marketing here.') : s.rate <= teamRate - .15 ? 'Cut spend here, or screen harder before signing.' : 'Only take contracts here with a wider spread.';
     return `<div class="ii"><div class="nm">${esc(x.name)}<small>${s.closed}/${s.done} Closed</small></div>${pills(s, good)}<div class="why">${why}</div><div class="tip">${esc(tip)}</div></div>`; };
   const good = states.filter(x => x.s.done >= 4 && x.s.closed >= 2 && x.s.rate >= teamRate && x.s.avg >= teamAvg * .85).sort((a, c) => score(c.s) - score(a.s)).slice(0, 5);
   const goodC = cities.filter(x => x.s.done >= 3 && x.s.closed >= 2 && x.s.rate >= teamRate && x.s.avg >= teamAvg * .85).sort((a, c) => score(c.s) - score(a.s)).slice(0, 3);
@@ -1638,16 +1638,16 @@ function renderInsights() {
   withR.forEach(d => { const r = reasonOf(d), hit = th.find(t => t.re.test(r)); (hit || other).ds.push(d); });
   const themes = [...th, other].filter(t => t.ds.length).sort((a, c) => c.ds.length - a.ds.length);
   const quote = d => `<div class="q">“${esc(reasonOf(d).slice(0, 140))}${reasonOf(d).length > 140 ? '…' : ''}” · ${esc(d.city || '')} ${d.state || ''}</div>`;
-  const fallStat = (key, label) => { const g = groups(d => d[key]).filter(x => x.s.done >= 5).sort((a, c) => c.s.crate - a.s.crate)[0]; return g ? `<div class="ii"><div class="nm">${esc(label)}: ${esc(g.k)}<small>${g.s.canc}/${g.s.done} Cancelled</small></div><div class="why">Cancels ${pct(g.s.crate)} of finished deals, against ${pct(fin.length ? canc.length / fin.length : NaN)} for the team.</div></div>` : ''; };
+  const fallStat = (key, label) => { const g = groups(d => d[key]).filter(x => x.s.done >= 5).sort((a, c) => c.s.crate - a.s.crate)[0]; return g ? `<div class="ii"><div class="nm">${esc(label)}: ${esc(g.k)}<small>${g.s.canc}/${g.s.done} Cancelled</small></div><div class="why">Cancels ${pct(g.s.crate)} of finished contracts, against ${pct(fin.length ? canc.length / fin.length : NaN)} for the team.</div></div>` : ''; };
   const fall = themes.length
     ? themes.map(t => `<div class="ii"><div class="nm">${esc(t.t)}<small>${t.ds.length} Of ${withR.length}</small></div><div class="ibar"><b style="width:${(t.ds.length / withR.length * 100).toFixed(0)}%"></b></div><div class="tip">${esc(t.tip)}</div>${t.ds.slice(-2).map(quote).join('')}</div>`).join('')
-    : empty('No cancel reasons yet. They arrive with the Feedback field on each Cancelled hook, and this card groups them into themes with fixes.') + `<div class="isub">Where Deals Fall Out Now</div>` + (fallStat('source', 'Lead Source') + fallStat('acq', 'ACQ') + fallStat('state', 'State') || empty('Not enough finished deals yet.'));
-  $('insSub').textContent = `From ${fin.length} finished deals · team closes ${pct(teamRate)} and averages ${kmoney(teamAvg)} per close · follows the filters above`;
+    : empty('No cancel reasons yet. They arrive with the Feedback field on each Cancelled hook, and this card groups them into themes with fixes.') + `<div class="isub">Where Contracts Fall Out Now</div>` + (fallStat('source', 'Lead Source') + fallStat('acq', 'ACQ') + fallStat('state', 'State') || empty('Not enough finished contracts yet.'));
+  $('insSub').textContent = `From ${fin.length} finished contracts · team closes ${pct(teamRate)} and averages ${kmoney(teamAvg)} per close · follows the filters above`;
   $('ins').innerHTML = `
-    <article class="card icard"><div class="ih">${icon('--st-closed-bg', '--st-closed', '<path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/>')}<div><h3 class="h3" style="font-size:16px">Market More Here</h3><p>Higher close rate and profit than the team</p></div></div>
-      ${good.length ? good.map(x => item(x, true)).join('') : empty('No state beats the team on both close rate and profit yet.')}
+    <article class="card icard"><div class="ih">${icon('--st-closed-bg', '--st-closed', '<path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/>')}<div><h3 class="h3" style="font-size:16px">Market More Here</h3><p>Higher close rate and revenue than the team</p></div></div>
+      ${good.length ? good.map(x => item(x, true)).join('') : empty('No state beats the team on both close rate and revenue yet.')}
       ${goodC.length ? `<div class="isub">Top Cities</div>${goodC.map(x => item(x, true)).join('')}` : ''}</article>
-    <article class="card icard"><div class="ih">${icon('--st-cancel-bg', '--st-cancel', '<path d="m3 7 6 6 4-4 8 8"/><path d="M14 17h7v-7"/>')}<div><h3 class="h3" style="font-size:16px">Pull Back Here</h3><p>Low close rate or thin profit</p></div></div>
+    <article class="card icard"><div class="ih">${icon('--st-cancel-bg', '--st-cancel', '<path d="m3 7 6 6 4-4 8 8"/><path d="M14 17h7v-7"/>')}<div><h3 class="h3" style="font-size:16px">Pull Back Here</h3><p>Low close rate or thin revenue</p></div></div>
       ${bad.length ? bad.map(x => item(x, false)).join('') : empty('No state is well below the team right now.')}
       ${badC.length ? `<div class="isub">Cities To Watch</div>${badC.map(x => item(x, false)).join('')}` : ''}</article>
     <article class="card icard"><div class="ih">${icon('--indigo-050', '--text-heading', '<path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>')}<div><h3 class="h3" style="font-size:16px">Fix The Fall-Outs</h3><p>${canc.length} cancellation${canc.length === 1 ? '' : 's'} · ${withR.length} with a reason</p></div></div>${fall}</article>`;
@@ -1661,7 +1661,7 @@ function render(fromHook) {
   $('avDot').hidden = !crmCount();
   const today = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) + 'T00:00:00-05:00').getTime();
   Object.keys(DD).forEach(k => { if (!document.querySelector(`[data-dd="${k}"]`)) delete DD[k]; });
-  $('lbSub').textContent = `Every board follows the filters above · ${v.length} deals in view`;
+  $('lbSub').textContent = `Every board follows the filters above · ${v.length} contracts in view`;
 }
 
 // every request carries the signed-in person's Google token; the server decides what they may do
@@ -1708,7 +1708,7 @@ function openActive(anchor) {
 }
 function openLive() {
   const head = { ready: 'Live: Everything Is Saved', saving: 'Saving…', error: 'Not Saved', connecting: 'Connecting…' }[liveSt];
-  const text = { ready: 'Every change is saved for the whole team, and new deals from GoHighLevel show up within a minute.', saving: 'Your latest change is on its way to the server.', error: liveErr || 'The Heat Map could not reach the server.', connecting: 'Connecting to the Heat Map…' }[liveSt];
+  const text = { ready: 'Every change is saved for the whole team, and new contracts from GoHighLevel show up within a minute.', saving: 'Your latest change is on its way to the server.', error: liveErr || 'The Heat Map could not reach the server.', connecting: 'Connecting to the Heat Map…' }[liveSt];
   const when = lastSync ? 'Last synced ' + new Date(lastSync).toLocaleString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit' }) + ' EST' : 'Not synced yet.';
   openFloat($('clock'), `<div class="livepop"><h4>${head}</h4><p>${esc(text)}</p><div class="w">${when}</div>${liveSt === 'error' ? '<button class="btn pri" data-retry style="margin-top:10px;width:100%">Retry Now</button>' : ''}</div>`);
 }
@@ -1717,7 +1717,7 @@ $('actBtn').onclick = e => { e.stopPropagation(); $('acct').classList.contains('
 $('acct').addEventListener('click', e => { if (e.target.closest('[data-retry]')) { closePop(); refresh().catch(() => {}); } });
 async function start() {
   try { await refresh(); $('gate').hidden = true; beat(); }
-  catch (e) { if (e.status === 403 || e.status === 401) { gate(e.message, true); auth.signOut(); } else gate('Could not load the deals: ' + e.message, false); return; }
+  catch (e) { if (e.status === 403 || e.status === 401) { gate(e.message, true); auth.signOut(); } else gate('Could not load the contracts: ' + e.message, false); return; }
   if (started) return; started = true;
   setInterval(() => renderFeed(false), 30000);
   // new deals from GoHighLevel: refresh every minute while nothing is open for editing
@@ -1733,7 +1733,7 @@ Promise.all([fetch('map.json').then(r => r.json()), fetch('/api/app/config').the
   if (!c.firebase || !window.firebase) return gate('Sign-in is not set up yet. In Vercel, add HEATMAP_FIREBASE_WEB_CONFIG, then redeploy.', false);
   fb = firebase.initializeApp(c.firebase); auth = firebase.auth();
   $('signIn').onclick = () => { const p = new firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: 'select_account' }); auth.signInWithPopup(p).catch(e => gate(e.code === 'auth/popup-closed-by-user' ? 'Sign in with your company Google account.' : 'Sign-in failed: ' + e.message, true)); };
-  auth.onAuthStateChanged(u => { if (u) { gate('Loading the deals…', false); start(); } else { started = false; gate('Sign in with your company Google account.', true); } });
+  auth.onAuthStateChanged(u => { if (u) { gate('Loading the contracts…', false); start(); } else { started = false; gate('Sign in with your company Google account.', true); } });
 }).catch(e => gate('Could not reach the Heat Map: ' + e.message, false));
 })();
 </script>
