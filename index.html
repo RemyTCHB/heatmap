@@ -288,7 +288,8 @@ main{padding-block:36px 96px;display:flex;flex-direction:column;gap:24px;positio
 .zhint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .2s;z-index:3}
 .zhint span{background:color-mix(in srgb,var(--gray-900) 78%,transparent);color:var(--surface-card);border-radius:12px;padding:10px 14px;font-weight:700;font-size:13px}
 .zhint.show{opacity:1}
-.mapbox svg,.mapbox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mapbox>svg,.mapbox>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.legend .k svg{flex:none;display:block}
 .mapbox canvas{display:none}
 .mapbox svg{cursor:default}
 .mapbox svg.drag{cursor:grabbing}
@@ -817,6 +818,11 @@ function renderTools() { const m = $('ddMetric'); m.hidden = mode !== 'states'; 
 // ---------- map ----------
 const svg = $('svg'), NS = 'http://www.w3.org/2000/svg';
 const pinPos = d => [d.px, d.py];
+const diamondPath = (x, y, q) => `M${x.toFixed(1)} ${(y - q).toFixed(1)}L${(x + q).toFixed(1)} ${y.toFixed(1)}L${x.toFixed(1)} ${(y + q).toFixed(1)}L${(x - q).toFixed(1)} ${y.toFixed(1)}Z`;
+// a filled X: a plus sign turned 45 degrees (arm length L, half thickness a)
+function xPath(x, y, L, a) { const pts = [[-a, -L], [a, -L], [a, -a], [L, -a], [L, a], [a, a], [a, L], [-a, L], [-a, a], [-L, a], [-L, -a], [-a, -a]], k = Math.SQRT1_2;
+  return pts.map(([px, py], i) => (i ? 'L' : 'M') + (x + (px - py) * k).toFixed(2) + ' ' + (y + (px + py) * k).toFixed(2)).join('') + 'Z'; }
+const KEY_ICON = { signed: '<svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="var(--st-signed)"/></svg>', closed: '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 .5L11.5 6 6 11.5.5 6Z" fill="var(--st-closed)"/></svg>', cancelled: `<svg width="12" height="12" viewBox="0 0 12 12"><path d="${xPath(6, 6, 6, 1.9)}" fill="var(--st-cancel)"/></svg>` };
 function drawStatesBase() {
   $('gStates').innerHTML = MAP.states.map(s => `<path class="st" data-a="${s.a}" d="${s.d}"/>`).join('');
   $('borders').setAttribute('d', MAP.borders);
@@ -853,7 +859,9 @@ function renderMap(list) {
     const recent = Date.now() - 14 * DAY, r = 4.6 * pk, sw = (1.3 * pk).toFixed(2);
     g.innerHTML = sorted.filter(d => d.status === 'signed' && (d.signedAt || 0) >= recent).map(d => { const [x, y] = pinPos(d); return `<circle class="pulse" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="none" stroke="var(${STATUS[d.status].v})" stroke-width="${(1.4 * pk).toFixed(2)}"/>`; }).join('') +
       sorted.map((d, i) => { const [x, y] = pinPos(d), cls = `pin${selected === d.id ? ' sel' : ''}`, delay = intro ? ` style="animation-delay:${Math.min(900, i * 3)}ms"` : '';
-        if (d.status === 'cancelled') { const q = r * 1.2; return `<path class="${cls}" data-id="${d.id}" d="M${x.toFixed(1)} ${(y - q).toFixed(1)}L${(x + q).toFixed(1)} ${y.toFixed(1)}L${x.toFixed(1)} ${(y + q).toFixed(1)}L${(x - q).toFixed(1)} ${y.toFixed(1)}Z" stroke-width="${sw}" stroke-linejoin="round" fill="var(${STATUS[d.status].v})"${delay}/>`; }
+        // closed: a green diamond; cancelled: a red X; signed: a circle (shape as well as colour)
+        if (d.status !== 'signed') { const shape = d.status === 'closed' ? diamondPath(x, y, r * 1.25) : xPath(x, y, r * 1.45, r * .42);
+          return `<path class="${cls}" data-id="${d.id}" d="${shape}" stroke-width="${sw}" stroke-linejoin="round" fill="var(${STATUS[d.status].v})"${delay}/>`; }
         return `<circle class="${cls}" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" stroke-width="${sw}" fill="var(${STATUS[d.status].v})"${delay}/>`; }).join('');
   } else if (mode === 'heat') {
     g.innerHTML = list.filter(d => d.px != null).map(d => { const [x, y] = pinPos(d); return `<circle class="pin" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(5 * pk).toFixed(2)}" fill="transparent" stroke="none"/>`; }).join('');
@@ -901,7 +909,7 @@ function drawHeat(list) {
 }
 function renderLegend(min, max) {
   const lg = $('legend');
-  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k"><i class="${s === 'cancelled' ? 'dia' : ''}" style="background:var(${STATUS[s].v})"></i>${STATUS[s].label}</span>`).join('')}<span class="k"><i class="ring2"></i>Signed In The Last 14 Days</span></div>`;
+  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k">${KEY_ICON[s]}${STATUS[s].label}</span>`).join('')}<span class="k"><i class="ring2"></i>Signed In The Last 14 Days</span></div>`;
   else if (mode === 'heat') lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(--heat-a),var(--heat-b),var(--heat-c),var(--heat-d))"></div><div class="ends"><span>Fewer deals</span><span>More</span></div>`;
   else {
     const f = stateMetric === 'profit' ? kmoney : stateMetric === 'deals' ? (v => Math.round(v)) : pct;
