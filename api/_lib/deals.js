@@ -49,13 +49,13 @@ function extract(body) {
 }
 
 // these follow the latest hook whenever it carries a value
-const DESCRIPTIVE = ['address', 'city', 'state', 'zip', 'source', 'created', 'acq', 'fus', 'dispo', 'potential', 'exit', 'abSigned', 'abClosed', 'bcSigned', 'sold'];
+const DESCRIPTIVE = ['address', 'city', 'state', 'zip', 'source', 'created', 'acq', 'fus', 'dispo', 'potential', 'exit', 'feedback', 'abSigned', 'abClosed', 'bcSigned', 'sold'];
 const NO_DISPO = 'Closed Without A DISPO · Set To TCHB For Now';
 const usd = n => n == null ? 'no profit given' : (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US');
 
 function blank(f, now) {
   return { contactId: f.contactId, status: 'signed', address: '', city: '', state: '', zip: '', source: '', created: null, acq: '', fus: '', dispo: '',
-    potential: null, actual: null, exit: '', feedback: '', signedAt: null, closedAt: null, cancelledAt: null,
+    potential: null, actual: null, exit: '', feedback: '', cancelReason: '', signedAt: null, closedAt: null, cancelledAt: null,
     abSigned: null, abClosed: null, bcSigned: null, sold: null, closings: [], hist: [], flags: [], createdAt: now, updatedAt: now };
 }
 
@@ -93,11 +93,11 @@ function applyEvent(latest, event, f, now) {
     if (!deal) start('Cancelled Without A Signed Hook');
     if (deal.status === 'closed') {
       // a closed deal stays closed; the cancel is kept in its history to check
-      deal.flags.push('Cancelled Hook After It Closed'); if (f.feedback) deal.feedback = f.feedback;
+      deal.flags.push('Cancelled Hook After It Closed'); if (f.feedback) { deal.feedback = f.feedback; deal.cancelReason = f.feedback; }
       note('Cancelled hook arrived, but the deal had already closed');
     } else {
       fill(); deal.status = 'cancelled'; deal.cancelledAt = now; deal.closedAt = now; deal.actual = 0;
-      if (f.feedback) deal.feedback = f.feedback;
+      if (f.feedback) deal.cancelReason = f.feedback;
       note('Cancelled' + (f.feedback ? ' · ' + f.feedback : ''));
     }
   } else throw new Error('Unknown event: ' + event);

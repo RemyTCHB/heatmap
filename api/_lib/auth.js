@@ -1,9 +1,9 @@
 // Who is asking. People sign in with Google (Firebase Auth on the Heat Map's own project); the page sends the ID token
-// as "Authorization: Bearer <token>". Company accounts can view; the owner and managers can edit.
+// as "Authorization: Bearer <token>". Company accounts can view; only Remy, Monz and Jan can edit or add.
 // Vercel settings (all optional, comma-separated emails or domains):
 //   HEATMAP_ALLOWED_DOMAINS  who may sign in at all      default: totalchb.com,kpidriver.com
-//   HEATMAP_OWNERS           owners                     default: systems@totalchb.com,systems@kpidriver.com
-//   HEATMAP_MANAGERS         managers (can edit too)    default: brandy@totalchb.com,brandy@kpidriver.com
+//   HEATMAP_OWNERS           owner (Remy)               default: systems@totalchb.com,systems@kpidriver.com
+//   HEATMAP_EDITORS          editors (Monz, Jan)        default: monz@totalchb.com,info@totalchb.com
 // The webhook key (X-Heatmap-Key) also works, with the owner's rights, for maintenance such as the CSV import.
 const { app } = require('./store');
 const { keyOk } = require('./hooks');
@@ -14,7 +14,7 @@ function roleOf(email, env = process.env) {
   const e = String(email || '').toLowerCase(), domain = e.split('@')[1] || '';
   if (!list(env.HEATMAP_ALLOWED_DOMAINS, 'totalchb.com,kpidriver.com').includes(domain)) return null;
   if (list(env.HEATMAP_OWNERS, 'systems@totalchb.com,systems@kpidriver.com').includes(e)) return 'owner';
-  if (list(env.HEATMAP_MANAGERS, 'brandy@totalchb.com,brandy@kpidriver.com').includes(e)) return 'manager';
+  if (list(env.HEATMAP_EDITORS, 'monz@totalchb.com,info@totalchb.com').includes(e)) return 'editor';
   return 'viewer';
 }
 

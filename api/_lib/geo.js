@@ -4,6 +4,7 @@ const zipcodes = require('zipcodes');
 const titleCase = s => String(s || '').toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
 
 function geocode(d) {
+  d.geo = 'zip';
   const zip = String(d.zip || '').slice(0, 5);
   let z = /^\d{5}$/.test(zip) ? zipcodes.lookup(zip) : null;
   if (!z && d.city && d.state) { try { z = (zipcodes.lookupByName(d.city, d.state) || [])[0]; } catch (e) { z = null; } }
@@ -20,4 +21,17 @@ function addrKey(d) {
   return num && /^\d{5}$/.test(zip) ? num + '|' + zip : '';
 }
 
-module.exports = { geocode, addrKey, titleCase };
+// the exact spot of the street address, from the US Census geocoder. Returns true when it found one.
+async function exact(d, timeoutMs = 5000) {
+  if (!d.address || !(d.zip || (d.city && d.state))) return false;
+  const one = [d.address, d.city, [d.state, d.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  const url = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=json&address=' + encodeURIComponent(one);
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) }); if (!r.ok) return false;
+    const m = ((await r.json()).result || {}).addressMatches || [];
+    if (!m.length || !m[0].coordinates) return false;
+    d.lat = m[0].coordinates.y; d.lon = m[0].coordinates.x; d.geo = 'address'; return true;
+  } catch (e) { return false; }
+}
+
+module.exports = { geocode, exact, addrKey, titleCase };

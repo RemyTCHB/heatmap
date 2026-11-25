@@ -45,7 +45,7 @@ test('closed without a DISPO is set to TCHB and flagged', () => {
 
 test('cancelled keeps the feedback; signing again after a cancel starts a new deal', () => {
   const out = run([['signed', hook()], ['cancelled', hook({ 'FEEDBACK (MUST FILL)': 'Seller backed out' })], ['signed', hook()]]);
-  assert.strictEqual(out[1].deal.status, 'cancelled'); assert.strictEqual(out[1].deal.feedback, 'Seller backed out'); assert.strictEqual(out[1].deal.actual, 0);
+  assert.strictEqual(out[1].deal.status, 'cancelled'); assert.strictEqual(out[1].deal.feedback, 'Seller backed out'); assert.strictEqual(out[1].deal.cancelReason, 'Seller backed out'); assert.strictEqual(out[1].deal.actual, 0);
   assert.strictEqual(out[2].isNew, true); assert.strictEqual(out[2].deal.status, 'signed');
 });
 
@@ -86,8 +86,10 @@ test('address key and map spot', () => {
 
 test('who may edit', () => {
   assert.strictEqual(roleOf('systems@totalchb.com', {}), 'owner');
-  assert.strictEqual(roleOf('brandy@kpidriver.com', {}), 'manager');
+  assert.strictEqual(roleOf('monz@totalchb.com', {}), 'editor');
+  assert.strictEqual(roleOf('info@totalchb.com', {}), 'editor');
+  assert.strictEqual(roleOf('brandy@totalchb.com', {}), 'viewer');
   assert.strictEqual(roleOf('luke@totalchb.com', {}), 'viewer');
   assert.strictEqual(roleOf('someone@gmail.com', {}), null);
-  assert.strictEqual(roleOf('luke@totalchb.com', { HEATMAP_MANAGERS: 'luke@totalchb.com' }), 'manager');
+  assert.strictEqual(roleOf('luke@totalchb.com', { HEATMAP_EDITORS: 'luke@totalchb.com' }), 'editor');
 });

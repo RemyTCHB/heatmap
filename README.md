@@ -1,4 +1,4 @@
-# TCHB Deal Heat Map
+# Deals Heat Map
 
 A live map of TCHB's signed, closed and cancelled deals across the USA, with leaderboards, built in the Universal Team
 Hub's look. Deals come from GoHighLevel webhooks and are matched by **contact ID**.
@@ -12,12 +12,21 @@ Hub's data.
 and Settings, in the Hub's look. People sign in with their company Google account.
 
 - **Everyone at totalchb.com and kpidriver.com** can view it.
-- **The owner and managers** can edit deals, add and delete deals, fix review flags, and change the Settings lists.
+- **Only Remy, Monz and Jan** can edit, add and delete deals, fix review flags, and change the Settings lists.
   Everyone else sees it read-only, and the server enforces the same rule.
+- **The team is mirrored from the Hub** (read only, refreshed every 10 minutes): the ACQ, DISPO and FUS lists start
+  with each department's members, and names on deals that are not in the Hub show as Not In Hub.
+- **Active** shows who has the page open, like the Hub (each device checks in every minute).
+- **The clock** is the live status: green when everything is saved and synced, blue while saving, red when something
+  did not save. Click it for the last sync time and Retry Now.
+- **Pins sit at the exact street address** (US Census geocoder), or at the ZIP when the address is not found.
+- **Where To Market** suggests where to market more and where to pull back (close rate and profit against the team),
+  and groups cancel reasons into themes with fixes.
 - The page refreshes the deals every minute, so new hooks show up without reloading.
 
-Its endpoints (`api/app/[op].js`): `GET /api/app/config`, `GET /api/app/data`, `POST /api/app/deal`,
-`POST /api/app/options`, and `POST /api/app/import` (the one-time CSV history load, webhook key only).
+Its endpoints (`api/app/[op].js`): `GET /api/app/config`, `GET /api/app/data`, `POST /api/app/presence`,
+`POST /api/app/deal`, `POST /api/app/options`, `POST /api/app/geocode` (moves pins from the ZIP to the exact address, a
+batch per call, owner only), and `POST /api/app/import` (the one-time CSV history load, webhook key only).
 
 A hook for a deal that came from the CSV history (no contact ID yet) finds it by house number and ZIP and adopts it,
 so a deal signed before go-live closes on its own row.
@@ -59,7 +68,7 @@ recording links) is not stored.
 | ACQ / FUS / DISPO | `ACQ Manager` / `FUS Manager` / `Dispo Manager` |
 | Potential profit | `Potential Profit` |
 | Exit strategy | `Final Exit Strategy` |
-| Cancel feedback | `FEEDBACK (MUST FILL)` |
+| Feedback (on a Cancelled hook it is also the cancel reason) | `FEEDBACK (MUST FILL)` |
 | Profit at the closing | `AB Profit (TC)` |
 | Profit at the Fix & Flip resale | `BC Profit` |
 | Kept for reference | `AB Date Signed`, `AB Actual Closing Date`, `BC Date Signed`, `Actual Sold Date` |
@@ -86,8 +95,10 @@ The key can also go in an `X-Heatmap-Key` header. It is a secret: anyone with it
    - Authentication, Settings, Authorized domains: add your domain (e.g. `heatmap.totalchb.com`).
    - Project settings, General, Your apps: add a **Web** app and copy its `firebaseConfig` object.
    - In Vercel, add `HEATMAP_FIREBASE_WEB_CONFIG` with that object as JSON (keys in double quotes), then redeploy.
-6. Optional, in Vercel: `HEATMAP_MANAGERS` (emails that can edit, comma-separated), `HEATMAP_OWNERS`, and
-   `HEATMAP_ALLOWED_DOMAINS`. Defaults are in `api/_lib/auth.js`.
+6. Optional, in Vercel: `HEATMAP_EDITORS` (emails that can edit besides the owner, comma-separated),
+   `HEATMAP_OWNERS`, and `HEATMAP_ALLOWED_DOMAINS`. Defaults are in `api/_lib/auth.js`.
+7. The team mirror: `HUB_TEAM_SECRET`, the same value as one of the secrets the Hub's team endpoint already accepts
+   (for example the Hub's `DISPO_OPS_SECRET`). Read only: nothing in the Hub changes.
 
 ## Tests
 

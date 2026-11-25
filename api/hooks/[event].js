@@ -11,7 +11,7 @@
 // HEATMAP_FIREBASE_SERVICE_ACCOUNT (the Heat Map's own Firebase project, separate from the Hub). Logs counts only.
 const { EVENTS, eventOf, parseBody, keyOk } = require('../_lib/hooks');
 const { extract, applyEvent } = require('../_lib/deals');
-const { geocode, addrKey } = require('../_lib/geo');
+const { geocode, exact, addrKey } = require('../_lib/geo');
 const { intake } = require('../_lib/options');
 const { db, rawBody, send } = require('../_lib/store');
 
@@ -63,15 +63,19 @@ module.exports = async (req, res) => {
       const prevZip = latest ? latest.data.zip : null;
       const { deal, isNew } = applyEvent(latest ? latest.data : null, event, f, now);
       if (adopted) deal.hist.splice(deal.hist.length - 1, 0, { t: now, event, text: 'Matched to the deal from the CSV history by address' });
-      if (deal.lat == null || deal.zip !== prevZip) geocode(deal);
+      const moved = deal.lat == null || deal.zip !== prevZip || (latest && latest.data.address !== deal.address);
+      if (moved) geocode(deal);
       deal.addrKey = addrKey(deal);
       const ref = isNew ? db().collection(DEALS).doc() : latest.ref;
       tx.set(ref, deal);
       tx.set(db().collection(HOOKS).doc(), { event, receivedAt: now, contactId: f.contactId, dealId: ref.id, fields: f });
-      return { dealId: ref.id, status: deal.status, isNew };
+      return { dealId: ref.id, status: deal.status, isNew, ref, spot: moved || deal.geo !== 'address' ? { address: deal.address, city: deal.city, state: deal.state, zip: deal.zip } : null };
     });
+    // the exact street address when the Census geocoder knows it; the ZIP spot stays otherwise
+    if (out.spot && await exact(out.spot)) await out.ref.update({ lat: out.spot.lat, lon: out.spot.lon, geo: 'address', geoTried: now });
+    const { ref: _r, spot: _s, ...reply } = out;
     console.log(`heatmap hook: ${event} -> ${out.isNew ? 'new' : 'existing'} deal, now ${out.status}`);
-    send(res, 200, { ok: true, event, ...out });
+    send(res, 200, { ok: true, event, ...reply });
   } catch (e) {
     console.error('heatmap hook failed', e.code || '', e.message || '');
     send(res, 500, { error: 'Could not save the hook. GoHighLevel can retry.' });
