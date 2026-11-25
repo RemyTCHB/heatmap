@@ -986,7 +986,7 @@ svg.addEventListener('pointermove', e => {
   if (drag && drag.moved) return;
   const pin = e.target.closest('.pin');
   if (pin) { const d = deals.find(x => x.id === +pin.dataset.id); setHov(null);
-    showTip(`<div class="th">${esc(d.address)}, ${esc(d.city)} ${d.state}</div><div class="tr"><span>Status</span><b style="color:var(${STATUS[d.status].v})">${STATUS[d.status].label}</b></div><div class="tr"><span>ACQ / DISPO</span><b>${esc(d.acq.split(' ')[0])} / ${esc(d.dispo.split(' ')[0])}</b></div><div class="tr"><span>FUS</span><b>${esc(d.fus || '—')}</b></div><div class="tr"><span>Potential</span><b>${money(d.potential)}</b></div><div class="tr"><span>Actual</span><b>${money(d.actual)}</b></div><div class="tr"><span>Exit</span><b>${esc(d.exit || '—')}</b></div>${d.cancelReason ? `<div style="margin-top:6px;color:var(--text-body)">“${esc(d.cancelReason)}”</div>` : ''}`, e); return; }
+    showTip(`<div class="th">${esc(d.address)}, ${esc(d.city)} ${d.state}</div><div class="tr"><span>Status</span><b style="color:var(${STATUS[d.status].v})">${STATUS[d.status].label}</b></div><div class="tr"><span>ACQ / DISPO</span><b>${esc(d.acq.split(' ')[0])} / ${esc(d.dispo.split(' ')[0])}</b></div><div class="tr"><span>FUS</span><b>${esc(d.fus || '—')}</b></div><div class="tr"><span>Potential</span><b>${money(d.potential)}</b></div><div class="tr"><span>Actual</span><b>${money(d.actual)}</b></div><div class="tr"><span>Exit</span><b>${esc(d.exit || '—')}</b></div>${d.status === 'cancelled' && reasonOf(d) ? `<div style="margin-top:6px;color:var(--text-body)">“${esc(reasonOf(d))}”</div>` : ''}`, e); return; }
   const hxEl = e.target.closest('.hex');
   if (hxEl) { setHov(null); const b = HEX[+hxEl.dataset.hi]; if (!b) return; const o = b.s, cities = {}; b.ds.forEach(d => { if (d.city) cities[d.city + ', ' + d.state] = (cities[d.city + ', ' + d.state] || 0) + 1; });
     const top = Object.entries(cities).sort((a, c) => c[1] - a[1]).slice(0, 3).map(([n, c]) => `${esc(n)} (${c})`).join(', ');
@@ -1148,7 +1148,7 @@ $('dcards').addEventListener('click', e => { if (e.target.closest('[data-morecar
 
 // ---------- deal drawer: view, fix, add, delete ----------
 let draft = null, confirmDel = false, NEWD = null, zipsP = null;
-const FIELDS = [['address','Street Address','text','full'],['city','City','text'],['state','State','state'],['zip','ZIP','zip'],['source','Lead Source','opt'],['exit','Exit Strategy','opt'],['acq','ACQ','opt'],['dispo','DISPO','opt'],['fus','FUS','opt'],['potential','Potential Revenue','money'],['actual','Actual Revenue','money'],['created','Lead Came In','date'],['signedAt','Date Signed','date'],['closedAt','Date Closed Or Cancelled','date'],['feedback','Feedback','textarea','full'],['cancelReason','Cancel Reason','textarea','full']];
+const FIELDS = [['address','Street Address','text','full'],['city','City','text'],['state','State','state'],['zip','ZIP','zip'],['source','Lead Source','opt'],['exit','Exit Strategy','opt'],['acq','ACQ','opt'],['dispo','DISPO','opt'],['fus','FUS','opt'],['potential','Potential Revenue','money'],['actual','Actual Revenue','money'],['created','Lead Came In','date'],['signedAt','Date Signed','date'],['closedAt','Date Closed Or Cancelled','date'],['feedback','Feedback','textarea','full']];
 const LABEL = Object.fromEntries([['status', 'Status'], ...FIELDS.map(f => [f[0], f[1]])]);
 const toDay = t => t ? new Date(t).toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) : '';
 const fromDay = v => v ? new Date(v + 'T12:00:00-05:00').getTime() : null;
@@ -1180,7 +1180,7 @@ function renderDrawer(d) {
     }
     else if (t === 'money') ctl = `<input id="f-${k}" data-k="${k}" inputmode="decimal" class="num" value="${draft[k] == null ? '' : (draft[k] < 0 ? '-$' : '$') + Math.abs(draft[k]).toLocaleString()}" placeholder="${k === 'actual' && draft.status === 'signed' ? 'Fills in at closing' : k === 'potential' ? 'Not in GoHighLevel yet' : '$0'}">`;
     else if (t === 'date') ctl = `<input type="date" id="f-${k}" data-k="${k}" value="${toDay(draft[k])}">`;
-    else if (t === 'textarea') ctl = `<textarea id="f-${k}" data-k="${k}" rows="3" placeholder="${k === 'cancelReason' ? (draft.status === 'cancelled' ? 'Why the contract fell through' : 'Fills in when the contract is cancelled') : 'Notes from GoHighLevel’s Feedback field'}">${esc(draft[k] || '')}</textarea>`;
+    else if (t === 'textarea') ctl = `<textarea id="f-${k}" data-k="${k}" rows="3" placeholder="${draft.status === 'cancelled' ? 'Why the contract fell through · from GoHighLevel’s Feedback field' : 'Notes from GoHighLevel’s Feedback field'}">${esc(draft[k] || '')}</textarea>`;
     else if (t === 'zip') ctl = `<input id="f-zip" data-k="zip" inputmode="numeric" maxlength="5" class="num" value="${esc(draft.zip || '')}" placeholder="5 Digits">`;
     else ctl = `<input id="f-${k}" data-k="${k}" value="${esc(draft[k] || '')}"${k === 'address' ? ' placeholder="123 Main St"' : ''}>`;
     return `<div class="field ${w || ''} ${!isNew && draft[k] !== d[k] ? 'changed' : ''}"><label for="f-${k}">${l}<span class="dot2"></span>${t === 'opt' ? `<button type="button" class="lnk" data-editlist="${k}">${PEOPLE[k] ? 'From The Hub' : 'Edit List'}</button>` : ''}</label>${ctl}</div>`;
@@ -1611,7 +1611,7 @@ const THEMES = [
   { t: 'Agent Or Another Offer', re: /agent|realtor|list(ed|ing)|another offer|other offer|competit|investor|wholesaler/i, tip: 'Ask about listings and other offers on the first call, and move faster on hot leads.' },
   { t: 'Could Not Reach Seller', re: /no contact|unresponsive|ghost|can.?t reach|could not reach|no answer|stopped answering|disconnected/i, tip: 'Set the next touchpoint at signing and use call, text and email to stay connected.' }
 ];
-const reasonOf = d => d.cancelReason || (d.status === 'cancelled' ? d.feedback : '') || '';
+const reasonOf = d => d.status === 'cancelled' ? (d.feedback || d.cancelReason || '') : '';
 function renderInsights() {
   const all = base(), fin = all.filter(d => d.status !== 'signed'), closed = all.filter(d => d.status === 'closed');
   const teamRate = fin.length ? closed.length / fin.length : NaN, teamAvg = closed.length ? closed.reduce((a, d) => a + (d.actual || 0), 0) / closed.length : NaN;

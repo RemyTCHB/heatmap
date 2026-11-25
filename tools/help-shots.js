@@ -27,11 +27,11 @@ for (let i = 0; i < 190; i++) {
   const exit = status === 'closed' ? pick(EXITS) : '', d = {
     id: 's' + i, origin: 'csv', contactId: i % 3 ? 'c' + i : '', status, address: (100 + Math.floor(rnd() * 9800)) + ' ' + pick(STREETS), city: z.city.replace(/\b\w/g, c => c.toUpperCase()).replace(/\B\w+/g, w => w.toLowerCase()), state: z.state, zip: z.zip,
     lat: +z.latitude + (rnd() - .5) * .08, lon: +z.longitude + (rnd() - .5) * .08, geo: 'address', source: pick(SOURCES), acq: pick(ACQ), fus: pick(FUS), dispo: status === 'closed' ? (rnd() < .9 ? pick(DISPO) : 'TCHB') : '',
-    potential: null, actual, exit, feedback: '', cancelReason: status === 'cancelled' && rnd() < .7 ? pick(REASONS) : '', created: signedAt - (2 + rnd() * 20) * DAY, signedAt, closedAt, cancelledAt: status === 'cancelled' ? closedAt : null,
+    potential: null, actual, exit, feedback: status === 'cancelled' && rnd() < .7 ? pick(REASONS) : '', cancelReason: '', created: signedAt - (2 + rnd() * 20) * DAY, signedAt, closedAt, cancelledAt: status === 'cancelled' ? closedAt : null,
     closings: status === 'closed' ? [{ t: closedAt, label: 'Closing', revenue: actual, exit }] : [], flags: [], hist: [{ t: signedAt, event: 'signed', text: 'Signed' }]
   };
   if (status === 'closed') d.hist.push({ t: closedAt, event: 'closed', text: 'Closed · AB Profit (TC) $' + actual.toLocaleString() });
-  if (status === 'cancelled') d.hist.push({ t: closedAt, event: 'cancelled', text: 'Cancelled' + (d.cancelReason ? ' · ' + d.cancelReason : '') });
+  if (status === 'cancelled') d.hist.push({ t: closedAt, event: 'cancelled', text: 'Cancelled' + (d.feedback ? ' · ' + d.feedback : '') });
   if (d.dispo === 'TCHB') d.flags.push('Closed Without A DISPO · Set To TCHB For Now');
   deals.push(d);
 }
