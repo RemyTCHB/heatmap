@@ -97,8 +97,8 @@ The key can also go in an `X-Heatmap-Key` header. It is a secret: anyone with it
    - In Vercel, add `HEATMAP_FIREBASE_WEB_CONFIG` with that object as JSON (keys in double quotes), then redeploy.
 6. Optional, in Vercel: `HEATMAP_EDITORS` (emails that can edit besides the owner, comma-separated),
    `HEATMAP_OWNERS`, and `HEATMAP_ALLOWED_DOMAINS`. Defaults are in `api/_lib/auth.js`.
-7. The team mirror: `HUB_TEAM_SECRET`, the same value as one of the secrets the Hub's team endpoint already accepts
-   (for example the Hub's `DISPO_OPS_SECRET`). Read only: nothing in the Hub changes.
+7. The team mirror: `HEAT_MAP_SECRET`, the same value as `HEAT_MAP_SECRET` in the Hub's project (the Hub's team
+   endpoint must list it among the secrets it accepts). Read only: the Heat Map never writes to the Hub.
 
 ## Tests
 

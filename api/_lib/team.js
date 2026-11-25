@@ -1,7 +1,8 @@
 // The team, mirrored from the Hub (read only). The Hub already answers POST /api/title-agent/team for its connected
 // apps, signed with a shared secret: HMAC-SHA256 of "<unix seconds>.<body>". The Heat Map asks for every department
 // and keeps the answer in Firestore heatmap_meta/team for 10 minutes. Nothing is written to the Hub.
-// Vercel settings: HUB_TEAM_SECRET (one of the secrets the Hub's team endpoint accepts) and optionally HUB_URL.
+// Vercel settings: HEAT_MAP_SECRET (the same value as in the Hub's project; HUB_TEAM_SECRET also works) and optionally
+// HUB_URL.
 const crypto = require('crypto');
 
 const DEPTS = ['ACQ', 'DISPO', 'FUS', 'TC', 'OPS'];
@@ -23,7 +24,7 @@ async function fetchTeam(secret, base = process.env.HUB_URL || 'https://hub.tota
 // the mirrored team, or null when the Hub link is not set up yet
 async function team(db) {
   const ref = db.doc('heatmap_meta/team'), snap = await ref.get(), cached = snap.exists ? snap.data() : null;
-  const secret = process.env.HUB_TEAM_SECRET;
+  const secret = process.env.HEAT_MAP_SECRET || process.env.HUB_TEAM_SECRET;
   if (!secret) return cached ? cached.people : null;
   if (cached && Date.now() - (cached.at || 0) < FRESH_MS) return cached.people;
   try { const people = await fetchTeam(secret); await ref.set({ people, at: Date.now() }); return people; }
