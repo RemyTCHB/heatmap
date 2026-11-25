@@ -59,7 +59,7 @@ Every deal is a pin at its street address. The shape and colour tell you where i
 | Blue circle | Signed, still open |
 | Green diamond | Closed |
 | Red X | Cancelled |
-| A soft ring around a blue circle | Signed in the last 14 days |
+| A blue circle with a blue ring pulsing around it | Signed in the last 14 days |
 
 Hover a pin for the deal's details; click it to open the deal. State initials sit on every state, and the small northeastern states appear as you zoom in.
 
@@ -73,7 +73,7 @@ The map is split into hexagons, each shaded by the deals inside it: the darker, 
 
 ### States
 
-Each state is shaded by the measure you pick: deals, actual profit, close rate or cancel rate. Hover a state for its numbers; click it to filter the page to that state.
+Each state is shaded by the measure you pick: deals, actual profit, close rate or cancel rate. Hover a state and it grows out with its numbers; click it to filter the page to that state.
 
 ![States: each state shaded by the measure you pick](map-states.jpg)
 
