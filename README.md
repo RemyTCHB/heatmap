@@ -14,7 +14,7 @@ and Settings, in the Hub's look. People sign in with their company Google accoun
 - **Everyone at totalchb.com and kpidriver.com** can view it.
 - **Only Remy, Monz and Jan** can edit, add and delete deals, fix review flags, and change the Settings lists.
   Everyone else sees it read-only, and the server enforces the same rule.
-- **The team is mirrored from the Hub** (read only, refreshed every 10 minutes): the ACQ, DISPO and FUS lists start
+- **The team is mirrored from the Hub** (read only, refreshed once a day or with Refresh From Hub in Team Members): the ACQ, DISPO and FUS lists start
   with each department's members, and names on deals that are not in the Hub show as Not In Hub.
 - **Active** shows who has the page open, like the Hub (each device checks in every minute).
 - **The clock** is the live status: green when everything is saved and synced, blue while saving, red when something

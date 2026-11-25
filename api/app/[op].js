@@ -2,13 +2,14 @@
 //   GET  /api/app/config    the Firebase web config for Google sign-in (public by design; no sign-in needed)
 //   GET  /api/app/data      every deal, the dropdown lists, and who you are (company accounts)
 //   POST /api/app/presence  "I'm here" every minute; answers who is online (anyone signed in)
+//   POST /api/app/team      Refresh From Hub: mirror the Hub's team now (anyone signed in)
 //   POST /api/app/deal      add, edit or delete a deal (Remy, Monz and Jan)
 //   POST /api/app/options   change a dropdown list: add, rename, merge, remove, ok (Remy, Monz and Jan)
 //   POST /api/app/geocode   move pins from the ZIP to the exact address, a batch at a time (owner or webhook key)
 //   POST /api/app/import    one-time load of the CSV history (webhook key only)
 // Vercel settings: HEATMAP_FIREBASE_WEB_CONFIG (the web app's config JSON from Firebase), plus those in auth.js.
 const { db, rawBody, send } = require('../_lib/store');
-const { who } = require('../_lib/auth');
+const { who, roleOf } = require('../_lib/auth');
 const { blank } = require('../_lib/deals');
 const { geocode, exact, addrKey } = require('../_lib/geo');
 const { team } = require('../_lib/team');
@@ -52,6 +53,9 @@ async function pinExactly(ref, d) {
   else await ref.update({ geoTried: Date.now() });
 }
 
+// the mirrored team, each person marked when they can edit here (Remy, Monz and Jan)
+const teamOut = t => t ? { team: t.people.map(p => ({ ...p, canEdit: ['owner', 'editor'].includes(roleOf(p.email)) })), teamAt: t.at } : { team: null, teamAt: null };
+
 async function loadOptions() {
   const snap = await db().doc(OPTIONS).get();
   if (snap.exists) return snap.data();
@@ -71,9 +75,15 @@ module.exports = async (req, res) => {
 
     if (op === 'data') {
       if (req.method !== 'GET') return send(res, 405, { error: 'GET only' });
-      const [deals, options, people, on] = await Promise.all([db().collection(DEALS).limit(5000).get(), db().doc(OPTIONS).get(), team(db()), online()]);
+      const [deals, options, t, on] = await Promise.all([db().collection(DEALS).limit(5000).get(), db().doc(OPTIONS).get(), team(db()), online()]);
       return send(res, 200, { me: { name: me.name, email: me.email, photo: me.photo, role: me.role, canEdit: me.canEdit },
-        deals: deals.docs.map(d => ({ id: d.id, ...d.data() })), options: options.exists ? options.data() : null, team: people, online: on });
+        deals: deals.docs.map(d => ({ id: d.id, ...d.data() })), options: options.exists ? options.data() : null, ...teamOut(t), online: on });
+    }
+
+    if (op === 'team') {
+      if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
+      try { return send(res, 200, teamOut(await team(db(), true))); }
+      catch (e) { return send(res, 502, { error: 'The Hub did not answer. Try again in a minute.' }); }
     }
 
     if (op === 'presence') {
