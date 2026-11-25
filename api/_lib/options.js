@@ -47,12 +47,12 @@ function apply(options, { kind, op, name, to }) {
   if (op === 'remove') { list.splice(i, 1); return { options: o, move: null }; }
   if (op === 'rename') {
     if (!to || to === name) throw new Error('Type the new name.');
-    if (list.some((x, j) => j !== i && norm(x.name) === norm(to))) throw new Error(`"${to}" is already on the list. To merge them, remove "${name}" and move its deals there.`);
+    if (list.some((x, j) => j !== i && norm(x.name) === norm(to))) throw new Error(`"${to}" is already on the list. To merge them, remove "${name}" and move its contracts there.`);
     const it = list[i]; if (norm(name) !== norm(to) && !(it.aliases || []).some(a => norm(a) === norm(name))) (it.aliases = it.aliases || []).push(name);
     it.name = to; delete it.crm; return { options: o, move: { kind, from: name, to } };
   }
   if (op === 'merge') {
-    const t = list.find(x => x.name === to); if (!t || t === list[i]) throw new Error('Pick another option to move the deals to.');
+    const t = list.find(x => x.name === to); if (!t || t === list[i]) throw new Error('Pick another option to move the contracts to.');
     for (const a of [name, ...(list[i].aliases || [])]) if (norm(a) !== norm(t.name) && !(t.aliases || []).some(x => norm(x) === norm(a))) (t.aliases = t.aliases || []).push(a);
     list.splice(i, 1); return { options: o, move: { kind, from: name, to: t.name } };
   }
