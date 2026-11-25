@@ -15,7 +15,7 @@ Click a pin, a row in the deal list or a Latest Activity item to open the deal. 
 ![A deal open for editing](deal-panel.jpg)
 
 - **Status**: Signed, Closed or Cancelled. Fix it here if GoHighLevel sent the wrong one. Cancelled sets actual profit to $0; Signed clears the closing date.
-- **Address**: typing a 5-digit **ZIP** fills in the city and state. When you change the address, the pin moves to the new street address after you save (or to the ZIP when the address cannot be found).
+- **Address**: typing a 5-digit **ZIP** fills in the city and state. When you change the address, the pin moves to the new street address after you save (or to the ZIP when the address cannot be found). The deal list shows the address on one line, but the street, city, state and ZIP stay separate fields here, the same as they arrive from GoHighLevel.
 - **Lead Source, Exit Strategy, ACQ, DISPO, FUS**: pick from the lists. **Edit List** (or **From The Hub**) opens that list in Settings.
 - **Profits and dates**: type the numbers; negative profit is allowed for a loss.
 - **Feedback and Cancel Reason**: notes. The cancel reason feeds Fix The Fall-Outs in Where To Market.

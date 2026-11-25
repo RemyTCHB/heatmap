@@ -73,7 +73,7 @@ The map is split into hexagons, each shaded by the deals inside it: the darker, 
 
 ### States
 
-Each state is shaded by the measure you pick: deals, actual profit, close rate or cancel rate. Hover a state and it grows out with its numbers; click it to filter the page to that state.
+Each state is shaded by the measure you pick: deals, actual profit, close rate or cancel rate. Every state shows its initials, even with no deals. Hover a state and it grows out with its numbers; click it to filter the page to that state.
 
 ![States: each state shaded by the measure you pick](map-states.jpg)
 
@@ -83,15 +83,21 @@ Each state is shaded by the measure you pick: deals, actual profit, close rate o
 - On a phone: use **two fingers** to zoom and move the map. One finger scrolls the page.
 - The **+**, **−** and **⤢** buttons zoom in, zoom out and show the whole country again.
 
+### Full Screen
+
+Press **Full Screen** at the top right of the map to fill the window with it, Latest Activity beside it. Everything works the same: hover, click a pin, switch views. In full screen a plain scroll zooms the map. Press **Exit Full Screen** or Esc to go back. On a phone, turn it sideways for a bigger map.
+
 ### Latest Activity
 
 Beside the map, the newest signed, closed and cancelled deals are listed. Click one to open it.
 
 ## The Deal List
 
-Under the map, every deal that matches the filters is listed: Last Event first, then Signed, Status, Address, City, State, Lead Source, ACQ, DISPO, FUS, Potential, Actual and Exit Strategy. Click a heading to sort by it (click again to flip the order). Click a row to open the deal. A red ⚑ line under an address means the deal needs review.
+Under the map, every deal that matches the filters is listed: Last Event first, then Signed, Status, the full Address (street, city, state and ZIP together), Lead Source, ACQ, DISPO, FUS, Potential, Actual and Exit Strategy. Click a heading to sort by it (click again to flip the order). Click a row to open the deal. A red ⚑ line under an address means the deal needs review.
 
 ![The deal list](deal-list.jpg)
+
+Press **Full Screen** next to the heading to fill the window with the list; press **Exit Full Screen** or Esc to go back.
 
 On a phone, the list shows as cards; press **Show More** at the bottom for more deals.
 
