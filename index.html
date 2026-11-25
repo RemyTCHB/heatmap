@@ -1684,8 +1684,12 @@ async function api(op, payload) {
   if (payload && op !== 'presence') setLive('ready');
   return j;
 }
+// the server answers { same: true } when nothing changed since our last copy: one database read instead of every contract
+let DATA_AT = 0;
 async function refresh() {
-  const j = await api('data');
+  const j = await api(DATA_AT ? 'data?since=' + DATA_AT : 'data');
+  if (j.same) { setLive('ready'); return; }
+  DATA_AT = j.at || 0;
   ME = j.me; SERVER_OPTS = j.options || null; TEAM = j.team || null; TEAM_AT = j.teamAt || 0; ONLINE = j.online || [];
   const tm = teamBy(ME.name) || (TEAM || []).find(p => p.email === ME.email); if (tm && tm.photo) ME.photo = tm.photo;
   setLive('ready'); paintActive(); paintAvatar();

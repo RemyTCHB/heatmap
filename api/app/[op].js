@@ -8,14 +8,14 @@
 //   POST /api/app/geocode   move pins from the ZIP to the exact address, a batch at a time (owner or webhook key)
 //   POST /api/app/import    one-time load of the CSV history (webhook key only)
 // Vercel settings: HEATMAP_FIREBASE_WEB_CONFIG (the web app's config JSON from Firebase), plus those in auth.js.
-const { db, rawBody, send } = require('../_lib/store');
+const { db, rawBody, send, touch, quotaHit, QUOTA_MSG, STAMP } = require('../_lib/store');
 const { who, roleOf } = require('../_lib/auth');
 const { blank } = require('../_lib/deals');
 const { geocode, exact, addrKey } = require('../_lib/geo');
 const { team } = require('../_lib/team');
 const opts = require('../_lib/options');
 
-const DEALS = 'heatmap_deals', OPTIONS = 'heatmap_meta/options', PRESENCE = 'heatmap_presence';
+const DEALS = 'heatmap_deals', OPTIONS = 'heatmap_meta/options', PRESENCE = 'heatmap_meta/presence';
 const ONLINE_MS = 5 * 60 * 1000;
 const NOMAP = 'No City Or ZIP, So It Is Not On The Map';
 const STATUSES = ['signed', 'closed', 'cancelled'];
@@ -42,8 +42,8 @@ const placeFlags = d => { d.flags = (d.flags || []).filter(x => x !== NOMAP); if
 
 // who has the page open: each device checks in every minute; seen in the last five minutes = online
 async function online() {
-  const now = Date.now(), snap = await db().collection(PRESENCE).get();
-  return snap.docs.map(d => d.data()).map(p => { const ss = Object.values(p.sessions || {}).filter(s => s && now - (s.at || 0) < ONLINE_MS);
+  const now = Date.now(), snap = await db().doc(PRESENCE).get();
+  return Object.values((snap.exists && snap.data().people) || {}).map(p => { const ss = Object.values(p.sessions || {}).filter(s => s && now - (s.at || 0) < ONLINE_MS);
     return ss.length ? { name: p.name, email: p.email, photo: p.photo || '', mobile: ss.some(s => s.type === 'Mobile'), desktop: ss.some(s => s.type !== 'Mobile') } : null; }).filter(Boolean);
 }
 // after a save: try the exact street address; the ZIP spot stays when the address is not found
@@ -56,6 +56,9 @@ async function pinExactly(ref, d) {
 
 // the mirrored team, each person marked when they can edit here (Remy, Monz and Jan)
 const teamOut = t => t ? { team: t.people.map(p => ({ ...p, canEdit: ['owner', 'editor'].includes(roleOf(p.email)) })), teamAt: t.at } : { team: null, teamAt: null };
+
+// the last full read of the contracts, kept while this server stays warm and the stamp has not moved
+let CACHE = null; const CACHE_MS = 6 * 60 * 60 * 1000;
 
 async function loadOptions() {
   const snap = await db().doc(OPTIONS).get();
@@ -76,9 +79,17 @@ module.exports = async (req, res) => {
 
     if (op === 'data') {
       if (req.method !== 'GET') return send(res, 405, { error: 'GET only' });
-      const [deals, options, t, on] = await Promise.all([db().collection(DEALS).limit(5000).get(), db().doc(OPTIONS).get(), team(db()), online()]);
-      return send(res, 200, { me: { name: me.name, email: me.email, photo: me.photo, role: me.role, canEdit: me.canEdit },
-        deals: deals.docs.map(d => ({ id: d.id, ...d.data() })), options: options.exists ? options.data() : null, ...teamOut(t), online: on });
+      const st = await db().doc(STAMP).get(); let at = st.exists ? st.data().at : 0;
+      const since = Number((req.query && req.query.since) || 0);
+      if (at && since === at) return send(res, 200, { same: true, at });
+      if (!at) { at = Date.now(); await db().doc(STAMP).set({ at }); }
+      if (!CACHE || CACHE.at !== at || Date.now() - CACHE.readAt > CACHE_MS) {
+        const [deals, options] = await Promise.all([db().collection(DEALS).limit(5000).get(), db().doc(OPTIONS).get()]);
+        CACHE = { at, readAt: Date.now(), deals: deals.docs.map(d => ({ id: d.id, ...d.data() })), options: options.exists ? options.data() : null };
+      }
+      const [t, on] = await Promise.all([team(db()), online()]);
+      return send(res, 200, { at, me: { name: me.name, email: me.email, photo: me.photo, role: me.role, canEdit: me.canEdit },
+        deals: CACHE.deals, options: CACHE.options, ...teamOut(t), online: on });
     }
 
     if (op === 'team') {
@@ -91,8 +102,8 @@ module.exports = async (req, res) => {
     if (op === 'presence') {
       if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
       const b = await body(req) || {}, device = str(b.device, 40).replace(/[^\w-]/g, '');
-      if (me.email && device) await db().collection(PRESENCE).doc(me.email.replace(/[^\w@.+-]/g, '_')).set({ name: me.name, email: me.email, photo: me.photo,
-        sessions: { [device]: { at: b.off ? 0 : Date.now(), type: b.type === 'Mobile' ? 'Mobile' : 'Desktop' } } }, { merge: true });
+      if (me.email && device) await db().doc(PRESENCE).set({ people: { [me.email.replace(/[^\w]/g, '_')]: { name: me.name, email: me.email, photo: me.photo || '',
+        sessions: { [device]: { at: b.off ? 0 : Date.now(), type: b.type === 'Mobile' ? 'Mobile' : 'Desktop' } } } } }, { merge: true });
       return send(res, 200, { online: await online() });
     }
 
@@ -105,7 +116,7 @@ module.exports = async (req, res) => {
       if (b.delete) {
         if (!b.id) return send(res, 400, { error: 'Which contract?' });
         await db().collection(DEALS).doc(String(b.id)).delete();
-        console.log('deal deleted');
+        await touch(); console.log('deal deleted');
         return send(res, 200, { ok: true });
       }
       const f = cleanFields(b.fields), flags = cleanFlags(b.flags);
@@ -117,7 +128,7 @@ module.exports = async (req, res) => {
         geocode(d); d.addrKey = addrKey(d); placeFlags(d);
         const ref = await db().collection(DEALS).add(d);
         await pinExactly(ref, d); placeFlags(d); if (d.lat != null) await ref.update({ flags: d.flags });
-        console.log('deal added');
+        await touch(); console.log('deal added');
         return send(res, 200, { deal: { id: ref.id, ...d } });
       }
       const ref = db().collection(DEALS).doc(String(b.id));
@@ -139,7 +150,7 @@ module.exports = async (req, res) => {
       if (!out) return send(res, 404, { error: 'That contract no longer exists. Refresh the page.' });
       if (!out._sameAddress || out.geo !== 'address') await pinExactly(ref, out);
       delete out._sameAddress;
-      console.log('deal edited');
+      await touch(); console.log('deal edited');
       return send(res, 200, { deal: { id: ref.id, ...out } });
     }
 
@@ -157,7 +168,7 @@ module.exports = async (req, res) => {
         }
         moved = snap.size;
       }
-      console.log(`options ${b.op}: ${moved} deals moved`);
+      await touch(); console.log(`options ${b.op}: ${moved} deals moved`);
       return send(res, 200, { options: result.options, moved });
     }
 
@@ -167,7 +178,7 @@ module.exports = async (req, res) => {
       const todo = all.filter(d => { const x = d.data(); return x.geo !== 'address' && !x.geoTried && x.address; });
       let found = 0; const batch = todo.slice(0, limit);
       for (let i = 0; i < batch.length; i += 8) await Promise.all(batch.slice(i, i + 8).map(async doc => { const x = doc.data(); x._sameAddress = false; await pinExactly(doc.ref, x); if (x.geo === 'address') found++; }));
-      console.log(`geocode: ${found} of ${batch.length} found`);
+      if (found) await touch(); console.log(`geocode: ${found} of ${batch.length} found`);
       return send(res, 200, { tried: batch.length, found, remaining: todo.length - batch.length, exact: all.filter(d => d.data().geo === 'address').length + found, total: all.length });
     }
 
@@ -183,13 +194,14 @@ module.exports = async (req, res) => {
         await batch.commit();
       }
       if (b.options) await db().doc(OPTIONS).set({ ...b.options, updatedAt: now });
-      console.log(`import: ${list.length} deals`);
+      await touch(); console.log(`import: ${list.length} deals`);
       return send(res, 200, { ok: true, imported: list.length });
     }
 
     return send(res, 404, { error: 'Not found.' });
   } catch (e) {
     console.error('app ' + op + ' failed', e.code || '', e.message || '');
+    if (quotaHit(e)) return send(res, 503, { error: QUOTA_MSG });
     return send(res, 500, { error: 'Something went wrong. Try again.' });
   }
 };
