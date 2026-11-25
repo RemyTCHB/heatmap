@@ -34,11 +34,18 @@ Open the contract, press **Delete**, then **Delete Contract** to confirm. It is 
 
 ## Needs Review
 
-Some contracts carry a ⚑ note to check: a closed contract with no DISPO (set to **TCHB** for now), a contract with no signed record, two addresses that matched loosely, a cancel that arrived after a close, an address the map cannot find, and so on. **Needs Review** in the filters shows only those contracts.
+Some contracts carry a ⚑ note to check: a signed contract open for 60+ days, a closed contract with no DISPO (set to **TCHB** for now), a contract with no signed record, two addresses that matched loosely, a cancel that arrived after a close, an address the map cannot find, and so on. **Needs Review** in the filters shows only those contracts.
 
 - Open the contract: its notes are at the top.
 - Fix the contract and save; most notes clear themselves (picking the real DISPO clears the TCHB note, adding a ZIP clears the map note).
 - Press **Mark Fixed** next to a note once you have checked it and nothing needs changing.
+
+### Open 60+ Days
+
+A signed contract that has had no close or cancel for 60 days gets **Open 60+ Days: Check Its Stage In GoHighLevel**. Most cancels happen within three weeks, so these are usually contracts that fell through without being recorded.
+
+- If it closed or cancelled, set the **Status** (and the date and revenue) and save; the note goes away.
+- If it really is still open, press **Still Open**. The note comes back if it is still open 60 days later.
 
 ## Settings: The Lists
 
