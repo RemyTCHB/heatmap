@@ -149,7 +149,8 @@ header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;backgroun
 .icon-btn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--text-heading);border:0}
 
 /* ---------- title + KPI ---------- */
-main{padding-block:28px 96px;display:flex;flex-direction:column;gap:24px}
+main{padding-block:28px 96px;display:flex;flex-direction:column;gap:24px;position:relative;z-index:1}
+#aurora{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .title{text-align:center;font-family:var(--font-display);font-weight:800;font-size:44px;line-height:1.05;color:var(--text-heading);margin:0;text-wrap:balance}
 .title span{color:var(--red-500)}
 .sub{text-align:center;color:var(--text-muted);font-size:13px;margin-top:4px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center}
@@ -240,6 +241,7 @@ main{padding-block:28px 96px;display:flex;flex-direction:column;gap:24px}
 .hubtag{border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:var(--indigo-050);color:var(--text-heading);font-family:var(--font-display)}
 .hubtag.warn{background:var(--st-cancel-bg);color:var(--st-cancel)}
 .optrow.person{grid-template-columns:auto minmax(0,1fr) auto;padding:8px 10px}
+.optrow.person.out{grid-template-columns:auto minmax(130px,1fr) auto}
 .pav{width:32px;height:32px;border-radius:50%;background:var(--indigo-500);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:12px;flex:none}
 .pav.out{background:var(--gray-300);color:var(--text-strong)}
 .pname{font-weight:700;color:var(--text-strong);min-width:0;display:flex;flex-direction:column;line-height:1.25}
@@ -297,6 +299,13 @@ main{padding-block:28px 96px;display:flex;flex-direction:column;gap:24px}
 .legend .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .legend .k{display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
 .legend .k i{width:10px;height:10px;border-radius:50%}
+.legend .k i.dia{width:8px;height:8px;border-radius:1px;transform:rotate(45deg)}
+.legend .k i.ring2{background:transparent;border:1.5px solid var(--text-muted);box-shadow:0 0 0 3px color-mix(in srgb,var(--text-muted) 25%,transparent)}
+.pin,.pulse{transform-box:fill-box;transform-origin:center}
+svg.intro .pin{animation:pinIn .55s cubic-bezier(.2,1.5,.4,1) backwards}
+@keyframes pinIn{from{transform:scale(0);opacity:0}}
+.pulse{pointer-events:none;animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{from{transform:scale(1);opacity:.85}to{transform:scale(3.6);opacity:0}}
 .legend .ramp{width:160px;height:8px;border-radius:4px}
 .legend .ends{display:flex;justify-content:space-between;width:160px;color:var(--text-muted)}
 .maplabel{font-family:var(--font-display);font-weight:700;fill:var(--text-strong);paint-order:stroke;stroke:var(--surface-card);stroke-linejoin:round;pointer-events:none}
@@ -367,6 +376,23 @@ td.addr{font-weight:700;color:var(--text-strong)}
 .dcards .dc-a{font-weight:800;color:var(--text-strong)}
 .dcards .dc-v{font-family:var(--font-display);font-weight:800;color:var(--st-closed)}
 .dcards .more-li{background:transparent;border:0;box-shadow:none;align-items:center}
+.trends{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.chart{padding:16px 16px 10px;min-width:0}
+.ch-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.ch-h p{margin:2px 0 0;font-size:12px;color:var(--text-muted)}
+.lgd{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--text-body)}
+.lgd span{display:inline-flex;align-items:center;gap:6px}
+.lgd i{width:10px;height:10px;border-radius:3px}
+.ch-total{font-family:var(--font-display);font-weight:800;font-size:22px;color:var(--text-strong);font-variant-numeric:tabular-nums}
+.chbox{position:relative;width:100%;min-height:220px}
+.chbox svg{display:block;width:100%;height:220px;overflow:visible}
+.chbox .gl{stroke:var(--border-default);stroke-width:1}
+.chbox .ax{fill:var(--text-muted);font-size:11px;font-family:var(--font-body);font-variant-numeric:tabular-nums}
+.chbox .hit{fill:transparent;cursor:default}
+.chbox .hit.on{fill:color-mix(in srgb,var(--indigo-500) 8%,transparent)}
+.chbox .pl{fill:none;stroke:var(--indigo-500);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.chbox .pt{fill:var(--indigo-500);stroke:var(--surface-card);stroke-width:2}
+.chbox .pt.last{fill:var(--red-500)}
 .ins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
 .icard{padding:16px 16px 8px;display:flex;flex-direction:column;gap:4px;min-width:0}
 .icard .ih{display:flex;align-items:center;gap:10px;margin-bottom:4px}
@@ -460,7 +486,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
   .zoom button{width:32px;height:30px}
   .feed{max-height:300px}
   .tablewrap{display:none} .dcards{display:flex}
-  .ins{grid-template-columns:1fr}
+  .ins,.trends{grid-template-columns:1fr}
   .modal{left:0;right:0;top:auto;bottom:0;width:100%;max-height:92vh;border-radius:20px 20px 0 0;transform:translateY(100%)}
   .modal.open{transform:none}
   .dr-f{flex-wrap:wrap}
@@ -497,6 +523,7 @@ td.addr{font-weight:700;color:var(--text-strong)}
     <button class="btn pri" id="signIn" hidden>Sign In With Google</button>
   </div>
 </div>
+<canvas id="aurora" aria-hidden="true"></canvas>
 <header class="bar" id="hdr">
   <div class="wrap bar-row">
     <div class="bar-l">
@@ -565,6 +592,14 @@ td.addr{font-weight:700;color:var(--text-strong)}
     </aside>
   </section>
 
+  <section id="trends" class="sec-h" style="margin-top:8px">
+    <div><h2 class="h2">Month By <span>Month</span></h2><div class="muted">The last 12 months · follows the filters above</div></div>
+  </section>
+  <div class="trends">
+    <article class="card chart"><div class="ch-h"><div><h3 class="h3" style="font-size:16px">Deals Per Month</h3><p>Contracts signed, deals closed and deals cancelled each month</p></div><div class="lgd"><span><i style="background:var(--st-signed)"></i>Signed</span><span><i style="background:var(--st-closed)"></i>Closed</span><span><i style="background:var(--st-cancel)"></i>Cancelled</span></div></div><div class="chbox" id="chDeals"></div></article>
+    <article class="card chart"><div class="ch-h"><div><h3 class="h3" style="font-size:16px">Profit Per Month</h3><p>Actual profit from each month's closings</p></div><div class="ch-total" id="chTotal"></div></div><div class="chbox" id="chProfit"></div></article>
+  </div>
+
   <section id="leaderboards" class="sec-h" style="margin-top:8px">
     <div><h2 class="h2">Leader<span>boards</span></h2><div class="muted" id="lbSub">Every board follows the filters above</div></div>
   </section>
@@ -620,7 +655,7 @@ const ART = { source: 'a lead source', exit: 'an exit strategy', acq: 'an ACQ na
 const mkOpt = n => ({ name: n, aliases: [] });
 const OPTS = { source: [], exit: [], acq: [], dispo: [], fus: [] };
 const PEOPLE = { acq: 1, dispo: 1, fus: 1 };
-const optTag = o => o.company ? 'Company' : o.crm ? 'New' : o.hub === false ? 'Not In Hub' : o.role === 'Team Leader' ? 'Lead' : '';
+const optTag = o => o.company ? 'Company' : o.tag === 'former' ? 'Former' : o.tag === 'noLogin' ? 'No Login' : o.crm ? 'New' : o.hub === false ? 'Not In Hub' : o.role === 'Team Leader' ? 'Lead' : '';
 const names = k => OPTS[k].map(o => o.name);
 const norm = s => String(s == null ? '' : s).trim().replace(/\s+/g, ' ').toLowerCase();
 // match what the CRM sent to an option (ignoring capitals and spaces); add it as a new option when nothing matches
@@ -634,7 +669,8 @@ function matchOpt(kind, raw) {
   return { name, added: true };
 }
 // the lists start from what the CSVs hold, most used first
-function decorate(k, o) { const n = o.name; if (!PEOPLE[k]) return { aliases: [], ...o }; if (n === 'TCHB') return { aliases: [], ...o, hub: true, company: true, role: 'Company · Placeholder Until The Real DISPO Is In' };
+function decorate(k, o) { const n = o.name; if (!PEOPLE[k]) return { aliases: [], ...o };
+  if (o.tag) return { aliases: [], ...o, hub: false, role: o.tag === 'former' ? 'Former Member' : 'No Hub Login' }; if (n === 'TCHB') return { aliases: [], ...o, hub: true, company: true, role: 'Company · Placeholder Until The Real DISPO Is In' };
   const t = teamBy(n); if (TEAM) return { aliases: [], ...o, hub: !!t, role: t ? ROLE_LABEL[t.role] || 'Member' : '', email: t ? t.email : '', photo: t ? t.photo : '' };
   return NOT_PEOPLE.test(n) ? { aliases: [], ...o, hub: false } : { aliases: [], ...o, hub: true, role: roleOf(n) }; }
 // people lists start with the department's members in the Hub, then any other name the deals carry
@@ -668,6 +704,7 @@ function loadDeals(list) {
 
 // ---------- state ----------
 const F = { status: new Set(ORDER), period: 'all', acq: '', dispo: '', fus: '', src: '', exit: '', state: '', review: false };
+let introDone = false, kpiDone = false;
 let mode = 'pins', stateMetric = 'deals', vb = [0, 0, 975, 610], selected = null, hookCount = 0;
 const boardMetric = {}, boardMore = {};
 const $ = id => document.getElementById(id);
@@ -698,13 +735,19 @@ function renderKpis(b) {
   const pipe = sig.reduce((s, d) => s + d.potential, 0);
   const ringCol = css(rate >= .7 ? '--st-closed' : '--red-500');
   $('kpis').innerHTML = `
-    <div class="kpi"><span class="v">${b.length}</span><span class="l">Total Deals</span></div>
-    <div class="kpi"><span class="v">${sig.length}</span><span class="l"><i style="background:var(--st-signed)"></i>Signed · Open</span></div>
-    <div class="kpi"><span class="v">${closed.length}</span><span class="l"><i style="background:var(--st-closed)"></i>Closed</span></div>
-    <div class="kpi"><span class="v">${canc.length}</span><span class="l"><i style="background:var(--st-cancel)"></i>Cancelled</span></div>
+    <div class="kpi"><span class="v" data-n="${b.length}">${b.length}</span><span class="l">Total Deals</span></div>
+    <div class="kpi"><span class="v" data-n="${sig.length}">${sig.length}</span><span class="l"><i style="background:var(--st-signed)"></i>Signed · Open</span></div>
+    <div class="kpi"><span class="v" data-n="${closed.length}">${closed.length}</span><span class="l"><i style="background:var(--st-closed)"></i>Closed</span></div>
+    <div class="kpi"><span class="v" data-n="${canc.length}">${canc.length}</span><span class="l"><i style="background:var(--st-cancel)"></i>Cancelled</span></div>
     <div class="kpi ring-k"><div class="ring" style="background:conic-gradient(${ringCol} ${isFinite(rate) ? rate * 100 : 0}%, var(--gray-100) 0)"><b>${pct(rate)}</b></div><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="v" style="font-size:18px">${closed.length}/${done}</span><span class="l">Close Rate</span></div></div>
-    <div class="kpi"><span class="v">${kmoney(act)}</span><span class="l">${potC ? 'Actual Profit · ' + pct(act / potC) + ' of projected' : 'Actual Profit (Revenue)'}</span></div>
-    <div class="kpi"><span class="v">${closed.length ? kmoney(act / closed.length) : '—'}</span><span class="l">Avg Profit Per Close</span></div>`;
+    <div class="kpi"><span class="v" data-n="${act}" data-m="1">${kmoney(act)}</span><span class="l">${potC ? 'Actual Profit · ' + pct(act / potC) + ' of projected' : 'Actual Profit (Revenue)'}</span></div>
+    <div class="kpi"><span class="v"${closed.length ? ` data-n="${act / closed.length}" data-m="1"` : ''}>${closed.length ? kmoney(act / closed.length) : '—'}</span><span class="l">Avg Profit Per Close</span></div>`;
+  if (!kpiDone && b.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    kpiDone = true; const els = [...$('kpis').querySelectorAll('[data-n]')], t0 = performance.now();
+    const step = now => { const k = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - k, 3);
+      els.forEach(el => { const n = +el.dataset.n * e; el.textContent = el.dataset.m ? kmoney(n) : Math.round(n); }); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
 }
 
 // ---------- filters ----------
@@ -776,7 +819,12 @@ function renderMap(list) {
   const g = $('gPins');
   if (mode === 'pins') {
     const sorted = list.filter(d => d.px != null).sort((a, b) => ORDER.indexOf(b.status) - ORDER.indexOf(a.status));
-    g.innerHTML = sorted.map(d => { const [x, y] = pinPos(d); return `<circle class="pin${selected === d.id ? ' sel' : ''}" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(4.6 * pk).toFixed(2)}" stroke-width="${(1.3 * pk).toFixed(2)}" fill="var(${STATUS[d.status].v})"/>`; }).join('');
+    const intro = !introDone && sorted.length; if (intro) { introDone = true; svg.classList.add('intro'); setTimeout(() => svg.classList.remove('intro'), 2200); }
+    const recent = Date.now() - 14 * DAY, r = 4.6 * pk, sw = (1.3 * pk).toFixed(2);
+    g.innerHTML = sorted.filter(d => (d.closedAt || d.signedAt || 0) >= recent).map(d => { const [x, y] = pinPos(d); return `<circle class="pulse" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="none" stroke="var(${STATUS[d.status].v})" stroke-width="${(1.4 * pk).toFixed(2)}"/>`; }).join('') +
+      sorted.map((d, i) => { const [x, y] = pinPos(d), cls = `pin${selected === d.id ? ' sel' : ''}`, delay = intro ? ` style="animation-delay:${Math.min(900, i * 3)}ms"` : '';
+        if (d.status === 'cancelled') { const q = r * 1.2; return `<path class="${cls}" data-id="${d.id}" d="M${x.toFixed(1)} ${(y - q).toFixed(1)}L${(x + q).toFixed(1)} ${y.toFixed(1)}L${x.toFixed(1)} ${(y + q).toFixed(1)}L${(x - q).toFixed(1)} ${y.toFixed(1)}Z" stroke-width="${sw}" stroke-linejoin="round" fill="var(${STATUS[d.status].v})"${delay}/>`; }
+        return `<circle class="${cls}" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" stroke-width="${sw}" fill="var(${STATUS[d.status].v})"${delay}/>`; }).join('');
   } else if (mode === 'heat') {
     g.innerHTML = list.filter(d => d.px != null).map(d => { const [x, y] = pinPos(d); return `<circle class="pin" data-id="${d.id}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(5 * pk).toFixed(2)}" fill="transparent" stroke="none"/>`; }).join('');
   } else g.innerHTML = '';
@@ -823,7 +871,7 @@ function drawHeat(list) {
 }
 function renderLegend(min, max) {
   const lg = $('legend');
-  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k"><i style="background:var(${STATUS[s].v})"></i>${STATUS[s].label}</span>`).join('')}</div>`;
+  if (mode === 'pins') lg.innerHTML = `<div class="row">${ORDER.map(s => `<span class="k"><i class="${s === 'cancelled' ? 'dia' : ''}" style="background:var(${STATUS[s].v})"></i>${STATUS[s].label}</span>`).join('')}<span class="k"><i class="ring2"></i>Last 14 Days</span></div>`;
   else if (mode === 'heat') lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,var(--heat-a),var(--heat-b),var(--heat-c),var(--heat-d))"></div><div class="ends"><span>Fewer deals</span><span>More</span></div>`;
   else {
     const f = stateMetric === 'profit' ? kmoney : stateMetric === 'deals' ? (v => Math.round(v)) : pct;
@@ -1106,6 +1154,23 @@ window.addEventListener('scroll', () => {
   const f = $('filters'); f.classList.toggle('stuck', f.getBoundingClientRect().top <= $('hdr').offsetHeight + 2);
 }, { passive: true });
 
+// ---------- aurora: soft brand light behind the page, like the Hub; the green follows the pointer ----------
+(() => {
+  const cv = $('aurora'), c = cv.getContext('2d'), still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w = 0, h = 0, px = .72, py = .2, tx = .72, ty = .2, last = 0; const t0 = performance.now();
+  const size = () => { w = cv.width = Math.max(1, Math.round(innerWidth / 2)); h = cv.height = Math.max(1, Math.round(innerHeight / 2)); if (still) draw(0); };
+  const cols = () => currentTheme() === 'dark' ? [['79,217,138', .13], ['143,135,221', .17], ['239,90,111', .11]] : [['16,150,72', .09], ['77,69,138', .11], ['189,34,57', .07]];
+  const blob = (x, y, r, rgb, a) => { const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(1, `rgba(${rgb},0)`); c.fillStyle = g; c.fillRect(0, 0, w, h); };
+  function draw(t) { px += (tx - px) * .04; py += (ty - py) * .04; c.clearRect(0, 0, w, h); const [gr, ind, red] = cols(), R = Math.max(w, h) * .6;
+    blob(px * w, py * h, R * .7, gr[0], gr[1]);
+    blob((.12 + .08 * Math.sin(t * .00013)) * w, (.7 + .1 * Math.cos(t * .00011)) * h, R, ind[0], ind[1]);
+    blob((.9 + .06 * Math.cos(t * .00009)) * w, (.92 + .06 * Math.sin(t * .00012)) * h, R * .85, red[0], red[1]); }
+  function frame(now) { requestAnimationFrame(frame); if (document.hidden || now - last < 40) return; last = now; draw(now - t0); }
+  size(); addEventListener('resize', size);
+  addEventListener('pointermove', e => { tx = e.clientX / innerWidth; ty = e.clientY / innerHeight; }, { passive: true });
+  if (still) draw(0); else requestAnimationFrame(frame);
+})();
+
 // ---------- glass dropdowns ----------
 const DD = {}; let ddSeq = 0, ddBtn = null;
 const CHEV = '<svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M1 1l4 4 4-4"/></svg>';
@@ -1192,14 +1257,15 @@ $('setScrim').onclick = closeSettings;
 function syncDrawer(kind, from, to) { if (!draft) return; const d = deals.find(x => x.id === selected); if (draft[kind] === from) draft[kind] = to; renderDrawer(d); }
 const LINK = {};
 function renderPeopleTab(list) {
-  const hub = list.filter(o => o.hub), out = list.filter(o => !o.hub);
+  const hub = list.filter(o => o.hub), out = list.filter(o => !o.hub && !o.tag), tagged = list.filter(o => o.tag);
   const hubOpts = hub.map(x => ({ v: x.name, l: x.name }));
   return `<div class="hubhead"><span class="hubtag">From The Hub</span><span class="muted">${TEAM ? `The ${KINDS[setKind]} department in the Hub's Team Members` : `Names from your deals until the Hub link is set up`}</span></div>${hub.length ? '' : `<div class="empty">No one is in the ${KINDS[setKind]} department in the Hub yet.</div>`}
-    <ul class="optlist">${hub.map(o => { const u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${o.role}${o.email ? ' · ' + esc(o.email) : ''}${o.aliases.length ? ' · Also matches ' + o.aliases.map(esc).join(', ') : ''}</small></span><span class="uses num">${u} deal${u === 1 ? '' : 's'}</span></li>`; }).join('')}</ul>
+    <ul class="optlist">${hub.map(o => { const u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${o.role}${o.email ? ` · <span style="text-transform:none">${esc(o.email)}</span>` : ''}${o.aliases.length ? ' · Also matches ' + o.aliases.map(esc).join(', ') : ''}</small></span><span class="uses num">${u} deal${u === 1 ? '' : 's'}</span></li>`; }).join('')}</ul>
     ${out.length ? `<div class="hubhead"><span class="hubtag warn">Not In The Hub</span><span class="muted">Names the CRM sent that match no one in the Hub</span></div>
     <ul class="optlist">${out.map(o => { const i = list.indexOf(o), u = uses(setKind, o.name); if (!hubOpts.some(h => h.v === LINK[o.name])) { const first = norm(o.name.split(' ')[0]).replace(/\.$/, ''), guess = hub.find(h => norm(h.name).startsWith(first)) || hub[0]; LINK[o.name] = guess && guess.name; }
       return `<li class="optrow person out ${o.crm ? 'crm' : ''}"><span class="pav out">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${u} deal${u === 1 ? '' : 's'} · From The CRM</small></span>
-        <div class="linkbox">${hub.length ? `<span class="muted">Link To</span>${dd({ value: LINK[o.name], options: hubOpts, label: 'Link ' + o.name + ' to', onChange: v => { LINK[o.name] = v; renderSettings(); } })}<button class="btn pri sm" data-link="${i}">Link</button>` : ''}${o.crm ? `<button class="btn ghost sm" data-ok="${i}">Keep As Is</button>` : ''}</div></li>`; }).join('')}</ul>` : ''}
+        <div class="linkbox">${hub.length ? `<span class="muted">Link To</span>${dd({ value: LINK[o.name], options: hubOpts, label: 'Link ' + o.name + ' to', onChange: v => { LINK[o.name] = v; renderSettings(); } })}<button class="btn pri sm" data-link="${i}">Link</button>` : ''}${o.crm ? `<button class="btn ghost sm" data-ok="${i}">Keep As Is</button>` : ''}<button class="btn ghost sm" data-ti="${i}" data-tag="noLogin">No Hub Login</button><button class="btn ghost sm" data-ti="${i}" data-tag="former">Former Member</button></div></li>`; }).join('')}</ul>` : ''}
+    ${[['noLogin', 'No Hub Login', 'Real people and agents without a Hub account'], ['former', 'Former Members', 'No longer on the team; their names stay on their deals']].map(([tg, title, sub]) => { const rows = tagged.filter(o => o.tag === tg); return rows.length ? `<div class="hubhead"><span class="hubtag">${title}</span><span class="muted">${sub}</span></div><ul class="optlist">${rows.map(o => { const i = list.indexOf(o), u = uses(setKind, o.name); return `<li class="optrow person"><span class="pav out">${initials(o.name)}</span><span class="pname">${esc(o.name)}<small>${u} deal${u === 1 ? '' : 's'}</small></span><button class="btn ghost sm" data-ti="${i}" data-tag="">Undo</button></li>`; }).join('')}</ul>` : ''; }).join('')}
 `;
 }
 function renderSettings() {
@@ -1251,6 +1317,7 @@ $('settings').addEventListener('click', e => {
   if (t.closest('[data-cancelrm]')) { removing = null; return renderSettings(); }
   const cf = t.closest('[data-confirm]'); if (cf) return mergeOpt(+cf.dataset.confirm, moveTo);
   const lk = t.closest('[data-link]'); if (lk) { const i = +lk.dataset.link; return mergeOpt(i, LINK[list[i].name], true); }
+  const tg = t.closest('[data-ti]'); if (tg) { const o = list[+tg.dataset.ti], tag = tg.dataset.tag; return serverOpt({ op: 'tag', name: o.name, tag }, tag === 'former' ? `${o.name} is kept as a former member` : tag === 'noLogin' ? `${o.name} is kept without a Hub login` : `${o.name} is back under Not In The Hub`); }
 });
 $('settings').addEventListener('change', e => {
   if (!e.target.classList.contains('optname')) return;
@@ -1267,6 +1334,55 @@ $('settings').addEventListener('submit', e => {
   if (OPTS[setKind].some(x => norm(x.name) === norm(v) || x.aliases.some(a => norm(a) === norm(v)))) { setErr = `“${v}” is already on the list.`; return renderSettings(); }
   serverOpt({ op: 'add', name: v }, `Added “${v}” to ${KINDS[setKind]}`);
 });
+
+// ---------- month by month ----------
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthOf = t => new Date(t).toLocaleDateString('en-CA', { timeZone: 'America/New_York' }).slice(0, 7);
+function niceMax(v) { const st = Math.pow(10, Math.floor(Math.log10(Math.max(v, 1)))); for (const m of [1, 2, 2.5, 5, 10]) if (m * st >= v) return m * st; return 10 * st; }
+let TR = [];
+function renderTrends() {
+  const now = new Date(), keys = [];
+  for (let i = 11; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); keys.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')); }
+  const at = Object.fromEntries(keys.map((k, i) => [k, i]));
+  TR = keys.map(k => ({ k, signed: 0, closed: 0, cancelled: 0, profit: 0 }));
+  const add = (t, f, v = 1) => { if (!t) return; const i = at[monthOf(t)]; if (i != null) TR[i][f] += v; };
+  base().forEach(d => {
+    add(d.signedAt, 'signed');
+    if (d.status === 'closed') (d.closings && d.closings.length ? d.closings : [{ t: d.closedAt, revenue: d.actual }]).forEach(c => { add(c.t, 'closed'); add(c.t, 'profit', c.revenue || 0); });
+    if (d.status === 'cancelled') add(d.cancelledAt || d.closedAt, 'cancelled');
+  });
+  const lab = (k, i, every) => { const [y, m] = k.split('-'); return i % every ? '' : MON[+m - 1] + (+m === 1 || i === 0 ? ' ’' + y.slice(2) : ''); };
+  // deals: three thin bars a month, in a fixed order, 2px apart
+  { const el = $('chDeals'), W = Math.max(280, el.clientWidth), H = 220, L = 30, R = 6, T = 10, B = 26, iw = W - L - R, ih = H - T - B;
+    const max = niceMax(Math.max(1, ...TR.map(m => Math.max(m.signed, m.closed, m.cancelled)))), gw = iw / 12, bw = Math.max(3, Math.min(12, (gw - 10) / 3 - 2)), every = gw < 34 ? 2 : 1;
+    const n = max % 4 === 0 ? 4 : max % 5 === 0 ? 5 : 2;
+    let g = ''; for (let j = 0; j <= n; j++) { const v = max * j / n, y = T + ih - ih * j / n; g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y}" y2="${y}"/><text class="ax" x="${L - 6}" y="${y + 4}" text-anchor="end">${Math.round(v)}</text>`; }
+    TR.forEach((m, i) => { const x0 = L + i * gw + (gw - (3 * bw + 4)) / 2;
+      ['signed', 'closed', 'cancelled'].forEach((f, j) => { const v = m[f]; if (!v) return; const h = v / max * ih, x = x0 + j * (bw + 2), y = T + ih - h, rr = Math.min(3, bw / 2, h);
+        g += `<path d="M${x} ${T + ih}V${y + rr}Q${x} ${y} ${x + rr} ${y}H${x + bw - rr}Q${x + bw} ${y} ${x + bw} ${y + rr}V${T + ih}Z" fill="var(${STATUS[f].v})"/>`; });
+      g += `<text class="ax" x="${L + i * gw + gw / 2}" y="${H - 8}" text-anchor="middle">${lab(m.k, i, every)}</text><rect class="hit" data-mi="${i}" x="${L + i * gw}" y="${T}" width="${gw}" height="${ih}" rx="6"/>`; });
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Deals signed, closed and cancelled per month">${g}</svg>`; }
+  // profit: a line with an area under it, a point a month, the latest month in red
+  { const el = $('chProfit'), W = Math.max(280, el.clientWidth), H = 220, L = 44, R = 10, T = 12, B = 26, iw = W - L - R, ih = H - T - B;
+    const vals = TR.map(m => m.profit), lo = Math.min(0, ...vals), max = niceMax(Math.max(1, ...vals)), span = max - lo, gw = iw / 12, every = gw < 34 ? 2 : 1;
+    const X = i => L + i * gw + gw / 2, Y = v => T + ih - (v - lo) / span * ih;
+    let g = `<defs><linearGradient id="pfill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--indigo-500)" stop-opacity=".28"/><stop offset="1" stop-color="var(--indigo-500)" stop-opacity="0"/></linearGradient></defs>`;
+    for (let j = 0; j <= 4; j++) { const v = lo + span * j / 4, y = Y(v); g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${y}" y2="${y}"/><text class="ax" x="${L - 6}" y="${y + 4}" text-anchor="end">${kmoney(v).replace('.0K', 'K')}</text>`; }
+    const pts = TR.map((m, i) => [X(i), Y(m.profit)]), line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
+    g += `<path d="${line}L${pts[11][0]} ${Y(Math.max(lo, 0))}L${pts[0][0]} ${Y(Math.max(lo, 0))}Z" fill="url(#pfill)"/><path class="pl" d="${line}"/>`;
+    TR.forEach((m, i) => { g += `<circle class="pt${i === 11 ? ' last' : ''}" cx="${pts[i][0]}" cy="${pts[i][1]}" r="${i === 11 ? 5 : 4}"/><text class="ax" x="${X(i)}" y="${H - 8}" text-anchor="middle">${lab(m.k, i, every)}</text><rect class="hit" data-mi="${i}" x="${L + i * gw}" y="${T}" width="${gw}" height="${ih}" rx="6"/>`; });
+    el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Actual profit per month">${g}</svg>`;
+    $('chTotal').textContent = kmoney(vals.reduce((a, b) => a + b, 0)); }
+}
+['chDeals', 'chProfit'].forEach(id => {
+  const box = $(id);
+  const show = e => { const h = e.target.closest('.hit'); box.querySelectorAll('.hit.on').forEach(x => x.classList.remove('on')); if (!h) return hideTip(); h.classList.add('on');
+    const m = TR[+h.dataset.mi], [y, mo] = m.k.split('-');
+    showTip(`<div class="th">${MON[+mo - 1]} ${y}</div>` + (id === 'chDeals' ? ['signed', 'closed', 'cancelled'].map(f => `<div class="tr"><span>${STATUS[f].label}</span><b>${m[f]}</b></div>`).join('') : `<div class="tr"><span>Actual Profit</span><b>${money(m.profit)}</b></div><div class="tr"><span>Closings</span><b>${m.closed}</b></div><div class="tr"><span>Avg Per Closing</span><b>${m.closed ? money(m.profit / m.closed) : '—'}</b></div>`), e); };
+  box.addEventListener('pointermove', show); box.addEventListener('click', show);
+  box.addEventListener('pointerleave', () => { box.querySelectorAll('.hit.on').forEach(x => x.classList.remove('on')); hideTip(); });
+});
+let trT; window.addEventListener('resize', () => { clearTimeout(trT); trT = setTimeout(renderTrends, 150); });
 
 // ---------- where to market: suggestions from profits, close rates and cancel reasons ----------
 // cancel reasons sorted into themes by their words; each theme carries what tends to prevent it
@@ -1326,7 +1442,7 @@ function renderInsights() {
 function render(fromHook) {
   const b = base(), v = b.filter(d => F.status.has(d.status));
   renderFilterDDs(); renderTools();
-  renderKpis(b); renderChips(b); renderMap(v); renderBoards(v); renderInsights(); renderTable(v); renderFeed(fromHook);
+  renderKpis(b); renderChips(b); renderMap(v); renderTrends(); renderBoards(v); renderInsights(); renderTable(v); renderFeed(fromHook);
   $('avDot').hidden = !crmCount();
   const today = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) + 'T00:00:00-05:00').getTime();
   $('hookCt').textContent = events.filter(e => e.t >= today).length;

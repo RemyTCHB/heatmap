@@ -75,6 +75,10 @@ test('Settings lists: intake, rename, merge', () => {
   const m = opts.apply(r.options, { kind: 'source', op: 'merge', name: 'Self Generated', to: 'PPC NW RDS' });
   assert.strictEqual(m.options.source.length, 1); assert.ok(m.options.source[0].aliases.includes('Self Generated'));
   assert.throws(() => opts.apply(o, { kind: 'source', op: 'add', name: 'ppc nw rds' }));
+  const p = opts.fromDeals([{ fus: 'AI SMS AGENT' }, { fus: 'Nice Maralit' }]);
+  assert.strictEqual(opts.apply(p, { kind: 'fus', op: 'tag', name: 'AI SMS AGENT', tag: 'noLogin' }).options.fus[0].tag, 'noLogin');
+  const f2 = opts.apply(p, { kind: 'fus', op: 'tag', name: 'Nice Maralit', tag: 'former' }).options;
+  assert.strictEqual(f2.fus[1].tag, 'former'); assert.strictEqual(opts.apply(f2, { kind: 'fus', op: 'tag', name: 'Nice Maralit', tag: '' }).options.fus[1].tag, undefined);
 });
 
 test('address key and map spot', () => {
